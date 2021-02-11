@@ -31,7 +31,7 @@ class HomePageView(FormView):
 
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
-CLIENT_SECRETS_FILE = "../client_secret_youtube.json"
+CLIENT_SECRETS_FILE = "/home/ubuntu/mysite/youtube/client_secret_youtube.json"
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
@@ -71,7 +71,7 @@ def authorize(request):
     # error.
 
     # flow.redirect_uri = reverse('youtube:oauth2callback')
-    flow.redirect_uri = "http://127.0.0.1:8000/oauth2callback"
+    flow.redirect_uri = "https://wordfilters.railgun.in/oauth2callback"
 
     authorization_url, state = flow.authorization_url(
         # Enable offline access so that you can refresh an access token without
@@ -95,7 +95,7 @@ def oauth2callback(request):
     flow.redirect_uri = reverse('youtube:oauth2callback')
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-    authorization_response = request.url
+    authorization_response = request.build_absolute_uri()
     flow.fetch_token(authorization_response=authorization_response)
 
     # Store credentials in the session.
