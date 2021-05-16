@@ -10,6 +10,8 @@ urlpatterns = [
     path('test', views.test_api_request, name='test'),
     path('authorize', views.authorize, name='authorize'),
     path('oauth2callback', views.oauth2callback, name='oauth2callback'),
+    path('revoke', views.revoke, name='revoke'),
+    path('clear', views.clear_credentials, name='clear'),
 ]
 
 if settings.DEBUG:

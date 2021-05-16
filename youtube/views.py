@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import os
-import flask
 import requests
+import sys
 
 import google.oauth2.credentials
 import google_auth_oauthlib.flow
@@ -49,7 +49,15 @@ def test_api_request(request):
         return authorize(request)
 
     # Load credentials from the session.
-    credentials = google.oauth2.credentials.Credentials(request.session['credentials'])
+    sc = request.session['credentials']
+    credentials = google.oauth2.credentials.Credentials(
+        token = sc.get('token'),
+        refresh_token = sc.get('refresh_token'),
+        token_uri = sc.get('token_uri'),
+        client_id = sc.get('client_id'),
+        client_secret = sc.get('client_secret'),
+        scopes = sc.get('scopes')
+    )
     youtube = googleapiclient.discovery.build(
         API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
@@ -59,7 +67,8 @@ def test_api_request(request):
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     request.session['credentials'] = credentials_to_dict(credentials)
-    return JsonResponse(**channel)
+    return render(request, 'youtube/profile.html', channel)
+    # return JsonResponse(channel)
 
 
 def authorize(request):
@@ -92,7 +101,8 @@ def oauth2callback(request):
 
     flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
         CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-    flow.redirect_uri = reverse('youtube:oauth2callback')
+    # flow.redirect_uri = reverse('youtube:oauth2callback')
+    flow.redirect_uri = 'https://wordfilters.railgun.in/oauth2callback'
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
     authorization_response = request.build_absolute_uri()
@@ -103,8 +113,40 @@ def oauth2callback(request):
     #              credentials in a persistent database instead.
     credentials = flow.credentials
     request.session['credentials'] = credentials_to_dict(credentials)
-
+    print("Goodbye cruel world!", file=sys.stderr)
     return HttpResponseRedirect(reverse('youtube:test'))
+
+def revoke(request):
+    if 'credentials' not in request.session:
+        return HttpResponse('You need to <a href="/authorize">authorize</a> before ' +
+            'testing the code to revoke credentials.')
+
+    # Load credentials from the session.
+    sc = request.session['credentials']
+    credentials = google.oauth2.credentials.Credentials(
+        token = sc.get('token'),
+        refresh_token = sc.get('refresh_token'),
+        token_uri = sc.get('token_uri'),
+        client_id = sc.get('client_id'),
+        client_secret = sc.get('client_secret'),
+        scopes = sc.get('scopes')
+    )
+    revoke = requests.post('https://oauth2.googleapis.com/revoke',
+      params={'token': credentials.token},
+      headers = {'content-type': 'application/x-www-form-urlencoded'})
+    status_code = getattr(revoke, 'status_code')
+    if status_code == 200:
+        return HttpResponse('Credentials successfully revoked.' + print_index_table())
+    else:
+        return HttpResponse('An error occurred.' + print_index_table())
+
+def clear_credentials(request):
+    if 'credentials' in request.session:
+        del request.session['credentials']
+    return HttpResponse('Credentials have been cleared.<br><br>' +
+          print_index_table())
+
+    
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
@@ -129,7 +171,7 @@ def print_index_table():
             '    session. After revoking credentials, if you go to the test ' +
             '    page, you should see an <code>invalid_grant</code> error.' +
             '</td></tr>' +
-            '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
+            '<tr><td><a href="/clear">Clear Django session credentials</a></td>' +
             '<td>Clear the access token currently stored in the user session. ' +
             '    After clearing the token, if you <a href="/test">test the ' +
             '    API request</a> again, you should go back to the auth flow.' +
