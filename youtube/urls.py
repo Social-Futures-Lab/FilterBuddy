@@ -12,6 +12,7 @@ urlpatterns = [
     path('oauth2callback', views.oauth2callback, name='oauth2callback'),
     path('revoke', views.revoke, name='revoke'),
     path('clear', views.clear_credentials, name='clear'),
+    path('get_comments', views.get_comments, name='get_comments'),
 ]
 
 if settings.DEBUG:

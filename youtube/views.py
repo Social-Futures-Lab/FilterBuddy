@@ -146,6 +146,11 @@ def clear_credentials(request):
     return HttpResponse('Credentials have been cleared.<br><br>' +
           print_index_table())
 
+def get_comments(request):
+    
+    return HttpResponse(print_index_table())
+    
+
     
 
 def credentials_to_dict(credentials):
