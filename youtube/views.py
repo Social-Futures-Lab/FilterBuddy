@@ -157,27 +157,15 @@ def get_comments(request):
     video_id = "uMWOVLFn218"
 
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
-    video_response = youtube.commentThreads().list(part='snippet', videoId=video_id, textFormat="plainText",).execute()
+    video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
 
     # iterate video response
-    while (video_response):
-        for item in video_response['items']:
-            # Extracting comments
-            comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
-            comments.append(comment)
+    for item in video_response['items']:
+        # Extracting comments
+        comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+        comments.append(comment)
 
-#            # counting number of reply of comment
-#            replyCount = item['snippet']['totalReplyCount']
-
-            # if reply is there
-#            if (replyCount > 0):
-#                for reply in item['replies']['comments']:
-                    #Extract reply
-#                    reply = reply['snippet']['textDisplay']
-
-                    #Store reply in a list
-#                    replies.append(reply)
-    return HttpResponse(comments)
+    return render(request, 'youtube/comments.html', {'comments': comments})
     
 
 def credentials_to_dict(credentials):
