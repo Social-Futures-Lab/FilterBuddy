@@ -32,16 +32,21 @@ class HomePageView(FormView):
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
 CLIENT_SECRETS_FILE = "/home/ubuntu/mysite/youtube/client_secret_youtube.json"
+DEVELOPER_KEY_FILE = "/home/ubuntu/mysite/youtube/developer_key.txt"
+
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
 SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
+DEVELOPER_KEY = open(DEVELOPER_KEY_FILE).read()
+
 
 
 def index(request):
-    return HttpResponse(print_index_table())
+#    return HttpResponse(print_index_table())
+    return render(request, "youtube/home.html")
 
 
 def test_api_request(request):
@@ -147,10 +152,32 @@ def clear_credentials(request):
           print_index_table())
 
 def get_comments(request):
-    
-    return HttpResponse(print_index_table())
-    
 
+    comments = []
+    video_id = "uMWOVLFn218"
+
+    youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
+    video_response = youtube.commentThreads().list(part='snippet', videoId=video_id, textFormat="plainText",).execute()
+
+    # iterate video response
+    while (video_response):
+        for item in video_response['items']:
+            # Extracting comments
+            comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            comments.append(comment)
+
+#            # counting number of reply of comment
+#            replyCount = item['snippet']['totalReplyCount']
+
+            # if reply is there
+#            if (replyCount > 0):
+#                for reply in item['replies']['comments']:
+                    #Extract reply
+#                    reply = reply['snippet']['textDisplay']
+
+                    #Store reply in a list
+#                    replies.append(reply)
+    return HttpResponse(comments)
     
 
 def credentials_to_dict(credentials):
@@ -176,7 +203,7 @@ def print_index_table():
             '    session. After revoking credentials, if you go to the test ' +
             '    page, you should see an <code>invalid_grant</code> error.' +
             '</td></tr>' +
-            '<tr><td><a href="/clear">Clear Django session credentials</a></td>' +
+            '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
             '<td>Clear the access token currently stored in the user session. ' +
             '    After clearing the token, if you <a href="/test">test the ' +
             '    API request</a> again, you should go back to the auth flow.' +

@@ -151,4 +151,11 @@ dmypy.json
 # profiling data
 .prof
 
+# key files
+youtube/client_secret_youtube.json
+youtube/developer_key.txt
+db.sqlite3
+
+
+
 # End of https://www.toptal.com/developers/gitignore/api/django
