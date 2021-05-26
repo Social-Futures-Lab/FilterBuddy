@@ -1,16 +1,24 @@
 <h1> Welcome to YouTube Word Filters app </h1>
+
+<h3 style="color:Brown;">
+Go <a href="{% url 'youtube:home' %}">Home here</a>
+</h3>
+
 <h2> Here are some of your YouTube profile details: </h2>
 
-<b>Your profile's ETag</b>:{{ etag }} <br />
-
-<h3> Your Channels: </h3> 
+<h3> Your Channel Details: </h3> 
 {% for item in items %}
 
 <b>Title</b>: {{ item.snippet.title }} <br />
 <b>Description</b>: {{ item.snippet.description }} <br />
 <b>Published at</b>: {{ item.snippet.publishedAt }} <br />
-<b>Kind</b>: {{ item.kind }} <br />
-<b>ETag</b>: {{ item.etag }} <br />
-
 
 {% endfor %}
+
+<h3>
+Check out your videos here: <a href="/get_videos">My Videos</a>
+</h3>
+
+<h3>
+Check out your comments here: <a href="/get_comments">My Comments</a> 
+</h3>

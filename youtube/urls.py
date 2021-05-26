@@ -5,6 +5,7 @@ from django.urls import path
 from .views import HomePageView
 from . import views
 
+app_name = 'youtube'
 urlpatterns = [
     path('', views.index, name='home'),
     path('test', views.test_api_request, name='test'),
@@ -14,6 +15,7 @@ urlpatterns = [
     path('clear', views.clear_credentials, name='clear'),
     path('get_comments', views.get_comments, name='get_comments'),
     path('get_videos', views.get_videos, name='get_videos'),
+    path('get_video_comments/<str:video_id>', views.get_video_comments, name='get_video_comments'),
 ]
 
 if settings.DEBUG:

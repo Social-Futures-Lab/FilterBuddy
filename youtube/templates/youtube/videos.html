@@ -7,15 +7,25 @@
 
 <h1>Channel Videos</h1>
 
+<h3 style="color:Brown;">
+Go <a href="{% url 'youtube:home' %}">Home here</a>
+</h3>
+
 {% for video in videos %}
     <div>
         <span style="color:DodgerBlue;">
             <b>{{ video.snippet.title }}</b> •
         </span> 
-        <span style="color:DodgerBlue;">
+        <span style="color:Orange;">
             {{ video.snippet.publishedAt }}
         </span> 
     </div>
+    <div>
+        <span style="color:Red;">
+            <a href="/get_video_comments/{{video.id.videoId}}">Comments</a>
+        </span> 
+    </div>
+
 <hr class="solid">
 {% endfor %}
 

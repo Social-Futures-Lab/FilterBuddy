@@ -3,7 +3,15 @@
 <body>
 
 <h1>YouTube Rule Collections</h1>
-<p>What do you want to do?.</p>
+
+{% if page_message %}
+    <h2 style="color:Red;"> 
+    {{ page_message }}
+    </h2>
+{% endif %}
+
+
+<p>What do you want to do?</p>
 
 <table>
           <tr><td><a href="/test">Test an API request</a></td>
