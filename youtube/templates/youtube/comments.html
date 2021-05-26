@@ -1,6 +1,26 @@
 <h1>Here are all the comment posted on your YouTube channel</h1>
 <ul>
 {% for comment in comments %}
-    <li>{{ comment }}</li>
+    <li>
+<span style="color:DodgerBlue;">
+
+    <b>{{ comment.snippet.authorDisplayName }}</b> : 
+</span> 
+{{ comment.snippet.textDisplay }}
+({{ comment.snippet.publishedAt }}, {{comment.snippet.likeCount}} likes  )
+[Moderation status: {{ comment.snippet.moderationStatus }}]
+</li>
+
+{% if comment.replies %}
+    <ul>
+    {% for reply in comment.replies %}
+    <li> <span style="color:DodgerBlue;">  <b>{{ comment.snippet.authorDisplayName }}</b> : </span> 
+        {{ reply.textDisplay}} 
+        ({{ reply.publishedAt }}, {{ reply.likeCount}} likes ) 
+    </li>
     {% endfor %}
+    </ul>
+{% endif %}
+
+{% endfor %}
     </ul>

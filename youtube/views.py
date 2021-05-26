@@ -16,6 +16,10 @@ from django import forms
 from django.views.generic.edit import FormView
 from django.http import JsonResponse
 from django.urls import reverse
+from django.conf import settings
+
+import dateutil.parser
+import datetime
 
 
 class YouTubeForm(forms.Form):
@@ -154,7 +158,7 @@ def clear_credentials(request):
 def get_comments(request):
 
     comments = []
-    video_id = "uMWOVLFn218"
+    video_id = "dD_ACMXgPkE"
 
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
     video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
@@ -162,11 +166,24 @@ def get_comments(request):
     # iterate video response
     for item in video_response['items']:
         # Extracting comments
-        comment = item['snippet']['topLevelComment']['snippet']['textDisplay']
+        comment = item['snippet']['topLevelComment']
+        comment['snippet']['publishedAt'] = dateutil.parser.parse(comment['snippet']['publishedAt'])
+        if (item['snippet']['totalReplyCount'] > 0):
+            replies = get_replies(youtube, item['id'])
+            comment['replies'] = replies
         comments.append(comment)
 
+
     return render(request, 'youtube/comments.html', {'comments': comments})
-    
+
+def get_replies(youtube, parent_id):
+    results = youtube.comments().list(part="snippet", parentId=parent_id, textFormat="plainText").execute()
+    replies = []
+    for item in results['items']:
+        reply = item['snippet']
+        reply['publishedAt'] = dateutil.parser.parse(item['snippet']['publishedAt'])
+        replies.append(reply)
+    return replies
 
 def credentials_to_dict(credentials):
   return {'token': credentials.token,
