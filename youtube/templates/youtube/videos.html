@@ -1,0 +1,21 @@
+{% load static %}
+
+<head>
+<link rel="stylesheet" href="{% static "youtube/style.css" %}" />
+</head>
+
+
+<h1>Channel Videos</h1>
+
+{% for video in videos %}
+    <div>
+        <span style="color:DodgerBlue;">
+            <b>{{ video.snippet.title }}</b> •
+        </span> 
+        <span style="color:DodgerBlue;">
+            {{ video.snippet.publishedAt }}
+        </span> 
+    </div>
+<hr class="solid">
+{% endfor %}
+

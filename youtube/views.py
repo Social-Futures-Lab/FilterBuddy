@@ -20,7 +20,7 @@ from django.conf import settings
 
 import dateutil.parser
 import datetime
-
+import urllib.request, json
 
 class YouTubeForm(forms.Form):
     pass
@@ -155,15 +155,45 @@ def clear_credentials(request):
     return HttpResponse('Credentials have been cleared.<br><br>' +
           print_index_table())
 
-def get_comments(request):
+def get_videos(request):
+    if 'credentials' not in request.session:
+        return authorize(request)
 
-    comments = []
-    video_id = "dD_ACMXgPkE"
+    # Load credentials from the session.
+    sc = request.session['credentials']
+    credentials = google.oauth2.credentials.Credentials(
+        token = sc.get('token'),
+        refresh_token = sc.get('refresh_token'),
+        token_uri = sc.get('token_uri'),
+        client_id = sc.get('client_id'),
+        client_secret = sc.get('client_secret'),
+        scopes = sc.get('scopes')
+    )
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    channels = youtube.channels().list(mine=True, part='snippet').execute()
+    myChannelId = channels["items"][0]["id"]
+
+    videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
+
+    videoIds = []
+    with urllib.request.urlopen(videoFetchUrl) as url:
+        data = json.loads(url.read().decode())
+    return render(request, 'youtube/videos.html', {'videos': data['items']})
+
+def get_comments(request):
+    video_id = "rKCqRuthJKI"
 
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
-    video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
+    comments = get_comments_from_video(youtube, video_id)
+    return render(request, 'youtube/comments.html', {'comments': comments})
 
-    # iterate video response
+
+def get_comments_from_video(youtube, video_id):
+    video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
+    comments = []
+    # Get the first set of comments
     for item in video_response['items']:
         # Extracting comments
         comment = item['snippet']['topLevelComment']
@@ -173,8 +203,19 @@ def get_comments(request):
             comment['replies'] = replies
         comments.append(comment)
 
+    # Keep getting comments from the following pages
+    while ("nextPageToken" in video_response):
+        video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, pageToken=video_response["nextPageToken"], textFormat="plainText").execute()
+        for item in video_response['items']:
+            # Extracting comments    
+            comment = item['snippet']['topLevelComment']
+            comment['snippet']['publishedAt'] = dateutil.parser.parse(comment['snippet']['publishedAt'])
+            if (item['snippet']['totalReplyCount'] > 0):
+                replies = get_replies(youtube, item['id'])
+                comment['replies'] = replies
+            comments.append(comment)
+    return comments
 
-    return render(request, 'youtube/comments.html', {'comments': comments})
 
 def get_replies(youtube, parent_id):
     results = youtube.comments().list(part="snippet", parentId=parent_id, textFormat="plainText").execute()

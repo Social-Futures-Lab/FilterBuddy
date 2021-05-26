@@ -1,15 +1,28 @@
-<h1>Here are all the comment posted on your YouTube channel</h1>
-<ul>
-{% for comment in comments %}
-    <li>
-<span style="color:DodgerBlue;">
+{% load static %}
 
-    <b>{{ comment.snippet.authorDisplayName }}</b> : 
-</span> 
+<head>
+<link rel="stylesheet" href="{% static "youtube/style.css" %}" />
+</head>
+
+
+<body>
+<h1>Channel Comments </h1>
+<div >
+{% for comment in comments %}
+    <div>
+        <span style="color:DodgerBlue;">
+            <b>{{ comment.snippet.authorDisplayName }}</b> •
+        </span> 
+        <span style="color:DodgerBlue;">
+            {{ comment.snippet.publishedAt }}
+        </span> 
+    </div>
+
+    <div>
 {{ comment.snippet.textDisplay }}
-({{ comment.snippet.publishedAt }}, {{comment.snippet.likeCount}} likes  )
-[Moderation status: {{ comment.snippet.moderationStatus }}]
-</li>
+({{comment.snippet.likeCount}} likes  )
+    </div>
+</div>
 
 {% if comment.replies %}
     <ul>
@@ -21,6 +34,7 @@
     {% endfor %}
     </ul>
 {% endif %}
-
+<hr class="solid">
 {% endfor %}
-    </ul>
+</div>
+</body>

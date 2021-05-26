@@ -13,6 +13,7 @@ urlpatterns = [
     path('revoke', views.revoke, name='revoke'),
     path('clear', views.clear_credentials, name='clear'),
     path('get_comments', views.get_comments, name='get_comments'),
+    path('get_videos', views.get_videos, name='get_videos'),
 ]
 
 if settings.DEBUG:
