@@ -235,6 +235,7 @@ def get_comments(request):
         comments = get_comments_from_video(youtube, video_id)
         myComments += comments
     myComments = sorted(myComments, key=lambda k: k['snippet']['publishedAt'], reverse=True)
+    print(myComments[:3])
     return render(request, 'youtube/comments.html', {'comments': myComments})
 
 def get_video_comments(request, video_id):
@@ -310,6 +311,8 @@ def print_index_table():
             '    API request</a> again, you should go back to the auth flow.' +
             '</td></tr></table>')
 
+def index_comments(comments):
+    print(comments)
 
 if __name__ == '__main__':
     # When running locally, disable OAuthlib's HTTPs verification.
