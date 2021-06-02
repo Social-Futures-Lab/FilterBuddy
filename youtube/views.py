@@ -49,7 +49,6 @@ DEVELOPER_KEY = open(DEVELOPER_KEY_FILE).read()
 
 
 def index(request):
-#    return HttpResponse(print_index_table())
     return render(request, "youtube/home.html")
 
 
@@ -159,8 +158,6 @@ def clear_credentials(request):
         del request.session['credentials']
     page_message = 'Credentials have been cleared.'
     return render(request, "youtube/home.html", {'page_message': page_message})
-#    return HttpResponse('Credentials have been cleared.<br><br>' +
-#          print_index_table())
 
 def get_videos(request):
     if 'credentials' not in request.session:
@@ -290,26 +287,6 @@ def credentials_to_dict(credentials):
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
 
-def print_index_table():
-    return ('<table>' +
-            '<tr><td><a href="/test">Test an API request</a></td>' +
-            '<td>Submit an API request and see a formatted JSON response. ' +
-            '    Go through the authorization flow if there are no stored ' +
-            '    credentials for the user.</td></tr>' +
-            '<tr><td><a href="/authorize">Test the auth flow directly</a></td>' +
-            '<td>Go directly to the authorization flow. If there are stored ' +
-            '    credentials, you still might not be prompted to reauthorize ' +
-            '    the application.</td></tr>' +
-            '<tr><td><a href="/revoke">Revoke current credentials</a></td>' +
-            '<td>Revoke the access token associated with the current user ' +
-            '    session. After revoking credentials, if you go to the test ' +
-            '    page, you should see an <code>invalid_grant</code> error.' +
-            '</td></tr>' +
-            '<tr><td><a href="/clear">Clear Flask session credentials</a></td>' +
-            '<td>Clear the access token currently stored in the user session. ' +
-            '    After clearing the token, if you <a href="/test">test the ' +
-            '    API request</a> again, you should go back to the auth flow.' +
-            '</td></tr></table>')
 
 def index_comments(comments):
     print(comments)
