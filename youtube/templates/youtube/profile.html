@@ -7,13 +7,12 @@ Go <a href="{% url 'youtube:home' %}">Home here</a>
 <h2> Here are some of your YouTube profile details: </h2>
 
 <h3> Your Channel Details: </h3> 
-{% for item in items %}
 
-<b>Title</b>: {{ item.snippet.title }} <br />
-<b>Description</b>: {{ item.snippet.description }} <br />
-<b>Published at</b>: {{ item.snippet.publishedAt }} <br />
+<b>Title</b>: {{ channel.title }} <br />
+<b>Description</b>: {{ channel.description }} <br />
+<b>Published at</b>: {{ channel.publishedAt }} <br />
+<b>Channel ID</b>: {{ channel.id }} <br />
 
-{% endfor %}
 
 <h3>
 Check out your videos here: <a href="/get_videos">My Videos</a>

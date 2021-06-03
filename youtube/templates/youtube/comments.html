@@ -15,7 +15,8 @@ Go <a href="{% url 'youtube:home' %}">Home here</a>
 <div>
 {% if video_id %}
         <span style="color:Brown;">
-    <h2> Comments for <a href="https://www.youtube.com/watch?v=%s" % ({{ video_id }},)>this</a> video: </h2>
+    <h2> Comments for <a href={{ video_url }}>this</a> video: </h2>
+    here{{video_id}}now
         </span>
 {% endif %}
 </div>
@@ -24,29 +25,27 @@ Go <a href="{% url 'youtube:home' %}">Home here</a>
 {% for comment in comments %}
     <div>
         <span style="color:DodgerBlue;">
-            <b>{{ comment.snippet.authorDisplayName }}</b> •
+            <b>{{ comment.author }}</b> •
         </span> 
         <span style="color:Orange;">
-            {{ comment.snippet.publishedAt }}
+            {{ comment.pub_date }}
         </span> 
     </div>
 
     <div>
-{{ comment.snippet.textDisplay }}
-({{comment.snippet.likeCount}} likes  )
+{{ comment.text }}
+({{comment.likeCount}} likes  )
     </div>
 </div>
 
-{% if comment.replies %}
     <ul>
-    {% for reply in comment.replies %}
-    <li> <span style="color:DodgerBlue;">  <b>{{ comment.snippet.authorDisplayName }}</b> : </span> 
-        {{ reply.textDisplay}} 
-        ({{ reply.publishedAt }}, {{ reply.likeCount}} likes ) 
+    {% for reply in comment.reply_set.all %}
+    <li> <span style="color:DodgerBlue;">  <b>{{ reply.author }}</b> : </span> 
+        {{ reply.text}} 
+        ({{ reply.pub_date }}, {{ reply.likeCount}} likes ) 
     </li>
     {% endfor %}
     </ul>
-{% endif %}
 <hr class="solid">
 {% endfor %}
 </div>

@@ -22,6 +22,8 @@ import dateutil.parser
 import datetime
 import urllib.request, json
 
+from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+
 class YouTubeForm(forms.Form):
     pass
 
@@ -51,6 +53,17 @@ DEVELOPER_KEY = open(DEVELOPER_KEY_FILE).read()
 def index(request):
     return render(request, "youtube/home.html")
 
+def getChannel(credentials):
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+
+    channels = youtube.channels().list(mine=True, part='snippet').execute()
+    for channel in channels['items']:
+        channel['snippet']['publishedAt'] = dateutil.parser.parse(channel['snippet']['publishedAt'])
+    myChannel = channels['items'][0]
+
+    djangoChannel, created = Channel.objects.get_or_create(title=myChannel['snippet']['title'], description=myChannel['snippet']['description'], pub_date=myChannel['snippet']['publishedAt'], channel_id=myChannel['id'])
+    return djangoChannel
 
 def test_api_request(request):
     if 'credentials' not in request.session:
@@ -66,20 +79,20 @@ def test_api_request(request):
         client_secret = sc.get('client_secret'),
         scopes = sc.get('scopes')
     )
-    youtube = googleapiclient.discovery.build(
-        API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
-    channels = youtube.channels().list(mine=True, part='snippet').execute()
-    for channel in channels['items']:
-        channel['snippet']['publishedAt'] = dateutil.parser.parse(channel['snippet']['publishedAt'])
-    myChannelId = channels["items"][0]["id"]
+    channel = getChannel(credentials)
 
     # Save credentials back to session in case access token was refreshed.
     # ACTION ITEM: In a production app, you likely want to save these
     #              credentials in a persistent database instead.
     request.session['credentials'] = credentials_to_dict(credentials)
-    request.session['credentials']['myChannelId'] = myChannelId
-    return render(request, 'youtube/profile.html', channels)
+    request.session['credentials']['myChannelId'] = channel.channel_id
+    channelDict = {
+        'title': channel.title,
+        'description': channel.description,
+        'publishedAt': channel.pub_date,
+        'id': channel.channel_id}
+    return render(request, 'youtube/profile.html', {'channel': channelDict,})
     # return JsonResponse(channel)
 
 
@@ -174,23 +187,25 @@ def get_videos(request):
             client_secret = sc.get('client_secret'),
             scopes = sc.get('scopes')
         )
-        youtube = googleapiclient.discovery.build(
-            API_SERVICE_NAME, API_VERSION, credentials=credentials)
-
-        channels = youtube.channels().list(mine=True, part='snippet').execute()
-        myChannelId = channels["items"][0]["id"]
-        sc['myChannelId'] = myChannelId
+        myChannel = getChannel(credentials)
+        sc['myChannelId'] = myChannel.channel_id
     else:
         myChannelId = sc['myChannelId']
+        myChannel = Channel.objects.get(channel_id = myChannelId)
+    myChannelId = myChannel.channel_id
 
     videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
 
     videos = []
     with urllib.request.urlopen(videoFetchUrl) as url:
         data = json.loads(url.read().decode())
-        for video in data['items']:
-            video['snippet']['publishedAt'] = dateutil.parser.parse(video['snippet']['publishedAt'])
-    return render(request, 'youtube/videos.html', {'videos': data['items']})
+        for item in data['items']:
+            publishedAt = dateutil.parser.parse(item['snippet']['publishedAt'])
+            title = item['snippet']['title']
+            videoId = item['id']['videoId']
+            video, created = Video.objects.get_or_create(title=title, pub_date=publishedAt, video_id=videoId, channel=myChannel)
+            videos.append(video)
+    return render(request, 'youtube/videos.html', {'videos': videos})
 
 
 def get_comments(request):
@@ -208,14 +223,12 @@ def get_comments(request):
             client_secret = sc.get('client_secret'),
             scopes = sc.get('scopes')
         )
-        youtube = googleapiclient.discovery.build(
-            API_SERVICE_NAME, API_VERSION, credentials=credentials)
-
-        channels = youtube.channels().list(mine=True, part='snippet').execute()
-        myChannelId = channels["items"][0]["id"]
-        sc['myChannelId'] = myChannelId
+        myChannel = getChannel(credentials)
+        sc['myChannelId'] = myChannel.channel_id
     else:
         myChannelId = sc['myChannelId']
+        myChannel = Channel.objects.get(channel_id = myChannelId)
+    myChannelId = myChannel.channel_id
 
     videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
     myVideoIds = []
@@ -231,29 +244,33 @@ def get_comments(request):
     for video_id in myVideoIds:
         comments = get_comments_from_video(youtube, video_id)
         myComments += comments
-    myComments = sorted(myComments, key=lambda k: k['snippet']['publishedAt'], reverse=True)
-    print(myComments[:3])
+    myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
     return render(request, 'youtube/comments.html', {'comments': myComments})
 
 def get_video_comments(request, video_id):
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
     comments = get_comments_from_video(youtube, video_id)
-    return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id})
+    video_url = "https://www.youtube.com/watch?v=%s" % (video_id,)
+    return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id, 'video_url': video_url})
 
 def get_comments_from_video(youtube, video_id):
     comments = []
     vid_stats = youtube.videos().list(part="statistics", id=video_id).execute()
     comment_count = vid_stats.get("items")[0].get("statistics").get("commentCount")
+    video = Video.objects.get(video_id=video_id)
     if (comment_count and int(comment_count)>0):
         video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
         # Get the first set of comments
         for item in video_response['items']:
             # Extracting comments
-            comment = item['snippet']['topLevelComment']
-            comment['snippet']['publishedAt'] = dateutil.parser.parse(comment['snippet']['publishedAt'])
+            text = item['snippet']['topLevelComment']['snippet']['textDisplay']
+            pub_date = dateutil.parser.parse(item['snippet']['topLevelComment']['snippet']['publishedAt'])
+            author = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
+            likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
+            comment_id = item['snippet']['topLevelComment']['id']
+            comment, created = Comment.objects.get_or_create(text=text, pub_date=pub_date, video=video, author=author, likeCount=likeCount, comment_id=comment_id)
             if (item['snippet']['totalReplyCount'] > 0):
-                replies = get_replies(youtube, item['id'])
-                comment['replies'] = replies
+                replies = get_replies(youtube, comment)
             comments.append(comment)
 
         # Keep getting comments from the following pages
@@ -261,21 +278,29 @@ def get_comments_from_video(youtube, video_id):
             video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, pageToken=video_response["nextPageToken"], textFormat="plainText").execute()
             for item in video_response['items']:
                 # Extracting comments    
-                comment = item['snippet']['topLevelComment']
-                comment['snippet']['publishedAt'] = dateutil.parser.parse(comment['snippet']['publishedAt'])
+                text = item['snippet']['topLevelComment']['snippet']['textDisplay']
+                pub_date = dateutil.parser.parse(item['snippet']['topLevelComment']['snippet']['publishedAt'])
+                author = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
+                likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
+                comment_id = item['snippet']['topLevelComment']['id']
+                comment, created = Comment.objects.get_or_create(text=text, pub_date=pub_date, video=video, author=author, likeCount=likeCount, comment_id=comment_id)
                 if (item['snippet']['totalReplyCount'] > 0):
-                    replies = get_replies(youtube, item['id'])
-                    comment['replies'] = replies
+                    replies = get_replies(youtube, comment)
                 comments.append(comment)
+
     return comments
 
 
-def get_replies(youtube, parent_id):
-    results = youtube.comments().list(part="snippet", parentId=parent_id, textFormat="plainText").execute()
+def get_replies(youtube, parent):
+    results = youtube.comments().list(part="snippet", parentId=parent.comment_id, textFormat="plainText").execute()
     replies = []
     for item in results['items']:
-        reply = item['snippet']
-        reply['publishedAt'] = dateutil.parser.parse(item['snippet']['publishedAt'])
+        text = item['snippet']['textDisplay']
+        publishedAt = dateutil.parser.parse(item['snippet']['publishedAt'])
+        author = item['snippet']['authorDisplayName']
+        likeCount = item['snippet']['likeCount']
+        reply_id = item['id']
+        reply, created = Reply.objects.get_or_create(text=text, pub_date=publishedAt, author=author, likeCount=likeCount, comment=parent, reply_id=reply_id)
         replies.append(reply)
     return replies
 

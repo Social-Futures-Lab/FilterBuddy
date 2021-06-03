@@ -14,15 +14,15 @@ Go <a href="{% url 'youtube:home' %}">Home here</a>
 {% for video in videos %}
     <div>
         <span style="color:DodgerBlue;">
-            <b>{{ video.snippet.title }}</b> •
+            <b>{{ video.title }}</b> •
         </span> 
         <span style="color:Orange;">
-            {{ video.snippet.publishedAt }}
+            {{ video.pub_date }}
         </span> 
     </div>
     <div>
         <span style="color:Red;">
-            <a href="/get_video_comments/{{video.id.videoId}}">Comments</a>
+            <a href="/get_video_comments/{{video.video_id}}">Comments</a>
         </span> 
     </div>
 
