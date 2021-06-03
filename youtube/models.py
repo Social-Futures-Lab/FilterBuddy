@@ -2,14 +2,11 @@ from django.db import models
 
 # Create your models here.
 
-class User(models.Model):
-    user_id = models.CharField(max_length=100, primary_key=True)
-
 class Channel(models.Model):
     title = models.CharField(max_length=500)
+    description = models.CharField(max_length=5000)
     pub_date = models.DateTimeField('date published')
     channel_id = models.CharField(max_length=100, primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 class RuleCollection(models.Model):
     title = models.CharField(max_length=500)
@@ -31,4 +28,16 @@ class Comment(models.Model):
     text = models.CharField(max_length=5000)
     pub_date = models.DateTimeField('date published')
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    author = models.CharField(max_length=200)
+    likeCount = models.IntegerField()
+    comment_id = models.CharField(max_length=100, primary_key=True)
+    thread_id = models.CharField(max_length=100)
 
+class Reply(models.Model):
+    text = models.CharField(max_length=5000)
+    pub_date = models.DateTimeField('date published')
+    author = models.CharField(max_length=200)
+    likeCount = models.IntegerField()
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+    reply_id = models.CharField(max_length=100, primary_key=True)
+    
