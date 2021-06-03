@@ -21,6 +21,8 @@ from django.conf import settings
 import dateutil.parser
 import datetime
 import urllib.request, json
+import re
+import copy
 
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
@@ -247,6 +249,7 @@ def get_comments(request):
     myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
     return render(request, 'youtube/comments.html', {'comments': myComments})
 
+
 def get_video_comments(request, video_id):
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
     comments = get_comments_from_video(youtube, video_id)
@@ -287,7 +290,6 @@ def get_comments_from_video(youtube, video_id):
                 if (item['snippet']['totalReplyCount'] > 0):
                     replies = get_replies(youtube, comment)
                 comments.append(comment)
-
     return comments
 
 
@@ -313,8 +315,21 @@ def credentials_to_dict(credentials):
           'scopes': credentials.scopes}
 
 
-def index_comments(comments):
-    print(comments)
+def search_reg_exp(reg_exp, comments, highlight_words=False):
+    def highlight(match):
+        return "<strong>" + match.group() + "</strong>"
+    matching_comments = []
+    for comment in comments:
+        if highlight_words:
+            res_and_num_changes = re.subn(reg_exp, highlight, comment.text)
+            if res_and_num_changes[1] > 0:
+                matched_comment = copy.copy(comment)
+                matched_comment.text = res_and_num_changes[0]
+                matching_comments.append(matched_comment)
+        elif re.search(reg_exp, comment.text) != None:
+            matching_comments.append(comment)
+    return matching_comments
+    
 
 if __name__ == '__main__':
     # When running locally, disable OAuthlib's HTTPs verification.
