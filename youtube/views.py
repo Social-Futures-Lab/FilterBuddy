@@ -314,6 +314,9 @@ def credentials_to_dict(credentials):
           'client_secret': credentials.client_secret,
           'scopes': credentials.scopes}
 
+def create_word_filter(request):
+    return render(request, "youtube/create_word_filter.html")
+
 
 def search_reg_exp(reg_exp, comments, highlight_words=False):
     def highlight(match):
