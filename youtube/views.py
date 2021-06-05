@@ -14,6 +14,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 
 from django import forms
 from django.views.generic.edit import FormView
+from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.urls import reverse
 from django.conf import settings
@@ -23,6 +24,7 @@ import datetime
 import urllib.request, json
 import re
 import copy
+import json
 
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
@@ -54,6 +56,21 @@ DEVELOPER_KEY = open(DEVELOPER_KEY_FILE).read()
 
 def index(request):
     return render(request, "youtube/home.html")
+
+@csrf_exempt
+def api(request):
+    if request.method == 'GET':
+        api_response = {
+            'message': 'It works!'
+        }
+    elif request.method == 'POST':
+        # Read the request data
+        request_data = json.loads(request.body.decode('utf-8'))
+        api_response = {
+            'message': f'User tried to do action {request_data["action"]}'
+        }
+
+    return HttpResponse(json.dumps(api_response), content_type='text/json')
 
 def getChannel(credentials):
     youtube = googleapiclient.discovery.build(
@@ -132,7 +149,7 @@ def oauth2callback(request):
     flow.redirect_uri = 'https://wordfilters.railgun.in/oauth2callback'
 
     # Use the authorization server's response to fetch the OAuth 2.0 tokens.
-    authorization_response = request.build_absolute_uri()
+    authorization_response = request.build_absolute_uri().replace('http', 'https')
     flow.fetch_token(authorization_response=authorization_response)
 
     # Store credentials in the session.
@@ -174,6 +191,7 @@ def clear_credentials(request):
     page_message = 'Credentials have been cleared.'
     return render(request, "youtube/home.html", {'page_message': page_message})
 
+@csrf_exempt
 def get_videos(request):
     if 'credentials' not in request.session:
         return authorize(request)
@@ -202,12 +220,21 @@ def get_videos(request):
     with urllib.request.urlopen(videoFetchUrl) as url:
         data = json.loads(url.read().decode())
         for item in data['items']:
-            publishedAt = dateutil.parser.parse(item['snippet']['publishedAt'])
+            publishedAt = item['snippet']['publishedAt']
             title = item['snippet']['title']
             videoId = item['id']['videoId']
-            video, created = Video.objects.get_or_create(title=title, pub_date=publishedAt, video_id=videoId, channel=myChannel)
-            videos.append(video)
-    return render(request, 'youtube/videos.html', {'videos': videos})
+            videos.append({
+                'videoId': videoId,
+                'title': title,
+                'publishTime': publishedAt
+            })
+            #video, created = Video.objects.get_or_create(title=title, pub_date=publishedAt, video_id=videoId, channel=myChannel)
+            #videos.append(video)
+    response = {
+        'video': videos
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')
+    #return render(request, 'youtube/videos.html', {'videos': videos})
 
 
 def get_comments(request):
