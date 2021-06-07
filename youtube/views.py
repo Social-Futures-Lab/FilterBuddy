@@ -360,6 +360,26 @@ def search_reg_exp(reg_exp, comments, highlight_words=False):
             matching_comments.append(comment)
     return matching_comments
     
+@csrf_exempt
+def get_rule_collection_templates(request):
+    ruleTemplates = RuleCollection.objects.filter(is_template=True)
+    templates = []
+    for ruleTemplate in ruleTemplates:
+        rules = []
+        for rule in Rule.objects.filter(rule_collection = ruleTemplate):
+            rules.append({
+                'phrase': rule.phrase,
+                'exception': rule.exception_phrase
+                })
+        template = {
+            'title': ruleTemplate.title,
+            'rules': rules
+        }
+        templates.append(template)
+    response = {
+        'templates': templates
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')
 
 if __name__ == '__main__':
     # When running locally, disable OAuthlib's HTTPs verification.

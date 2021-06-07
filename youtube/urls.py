@@ -18,6 +18,7 @@ urlpatterns = [
     path('get_videos', views.get_videos, name='get_videos'),
     path('get_video_comments/<str:video_id>', views.get_video_comments, name='get_video_comments'),
     path('backend', views.index, name='backend'),
+    path('get_rule_collection_templates', views.get_rule_collection_templates, name='backend'),
 ]
 
 if settings.DEBUG:

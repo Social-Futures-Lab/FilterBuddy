@@ -11,12 +11,19 @@ class Channel(models.Model):
 class RuleCollection(models.Model):
     title = models.CharField(max_length=500)
     pub_date = models.DateTimeField('date published')
-    channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
+    channel = models.ForeignKey(Channel, on_delete=models.CASCADE, blank=True, null=True)
+    is_template = models.BooleanField()
+
+    def __str__(self):
+        return u'%s' % (self.title)
 
 class Rule(models.Model):
     phrase = models.CharField(max_length=500)
-    exception_phrase = models.CharField(max_length=500)
+    exception_phrase = models.CharField(max_length=500, blank=True, null=True)
     rule_collection = models.ForeignKey(RuleCollection, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return u'%s %s' % (self.phrase, self.rule_collection)
 
 class Video(models.Model):
     title = models.CharField(max_length=500)
