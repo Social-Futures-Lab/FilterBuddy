@@ -7,7 +7,7 @@ from . import views
 
 app_name = 'youtube'
 urlpatterns = [
-    path('', views.create_word_filter, name='create_word_filter'),
+    path('', views.create_word_filter, name='home'),
     path('api', views.api, name='api'),
     path('test', views.test_api_request, name='test'),
     path('authorize', views.authorize, name='authorize'),
@@ -18,7 +18,8 @@ urlpatterns = [
     path('get_videos', views.get_videos, name='get_videos'),
     path('get_video_comments/<str:video_id>', views.get_video_comments, name='get_video_comments'),
     path('backend', views.index, name='backend'),
-    path('get_rule_collection_templates', views.get_rule_collection_templates, name='backend'),
+    path('get_rule_collection_templates', views.get_rule_collection_templates, name='get_rule_collection_templates'),
+    path('get_matching_comments/<str:phrase>', views.get_matching_comments, name='get_matching_comments'),    
 ]
 
 if settings.DEBUG:

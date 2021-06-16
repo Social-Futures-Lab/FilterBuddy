@@ -276,7 +276,6 @@ def get_comments(request):
     myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
     return render(request, 'youtube/comments.html', {'comments': myComments})
 
-
 def get_video_comments(request, video_id):
     youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
     comments = get_comments_from_video(youtube, video_id)
@@ -343,6 +342,45 @@ def credentials_to_dict(credentials):
 
 def create_word_filter(request):
     return render(request, "youtube/create_word_filter.html")
+
+def get_matching_comments(request, phrase):
+    if 'credentials' not in request.session:
+        return authorize(request)
+
+    print ("phrase is: ", phrase)
+# Load credentials from the session.
+    sc = request.session['credentials']
+
+    myChannelId = sc['myChannelId']
+    myChannel = Channel.objects.get(channel_id = myChannelId)   
+    myComments = Comment.objects.filter(video__channel = myChannel) 
+    matched_comments = []
+    for myComment in myComments:
+        if (phrase in myComment.text):
+            matched_comment = {
+            'text': myComment.text,
+            'author': myComment.author,
+            'likeCount': myComment.likeCount,
+            'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+            }
+
+            matched_comments.append(matched_comment)
+        replies = Reply.objects.filter(comment = myComment)
+        for reply in replies:
+            if (phrase in reply.text):
+                matched_comment = {
+                'text': reply.text,
+                'author': reply.author,
+                'likeCount': reply.likeCount,
+                'pub_date': reply.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+                }
+                matched_comments.append(matched_comment)
+
+    response = {
+            'matched_comments': matched_comments,
+        }    
+    return HttpResponse(json.dumps(response), content_type='application/json')        
+
 
 
 def search_reg_exp(reg_exp, comments, highlight_words=False):
