@@ -1,24 +1,19 @@
-body {
-  font-family: Arial, Helvetica, sans-serif;
+div.inline-editable.default {
+  color: #aaa;
 }
-
-/* Dashed border */
-hr.dashed {
-  border-top: 3px dashed #bbb;
+div.inline-editable {
+  display: inline;
+  color: #666;
+  border-bottom: 1px dashed #666;
 }
-
-/* Dotted border */
-hr.dotted {
-  border-top: 3px dotted #bbb;
+div.inline-editable:focus {
+  color: #111;
+  border-bottom: 1px dashed #111;
+  outline: 0px solid transparent;
 }
-
-/* Solid border */
-hr.solid {
-  border-top: 3px solid #bbb;
+div.inline-editable * {
+  display: inline;
 }
-
-/* Rounded border */
-hr.rounded {
-  border-top: 8px solid #bbb;
-  border-radius: 5px;
+div.inline-editable br {
+  display: none;
 }
