@@ -60,6 +60,7 @@ def loadFilter(request, filter_id):
 def createFilter(request, name, reference):
     myChannelId = request.session['credentials']['myChannelId']
     myChannel = Channel.objects.get(channel_id = myChannelId)
+    
 
 def deleteFilter(request, filter_id):
     collections = RuleCollection.objects.filter(id = filter_id)

@@ -27,8 +27,9 @@ urlpatterns = [
     path('loadFilter/<int:filter_id>', views_filters.loadFilter),
     path('deleteFilter/<int:filter_id>', views_filters.deleteFilter),
 
-    path('previewRule/<int:rule_id>', views_rules.previewRules),    
-    path('previewRule/<int:comment_id>', views_rules.getComment),    
+    path('previewRule/<int:rule_id>', views_rules.previewRule),    
+    path('getComment/<int:comment_id>', views_rules.getComment),   
+    path('previewFilter/<int:filter_id>', views_rules.previewFilter),     
 
 
 ]
