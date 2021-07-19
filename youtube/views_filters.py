@@ -7,6 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
+from datetime import datetime
+
 
 def serializeRules(collection):
     rules = Rule.objects.filter(rule_collection = collection)
@@ -57,9 +59,71 @@ def loadFilter(request, filter_id):
         }
     return HttpResponse(json.dumps(response), content_type='application/json')    
 
-def createFilter(request, name, reference):
+def createFilter(request):
     myChannelId = request.session['credentials']['myChannelId']
     myChannel = Channel.objects.get(channel_id = myChannelId)
+
+    request_data = json.loads(request.body.decode('utf-8'))
+    name = request_data['name']
+    reference = request_data['reference']
+    collection = RuleCollection.objects.create(
+            title = name,
+            pub_date = datetime.now(),
+            channel = myChannel,
+            is_template = False,
+            )    
+    if (reference and 'existing' in reference.keys()):
+        referenceCollection = RuleCollection.objects.get(id=reference['existing'])
+        for rule in Rule.objects.filter(rule_collection = referenceCollection):
+            newRule = Rule.objects.create(
+                phrase = rule.phrase,
+                exception_phrase = rule.exception_phrase,
+                rule_collection = collection,
+                )
+
+    response = {
+    'id': collection.id,
+    }
+    return HttpResponse(json.dumps(response), content_type='application/json')        
+
+def updateFilter(request):
+    myChannelId = request.session['credentials']['myChannelId']
+    myChannel = Channel.objects.get(channel_id = myChannelId)
+
+    request_data = json.loads(request.body.decode('utf-8'))
+    collection = RuleCollection.objects.get(id=request_data['id'])
+
+    updateAction = request_data['updateAction']
+    updateValue = request_data['updateValue']
+    if (updateAction == 'name'):
+        collection.title = updateValue
+        collection.save()
+        message = "Collection name is updated."
+
+    elif (updateAction == 'rules:add'):
+        rule = Rule.objects.create(
+            phrase = updateValue,
+            rule_collection = collection,
+            )
+        message = "New rules has been added"
+    
+    elif (updateAction == 'rules:remove'):
+        rules = Rule.objects.filter(id=updateValue)
+        if (rules):
+            rule = rules[0]
+            rule.delete()
+            message = "Rule has been deleted."
+        else:
+            message = "Rule not found."
+
+    reponse = {
+    'message': message,
+    }
+
+    return HttpResponse(json.dumps(response), content_type='application/json')            
+
+
+
     
 
 def deleteFilter(request, filter_id):

@@ -25,6 +25,8 @@ urlpatterns = [
 
     path('loadFilters', views_filters.loadFilters),
     path('loadFilter/<int:filter_id>', views_filters.loadFilter),
+    path('createFilter', views_filters.createFilter),
+    path('updateFilter', views_filters.updateFilter),
     path('deleteFilter/<int:filter_id>', views_filters.deleteFilter),
 
     path('previewRule/<int:rule_id>', views_rules.previewRule),    
