@@ -4,6 +4,8 @@ from django.urls import path
 
 from .views import HomePageView
 from . import views
+from . import views_filters
+from . import views_rules
 
 app_name = 'youtube'
 urlpatterns = [
@@ -20,6 +22,15 @@ urlpatterns = [
     path('backend', views.index, name='backend'),
     path('get_rule_collection_templates', views.get_rule_collection_templates, name='get_rule_collection_templates'),
     path('get_matching_comments/<str:phrase>', views.get_matching_comments, name='get_matching_comments'),    
+
+    path('loadFilters', views_filters.loadFilters),
+    path('loadFilter/<int:filter_id>', views_filters.loadFilter),
+    path('deleteFilter/<int:filter_id>', views_filters.deleteFilter),
+
+    path('previewRule/<int:rule_id>', views_rules.previewRules),    
+    path('previewRule/<int:comment_id>', views_rules.getComment),    
+
+
 ]
 
 if settings.DEBUG:
