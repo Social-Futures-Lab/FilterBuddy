@@ -117,30 +117,22 @@ def updateFilter(request):
         else:
             message = "Rule not found."
 
-    reponse = {
+    response = {
     'message': message,
     }
 
     return HttpResponse(json.dumps(response), content_type='application/json')            
-
-
-
-    
 
 def deleteFilter(request, filter_id):
     collections = RuleCollection.objects.filter(id = filter_id)
     if (collections):
         collection = collections[0]
         collection.delete()
-        reponse = {
+        response = {
         'message': 'Rule collection has been deleted.'
         }    
     else:
-        reponse = {
+        response = {
         'message': 'Rule collection not found.'
         }           
     return HttpResponse(json.dumps(response), content_type='application/json')            
-
-
-
-
