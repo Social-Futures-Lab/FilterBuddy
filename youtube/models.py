@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -7,6 +8,7 @@ class Channel(models.Model):
     description = models.CharField(max_length=5000)
     pub_date = models.DateTimeField('date published')
     channel_id = models.CharField(max_length=100, primary_key=True)
+#    user = models.ForeignKey(User)
 
     def __str__(self):
         return u'%s' % (self.title)
@@ -50,4 +52,3 @@ class Reply(models.Model):
     likeCount = models.IntegerField()
     comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
     reply_id = models.CharField(max_length=100, primary_key=True)
-    

@@ -214,6 +214,8 @@ def get_videos(request):
                 'title': title,
                 'publishTime': publishedAt
             })
+            pub_date = dateutil.parser.parse(publishedAt)
+            video, created = Video.objects.get_or_create(title=title, pub_date=pub_date, video_id=videoId, channel=myChannel)
     response = {
         'video': videos
     }
@@ -301,7 +303,6 @@ def get_comments_from_video(youtube, video_id):
                     replies = get_replies(youtube, comment)
                 comments.append(comment)
     return comments
-
 
 def get_replies(youtube, parent):
     results = youtube.comments().list(part="snippet", parentId=parent.comment_id, textFormat="plainText").execute()
