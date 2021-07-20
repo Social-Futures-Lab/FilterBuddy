@@ -11,8 +11,8 @@
   const END_POINT = '/api';
   const ACTIONS = {
     'get_videos': 'GET',
-    'get_filter_groups': 'GET',
-    'update_filter_group': 'POST'
+    'loadFilters': 'GET',
+    'updateFilter': 'POST'
   }
 
   function FakeApiRequest(response) {
