@@ -24,7 +24,6 @@ import datetime
 import urllib.request, json
 import re
 import copy
-import json
 
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 from .utils import *
@@ -215,8 +214,6 @@ def get_videos(request):
                 'title': title,
                 'publishTime': publishedAt
             })
-            #video, created = Video.objects.get_or_create(title=title, pub_date=publishedAt, video_id=videoId, channel=myChannel)
-            #videos.append(video)
     response = {
         'video': videos
     }

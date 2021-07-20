@@ -8,6 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
 from datetime import datetime
+import urllib.request, json
 
 
 def serializeRules(collection):

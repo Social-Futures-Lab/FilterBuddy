@@ -9,6 +9,7 @@ from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 from .utils import *
 
 import re
+import urllib.request, json
 
 
 def serializeComment(myComment, phrase):
