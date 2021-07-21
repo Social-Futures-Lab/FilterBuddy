@@ -12,6 +12,9 @@
     -->
     <link rel="stylesheet" href="{% static 'youtube/style.css' %}">
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>    
+
     <script type="text/javascript" src="https://pettanjs.github.io/dfcjs/dfc.js"></script>
     <script type="text/javascript" src="https://pettanjs.github.io/pettanjs/src/pettan.js"></script>
 
@@ -27,9 +30,22 @@
       <img src="{% static 'youtube/uw-cse.png' %}" alt="" width="320" height="40">
     </a>      
 
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <a class="navbar-brand navbar-center mx-auto h1" href="#">YouTube Word Filters</a>
 
+      <li class="nav-item navbar-nav dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Dropdown
+        </a>
+        <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
+          <li><a class="dropdown-item" href="/clear">Sign out</a></li>
+          <li><a class="dropdown-item" href="#">Another action</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#">Something else here</a></li>
+        </ul>
+      </li>          
+
+<!--
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
         <li class="nav-item">
           <a class="nav-link" href="#">About Us</a>
@@ -43,6 +59,7 @@
 
       </ul>
     </div>
+-->
   </div>
 </nav>
 
@@ -57,16 +74,33 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-3">
+
           <div class="row">
             <div class="list-group col">
               <a id="sidebar-overview" class="list-group-item list-group-item-action" href="#">
               Overview</a>
             </div>
           </div>
+
           <div class="row py-3">
             <div id="filter-list" class="list-group col">
             </div>
           </div>
+
+          <div class="row">
+            <div class="list-group col">
+              <a id="sidebar-videos" class="list-group-item list-group-item-action" href="#">
+              Videos</a>
+            </div>
+          </div>    
+
+          <div class="row">
+            <div class="list-group col">
+              <a id="sidebar-comments" class="list-group-item list-group-item-action" href="#">
+              Comments</a>
+            </div>
+          </div>   
+
         </div>
         <div class="col-md-9">
           <div id="filter-overview" class="card">
