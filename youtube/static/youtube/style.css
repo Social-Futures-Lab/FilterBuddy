@@ -1,11 +1,27 @@
-div.inline-editable.default {
-  color: #aaa;
-}
 div.inline-editable {
+  color: #111;
   display: inline;
-  color: #666;
+}
+
+h3.name-wrapper.default > div.inline-editable {
+  color: #aaa;
   border-bottom: 1px dashed #666;
 }
+
+h3.name-wrapper > i.bi-pencil-square {
+  display: none;
+}
+
+h3.name-wrapper:hover > i.bi-pencil-square,
+h3.name-wrapper.default > i.bi-pencil-square {
+  display: inline;
+}
+
+h3.name-wrapper:hover > div.inline-editable {
+ color: #666;
+ border-bottom: 1px dashed #666;
+}
+
 div.inline-editable:focus {
   color: #111;
   border-bottom: 1px dashed #111;

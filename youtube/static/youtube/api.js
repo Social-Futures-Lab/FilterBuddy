@@ -10,7 +10,6 @@
 })(this, function (exports) {
   const END_POINT = '/api';
   const ACTIONS = {
-    'get_videos': 'GET',
     'loadFilters': 'GET',
     'updateFilter': 'POST'
   }
@@ -32,14 +31,30 @@
   }
 
   WordFilterApiRequest.prototype.execute = function () {
-    return fetch(END_POINT, {
+    // Decide whether there can be a body for the request
+    if (typeof this._body !== 'undefined' &&
+      this._body !== null &&
+      this._action in ACTIONS &&
+      ACTIONS[this._action] === 'GET') {
+
+      return Promise.reject(new Error('Tried to invoke GET endpoint with body'));
+    }
+    var config = {
       'method': (this._action in ACTIONS ? ACTIONS[this._action] : 'POST'),
-      'body': (typeof this._body !== 'undefined' ? JSON.stringify(this._body) : '{}'),
-      'headers': {
-        'Content-Type': 'application/json'
+      'headers': {}
+    };
+    if (typeof this._body !== 'undefined' && this._body !== null) {
+      config['body'] = JSON.stringify(this._body);
+      config.headers['Content-Type']= 'application/json';
+    }
+    return fetch(END_POINT + '/' + this._action, config).then(function (resp) {
+      if (!resp.ok) {
+        return resp.text().then(function (message) {
+          throw new Error(resp.status + ': ' + message);
+        });
+      } else {
+        return resp.json();
       }
-    }).then(function (resp) {
-      return resp.json();
     })
   }
 
@@ -104,8 +119,7 @@
       });
       return new FakeApiRequest({'filters': records});
     } else {
-      throw new Error('NotImplemented: Mode ' + this._mode +
-        ' not implemented');
+      return this.createRequest('loadFilters');
     }
   };
 
@@ -122,8 +136,10 @@
       });
       return new FakeApiRequest({'id': newKey});
     } else {
-      throw new Error('NotImplemented: Mode ' + this._mode +
-        ' not implemented');
+      return this.createRequest('createFilter', {
+        'name': name,
+        'reference': reference
+      });
     }
   };
 
@@ -136,8 +152,11 @@
       }
       return new FakeApiRequest({});
     } else {
-      throw new Error('NotImplemented: Mode ' + this._mode +
-        ' not implemented');
+      return this.createRequest('updateFilter', {
+        'id': id,
+        'updateAction': key,
+        'updateValue': item
+      });
     }
   };
 

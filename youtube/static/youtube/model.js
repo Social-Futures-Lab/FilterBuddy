@@ -33,7 +33,7 @@
   function WordFilterGroup(api, def) {
     this._api = api;
 
-    this._id = (typeof def === 'undefined' ? '' : def['id']);
+    this._id = (typeof def === 'undefined' ? '' : ('' + def['id']));
     this._name = (typeof def === 'undefined' ? 'Unnamed Group' : def['name']);
 
     this._rules = (typeof def !== 'undefined' ?
@@ -133,7 +133,6 @@
 
   WordFilterModel.prototype.load = function () {
     return this._api.loadWordFilters().execute().then((function (data) {
-      console.log(data);
       this._setGroups(data.filters.map((function (def) {
         return new WordFilterGroup(this._api, def);
       }).bind(this)));

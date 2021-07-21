@@ -5,10 +5,10 @@ from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 # Register your models here.
 
 class ChannelAdmin(admin.ModelAdmin):
-    list_display = ('title', 'pub_date')
+    list_display = ('title', 'description', 'pub_date', 'channel_id')
 
 class RuleCollectionAdmin(admin.ModelAdmin):
-    list_display = ('title', 'channel', 'id')
+    list_display = ('name', 'owner', 'id', 'is_template')
 
 class RuleAdmin(admin.ModelAdmin):
     list_display = ('phrase', 'rule_collection', 'id')

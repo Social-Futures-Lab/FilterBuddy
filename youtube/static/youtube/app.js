@@ -85,6 +85,46 @@
     }
   };
 
+  TabManager.prototype.hasTab = function (name) {
+    return name in this._tabs;
+  };
+
+  function RadioManager() {
+    this._tabManager = new TabManager();
+    this._radios = [];
+  };
+
+  RadioManager.prototype._scanAndShow = function () {
+    this._tabManager.hideAll();
+    this._radios.forEach((function (radio) {
+      var tabName = radio.name + '::' + radio.value;
+      if (!this._tabManager.hasTab(tabName)) {
+        return;
+      }
+      if (radio.checked) {
+        this._tabManager.show(tabName);
+      } else {
+        this._tabManager.hide(tabName);
+      }
+    }).bind(this));
+  };
+
+  RadioManager.prototype.addRadio = function (radio, section) {
+    radio.addEventListener('click', this._scanAndShow.bind(this));
+    if (typeof section !== 'undefined' && section !== null) {
+      this._tabManager.addTab(radio.name + '::' + radio.value, section);
+    }
+    this._radios.push(radio);
+  };
+
+  RadioManager.prototype.value = function () {
+    return this._radios.filter(function (radio) {
+      return radio.checked;
+    }).map(function (radio) {
+      return radio.value;
+    });
+  };
+
   function ListManager(root, onSelect) {
     this._list = [];
     this._root = root;
@@ -129,35 +169,59 @@
     }
   };
 
+  ListManager.prototype.refresh = function () {
+    this._list.forEach(function (item) {
+      item.dom.innerText = item.item.toString();
+    });
+  };
+
   ListManager.prototype.selected = function () {
     return this._selected !== null ? this._selected.item : null;
-  }
+  };
 
   function $(e) {
     return document.getElementById(e);
   }
 
   function App() {
-    this._model = new WordFilterModel(new WordFilterApi('local-only'));
+    this._model = new WordFilterModel(new WordFilterApi());
     this._P = new Pettan();
     this._tabs = new TabManager();
+    this._radioManager = new RadioManager();
     this._filterEditorTabs = new TabManager();
     this._sidebar = null;
+    this._sidebarOverview = null;
   }
 
   App.prototype._onLoad = function () {
     // Build the tab interface
     this._tabs.addTab('filter-editor', $('filter-editor'));
+    this._tabs.addTab('filter-overview', $('filter-overview'));
 
     this._filterEditorTabs.addTab('preview', $('wrap-preview'));
     this._filterEditorTabs.addTab('edit', $('wrap-edit-existing'));
     this._filterEditorTabs.addTab('new', $('wrap-create-from-scratch'));
 
+    // Add the radio toggles
+    this._radioManager.addRadio($('wiz-mode-empty'));
+    this._radioManager.addRadio($('wiz-mode-preset'), $('sec-template'));
+    this._radioManager.addRadio($('wiz-mode-clone'), $('sec-existing'));
+
     // Setup the sidebar
     this._sidebar = new ListManager($('filter-list'), (function (item) {
-      this._P.emit('sidebar.select', item !== null ? item.getId() : null);
+      if (item === null) {
+        this._P.emit('sidebar.select', null);
+      } else {
+        this._P.emit('sidebar.select', item.getId());
+      }
     }).bind(this));
     this._sidebar.load(this._model.getGroups());
+    this._sidebarOverview = $('sidebar-overview');
+    this._P.bind(this._sidebarOverview, 'click', 'sidebar.select.overview');
+    this._P.listen('sidebar.select.overview', (function (e) {
+      e.preventDefault();
+      this._sidebar.select(function () { return false; });
+    }).bind(this));
 
     // Bind some GUI elements
     this._P.bind($('filter-name'), 'input', 'gui.filter-name.change');
@@ -167,12 +231,20 @@
       }
       var currentId = this._sidebar.selected().getId();
       var currentFilter = this._model.getGroup(currentId);
-      currentFilter.setName(e.target.innerText);
+      return currentFilter.setName(e.target.innerText).then((function () {
+        this._P.emit('sidebar.update.labels');
+      }).bind(this))
     }).bind(this));
     this._P.bind($('btn-create-rule-group'), 'click', 'gui.filter.create');
     this._P.listen('gui.filter.create', (function (e) {
       // Can only be clicked in the case where it is new
-      return this._model.finalizeNew('empty').then((function () {
+      var mode = this._radioManager.value()[0];
+      if (mode === 'existing') {
+        mode = $('dropdown-existing-groups').value;
+      } else if (mode === 'template') {
+        mode = $('dropdown-template').value;
+      }
+      return this._model.finalizeNew(mode).then((function () {
         this._model._reshiftNewGroup();
         return this._P.emit('sidebar.update');
       }).bind(this)).catch(function (e) {
@@ -182,10 +254,21 @@
     }).bind(this));
 
     // Register listeners
+    this._P.listen('sidebar.update.labels', (function () {
+      this._sidebar.refresh();
+      // Also update the new item dropdowns
+      var dropdown = $('dropdown-existing-groups');
+      for (var i = 0; i < dropdown.children.length; i++) {
+        var option = dropdown.children[i];
+        if (option.value && option.value.startsWith('existing:')) {
+          option.innerText = this._model.getGroup(
+            option.value.substring(9)).toString();
+        }
+      }
+    }).bind(this));
     this._P.listen('sidebar.update', (function () {
       // Find what was selected
-      var selectedId = this._sidebar.selected() !== null ?
-        this._sidebar.selected().getId() : '';
+      var selectedId = this._sidebar.selected();
       this._sidebar.load(this._model.getGroups());
       this._sidebar.select(function (item) {
         return item.getId() === selectedId;
@@ -203,26 +286,33 @@
         }
       });
       if (added === 0) {
-        $('wizModeClone').setAttribute('disabled', 'disabled');
+        $('wiz-mode-clone').setAttribute('disabled', 'disabled');
         dropdown.setAttribute('disabled', 'disabled');
       } else {
-        $('wizModeClone').removeAttribute('disabled');
+        $('wiz-mode-clone').removeAttribute('disabled');
         dropdown.removeAttribute('disabled');
       }
     }).bind(this));
 
     this._P.listen('sidebar.select', (function (item) {
       if (item !== null) {
+        this._tabs.showOnly(['filter-editor']);
+        this._sidebarOverview.className = 'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
           // Set the head text
           $('filter-name').innerText = group.getName();
+          $('name-wrapper').className = !group.isFinalized() ?
+            'name-wrapper default' : 'name-wrapper';
           if (group.getId() === '') {
             this._filterEditorTabs.showOnly(['new']);
           } else {
             this._filterEditorTabs.showOnly(['preview', 'edit']);
           }
         }
+      } else {
+        this._tabs.showOnly(['filter-overview']);
+        this._sidebarOverview.className = 'list-group-item list-group-item-action active';
       }
     }).bind(this));
 

@@ -13,16 +13,11 @@
     <link rel="stylesheet" href="{% static 'youtube/style.css' %}">
 
     <script type="text/javascript" src="https://pettanjs.github.io/dfcjs/dfc.js"></script>
-    <!--<script type="text/javascript" src="https://pettanjs.github.io/pettanjs/src/pettan.js"></script>-->
-    <script type="text/javascript" src="http://127.0.0.1:8008/src/pettan.js"></script>
+    <script type="text/javascript" src="https://pettanjs.github.io/pettanjs/src/pettan.js"></script>
+
     <script type="text/javascript" src="{% static 'youtube/api.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/model.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/app.js' %}"></script>
-    <!--
-    <script type="text/javascript" src="/static/youtube/api.js"></script>
-    <script type="text/javascript" src="/static/youtube/model.js"></script>
-    <script type="text/javascript" src="/static/youtube/app.js"></script>
-    -->
   </head>
   <body>
     <div class="container">
@@ -33,14 +28,30 @@
       </div>
       <div class="row mt-3">
         <div class="col-md-3">
-          <div id="filter-list" class="list-group">
+          <div class="row">
+            <div class="list-group col">
+              <a id="sidebar-overview" class="list-group-item list-group-item-action" href="#">
+              Overview</a>
+            </div>
+          </div>
+          <div class="row py-3">
+            <div id="filter-list" class="list-group col">
+            </div>
           </div>
         </div>
         <div class="col-md-9">
-          <!-- filter editor -->
-          <div id="filter-editor" class="card">
+          <div id="filter-overview" class="card">
             <div class="card-body">
-              <h3>
+              <h3>Overview</h3>
+              <div class="py-2">
+                <p>PLACEHOLDER: Put some plots here</p>
+              </div>
+            </div>
+          </div>
+          <!-- filter editor -->
+          <div id="filter-editor" class="card" style="display: none;">
+            <div class="card-body">
+              <h3 id="name-wrapper" class="name-wrapper">
                 <div id="filter-name" class="inline-editable" contenteditable="true">Unnamed Filter</div>
                 <i class="bi bi-pencil-square"></i>
               </h3>
@@ -54,7 +65,7 @@
               </div>
               <!-- end common preview -->
               <div id="wrap-edit-existing" class="py-2" style="display: none;">
-                <p>Add a rule by typing something in the text box below: (<a href="#">Basic</a> / <a href="#">Advanced</a>)</p>
+                <p>Add a rule by typing something in the text box below:</p>
                 <div class="rule-create basic row">
                   <div class="col-auto">
                     <input class="form-control" type="text" placeholder="Default input" aria-label="default input example">
@@ -98,44 +109,44 @@
                 <p>Select how you want to create the filter list:</p>
                 <div class="px-2">
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wizModeEmpty" checked>
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-empty" checked value="empty">
+                    <label class="form-check-label" for="wiz-mode-empty">
                       Create an empty filter list
                     </label>
                   </div>
-                  <!--
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wizModePreset">
-                    <label class="form-check-label" for="flexRadioDefault2">
+                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-preset" value="template">
+                    <label class="form-check-label" for="wiz-mode-preset">
                       Create a list based on a platform template
                     </label>
-                    <div id="sec-template" class="py-1">
+                    <div id="sec-template" class="py-1" style="display: none;">
                       <div class="mb-3">
                         <label for="templateName" class="form-label">Base this list on the following template:</label>
-                        <select name="templateName" class="form-select" aria-label="Default select example">
-                          <option value="general" selected>General - Balanced</option>
-                          <option value="aggression">Aggression / Threat</option>
-                          <option value="obscene">Obscene</option>
-                          <option value="racism">Identity Hate - Racism</option>
-                          <option value="identity-lgbtq">Identity Hate - LGBTQ+</option>
-                          <option value="identity-misogyny">Identity Hate - Misogyny</option>
+                        <select id="dropdown-template" name="templateName" class="form-select" aria-label="Default select example">
+                          <option value="template:general" selected>General - Balanced</option>
+                          <option value="template:aggression">Aggression / Threat</option>
+                          <option value="template:obscene">Obscene</option>
+                          <option value="template:racism">Identity Hate - Racism</option>
+                          <option value="template:identity-lgbtq">Identity Hate - LGBTQ+</option>
+                          <option value="template:identity-misogyny">Identity Hate - Misogyny</option>
                         </select>
                       </div>
+                      <!--
                       <div class="mb-3">
                         <label for="strength" class="form-label">Select the filtering strength you want to base this list on:</label>
                         <div class="px-3">
                           <input type="range" class="form-range" min="1" max="4" step="1" id="strength">
                         </div>
                       </div>
+                      -->
                     </div>
                   </div>
-                  -->
                   <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wizModeClone">
-                    <label class="form-check-label" for="flexRadioDefault1">
+                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-clone" value="existing">
+                    <label class="form-check-label" for="wiz-mode-clone">
                       Clone another existing filter list
                     </label>
-                    <div id="sec-existing" class="py-1">
+                    <div id="sec-existing" class="py-1" style="display: none;">
                       <div class="mb-3">
                         <select id="dropdown-existing-groups" name="existingGroupName" class="form-select">
                         </select>
