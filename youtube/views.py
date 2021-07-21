@@ -168,7 +168,6 @@ def clear_credentials(request):
 
 @csrf_exempt
 def get_videos(request):
-<<<<<<< HEAD
   if 'credentials' not in request.session:
     return authorize(request)
 
@@ -209,50 +208,6 @@ def get_videos(request):
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
   #return render(request, 'youtube/videos.html', {'videos': videos})
-=======
-    if 'credentials' not in request.session:
-        return authorize(request)
-
-    # Load credentials from the session.
-    sc = request.session['credentials']
-    if 'myChannelId' not in sc:
-        credentials = google.oauth2.credentials.Credentials(
-            token = sc.get('token'),
-            refresh_token = sc.get('refresh_token'),
-            token_uri = sc.get('token_uri'),
-            client_id = sc.get('client_id'),
-            client_secret = sc.get('client_secret'),
-            scopes = sc.get('scopes')
-        )
-        myChannel = getChannel(credentials)
-        sc['myChannelId'] = myChannel.channel_id
-    else:
-        myChannelId = sc['myChannelId']
-        myChannel = Channel.objects.get(channel_id = myChannelId)
-    myChannelId = myChannel.channel_id
-
-    videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
-
-    videos = []
-    with urllib.request.urlopen(videoFetchUrl) as url:
-        data = json.loads(url.read().decode())
-        for item in data['items']:
-            publishedAt = item['snippet']['publishedAt']
-            title = item['snippet']['title']
-            videoId = item['id']['videoId']
-            videos.append({
-                'videoId': videoId,
-                'title': title,
-                'publishTime': publishedAt
-            })
-            pub_date = dateutil.parser.parse(publishedAt)
-            video, created = Video.objects.get_or_create(title=title, pub_date=pub_date, video_id=videoId, channel=myChannel)
-    response = {
-        'video': videos
-    }
-    return HttpResponse(json.dumps(response), content_type='application/json')
-    #return render(request, 'youtube/videos.html', {'videos': videos})
->>>>>>> 7e4ce2d64510844cba2d1b9d136fb42a8cb4ed60
 
 
 def get_comments(request):
