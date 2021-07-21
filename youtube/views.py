@@ -174,12 +174,14 @@ def revoke(request):
   else:
     page_message = 'An error occurred.'
   return render(request, "youtube/home.html", {'page_message': page_message})
+    
 
 def clear_credentials(request):
   if 'credentials' in request.session:
     del request.session['credentials']
   page_message = 'Credentials have been cleared.'
-  return render(request, "youtube/home.html", {'page_message': page_message})
+  # return render(request, "youtube/home.html", {'page_message': page_message})
+  return HttpResponseRedirect(reverse('youtube:authorize'))      
 
 @csrf_exempt
 def get_videos(request):
