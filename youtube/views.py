@@ -132,7 +132,18 @@ def oauth2callback(request):
   #        credentials in a persistent database instead.
   credentials = flow.credentials
   request.session['credentials'] = credentials_to_dict(credentials)
-  print("Goodbye cruel world!", file=sys.stderr)
+
+  channel = getChannel(credentials)
+
+  # Save credentials back to session in case access token was refreshed.
+  # ACTION ITEM: In a production app, you likely want to save these
+  #        credentials in a persistent database instead.
+  request.session['credentials']['myChannelId'] = channel.channel_id
+  channelDict = {
+    'title': channel.title,
+    'description': channel.description,
+    'publishedAt': channel.pub_date,
+    'id': channel.channel_id}
   return HttpResponseRedirect(reverse('youtube:home'))
 
 def revoke(request):
