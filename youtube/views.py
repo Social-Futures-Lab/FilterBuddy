@@ -48,6 +48,8 @@ def getChannel(credentials):
     API_SERVICE_NAME, API_VERSION, credentials=credentials)
 
   channels = youtube.channels().list(mine=True, part='snippet').execute()
+  if not 'items' in channels:
+    return None
   for channel in channels['items']:
     channel['snippet']['publishedAt'] = dateutil.parser.parse(channel['snippet']['publishedAt'])
   myChannel = channels['items'][0]
@@ -134,6 +136,8 @@ def oauth2callback(request):
   request.session['credentials'] = credentials_to_dict(credentials)
 
   channel = getChannel(credentials)
+  if channel is None:
+    raise Exception('This account has no channels')
 
   # Save credentials back to session in case access token was refreshed.
   # ACTION ITEM: In a production app, you likely want to save these
