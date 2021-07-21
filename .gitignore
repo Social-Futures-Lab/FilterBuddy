@@ -156,6 +156,10 @@ youtube/client_secret_youtube.json
 youtube/developer_key.txt
 db.sqlite3
 
+youtube/.*
+youtube/static/youtube/.*
+youtube/templates/youtube/.*
+
 
 
 # End of https://www.toptal.com/developers/gitignore/api/django
