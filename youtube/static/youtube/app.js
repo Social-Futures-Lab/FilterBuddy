@@ -184,7 +184,8 @@
   }
 
   function App() {
-    this._model = new WordFilterModel(new WordFilterApi());
+    this._api = new WordFilterApi();
+    this._model = new WordFilterModel(this._api);
     this._P = new Pettan();
     this._tabs = new TabManager();
     this._radioManager = new RadioManager();
@@ -194,6 +195,17 @@
   }
 
   App.prototype._onLoad = function () {
+    this._api.getUserInfo().execute().then((function (userInfo) {
+      this._bind(userInfo);
+    }).bind(this)).catch(function (e) {
+      // Probably not logged in
+      if (window.location.search.indexOf('debug') < 0) {
+        window.location = '/authorize';
+      }
+    });
+  };
+
+  App.prototype._bind = function (userInfo) {
     // Build the tab interface
     this._tabs.addTab('filter-editor', $('filter-editor'));
     this._tabs.addTab('filter-overview', $('filter-overview'));
@@ -252,6 +264,20 @@
         throw e;
       });
     }).bind(this));
+    this._P.bind($('btn-delete'), 'click', 'gui.filter.delete');
+    this._P.listen('gui.filter.delete', (function (e) {
+      var selected = this._sidebar.selected();
+      if (selected !== null) {
+        if (confirm('Are you sure you want to delete this filter')) {
+          return selected.delete().then((function () {
+            return this._P.emit('sidebar.update');
+          }).bind(this)).catch(function (e) {
+            alert(e);
+            throw e;
+          })
+        }
+      }
+    }).bind(this));
 
     // Register listeners
     this._P.listen('sidebar.update.labels', (function () {
@@ -304,10 +330,12 @@
           $('filter-name').innerText = group.getName();
           $('name-wrapper').className = !group.isFinalized() ?
             'name-wrapper default' : 'name-wrapper';
-          if (group.getId() === '') {
+          if (!group.isFinalized()) {
             this._filterEditorTabs.showOnly(['new']);
+            $('btn-delete').style.display = 'none';
           } else {
             this._filterEditorTabs.showOnly(['preview', 'edit']);
+            $('btn-delete').style.display = '';
           }
         }
       } else {

@@ -133,7 +133,7 @@ def oauth2callback(request):
   credentials = flow.credentials
   request.session['credentials'] = credentials_to_dict(credentials)
   print("Goodbye cruel world!", file=sys.stderr)
-  return HttpResponseRedirect(reverse('youtube:test'))
+  return HttpResponseRedirect(reverse('youtube:home'))
 
 def revoke(request):
   if 'credentials' not in request.session:

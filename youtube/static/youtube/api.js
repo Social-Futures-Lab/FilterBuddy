@@ -85,6 +85,10 @@
     return defaultValue;
   };
 
+  LocalDb.prototype.delete = function (key) {
+    delete this._db[key];
+  };
+
   LocalDb.prototype.getAll = function (filter) {
     var candidates = [];
     for(var key in this._db) {
@@ -105,6 +109,17 @@
 
   WordFilterApi.prototype.createRequest = function (action, body) {
     return new WordFilterApiRequest(action, body);
+  };
+
+  WordFilterApi.prototype.getUserInfo = function () {
+    if (this._mode === 'local-only') {
+      return new FakeApiRequest({
+        'name': 'Local Debug Channel',
+        'channel_id': 'THIS_IS_NOT_A_REAL_ID'
+      });
+    } else {
+      return this.createRequest('authenticate');
+    }
   };
 
   WordFilterApi.prototype.loadWordFilters = function () {
@@ -156,6 +171,19 @@
         'id': id,
         'updateAction': key,
         'updateValue': item
+      });
+    }
+  };
+
+  WordFilterApi.prototype.removeFilter = function (id) {
+    // there is no id yet so
+    if (this._mode === 'local-only') {
+      this._db.delete(id);
+      return new FakeApiRequest({});
+    } else {
+      console.log('id')
+      return this.createRequest('deleteFilter', {
+        'id': id
       });
     }
   };

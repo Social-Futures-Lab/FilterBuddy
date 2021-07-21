@@ -18,6 +18,10 @@
     this._api = api;
   }
 
+  WordFilter.prototype.getId = function () {
+    return 'id' in this._def ? this._def['id'] : null;
+  }
+
   WordFilter.prototype.getExamples = function (numExamples) {
     return this._api;
   };
@@ -30,7 +34,8 @@
     return this._def;
   };
 
-  function WordFilterGroup(api, def) {
+  function WordFilterGroup(parent, api, def) {
+    this._parent = parent;
     this._api = api;
 
     this._id = (typeof def === 'undefined' ? '' : ('' + def['id']));
@@ -47,11 +52,20 @@
   };
 
   WordFilterGroup.prototype.addRule = function (rule) {
-    return this._api.updateFilter(this._id, 'rule', rule).execute().
+    return this._api.updateFilter(this._id, 'rules:add', rule).execute().
       then((function () {
         this._rules.push(rule);
       }).bind(this));
   };
+
+  WordFilterGroup.prototype.removeRule = function (rule) {
+    return this._api.updateFilter(this._id, 'rules:add', rule).execute().
+      then((function () {
+        this._rules = this._rules.filter(function (r) {
+          return r.getId() !== rule['id'];
+        });
+      }).bind(this));
+  }
 
   WordFilterGroup.prototype.isFinalized = function () {
     return this._id !== '';
@@ -107,7 +121,7 @@
     return this._api.createFilter(this._name, reference).
       execute().
       then((function (id) {
-        this._id = id;
+        this._id = id.id;
         return id;
       }).bind(this));
   };
@@ -120,12 +134,23 @@
         return rule.serialize();
       })
     }
-  }
+  };
+
+  WordFilterGroup.prototype.delete = function () {
+    if (this.isFinalized()) {
+      return this._api.removeFilter(this._id).execute().then((function () {
+        var id = this._id;
+        this._parent._setGroups(this._parent._filterGroups.filter(function (g) {
+          return g.getId() !== id;
+        }));
+      }).bind(this));
+    }
+  };
 
   function WordFilterModel(api) {
     this._api = api;
 
-    this._filterGroups = null;
+    this._filterGroups = [];
     this._currentNew = null;
 
     this._setGroups([]);
@@ -134,13 +159,13 @@
   WordFilterModel.prototype.load = function () {
     return this._api.loadWordFilters().execute().then((function (data) {
       this._setGroups(data.filters.map((function (def) {
-        return new WordFilterGroup(this._api, def);
+        return new WordFilterGroup(this, this._api, def);
       }).bind(this)));
     }).bind(this));
   }
 
   WordFilterModel.prototype._createNewGroup = function () {
-    return new WordFilterGroup(this._api);
+    return new WordFilterGroup(this, this._api);
   };
 
   WordFilterModel.prototype._setGroups = function (groups) {

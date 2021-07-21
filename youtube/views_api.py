@@ -28,8 +28,11 @@ def getChannel(request):
     myChannel = Channel.objects.get(channel_id = myChannelId)
     return myChannel
   else:
-    return makeDebugChannel()
-    #raise Exception('Could not get login gredentials')
+    #return makeDebugChannel()
+    raise Exception('Could not get login gredentials')
+
+def isLoggedIn(request):
+  return True #request.user.is_authenticated
 
 @csrf_exempt
 def api(request):
@@ -43,7 +46,20 @@ def api(request):
     api_response = {
       'message': f'User tried to do action {request_data["action"]}'
     }
-  return HttpResponse(json.dumps(api_response), content_type='text/json')
+  return HttpResponse(json.dumps(api_response), content_type='application/json')
+
+@csrf_exempt
+def getUserInfo(request):
+  try:
+    channel = getChannel(request)
+    return HttpResponse(json.dumps({
+      'name': channel.title,
+      'desc': channel.description,
+      'channel_id': channel.channel_id
+    }), content_type='application/json')
+  except:
+    return HttpResponse('Not logged in', status=401)
+    # Redirect to login
 
 @csrf_exempt
 def previewRule(request, rule_id):

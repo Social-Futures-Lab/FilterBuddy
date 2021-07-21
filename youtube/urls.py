@@ -23,6 +23,7 @@ urlpatterns = [
   path('get_matching_comments/<str:phrase>', views.get_matching_comments, name='get_matching_comments'),
 
   path('api', views_api.api, name='api'),
+  path('api/authenticate', views_api.getUserInfo),
   path('api/loadFilters', views_api.loadFilters),
   path('api/loadFilter', views_api.loadFilter),
   path('api/createFilter', views_api.createFilter),
