@@ -19,7 +19,7 @@ class RuleCollection(models.Model):
   is_template = models.BooleanField()
 
   def __str__(self):
-    return u'%s' % (self.title)
+    return u'%s' % (self.name)
 
 class Rule(models.Model):
   phrase = models.CharField(max_length=500)

@@ -215,11 +215,13 @@ def get_videos(request):
       publishedAt = item['snippet']['publishedAt']
       title = item['snippet']['title']
       videoId = item['id']['videoId']
+      pub_date = dateutil.parser.parse(publishedAt)
       videos.append({
         'videoId': videoId,
         'title': title,
         'publishTime': publishedAt
       })
+      video, created = Video.objects.get_or_create(title = title, pub_date = pub_date, video_id = videoId, channel = myChannel)
   response = {
     'video': videos
   }
@@ -277,6 +279,7 @@ def get_comments_from_video(youtube, video_id):
   vid_stats = youtube.videos().list(part="statistics", id=video_id).execute()
   comment_count = vid_stats.get("items")[0].get("statistics").get("commentCount")
   video = Video.objects.get(video_id=video_id)
+  
   if (comment_count and int(comment_count)>0):
     video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
     # Get the first set of comments

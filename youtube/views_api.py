@@ -35,6 +35,27 @@ def isLoggedIn(request):
   return True #request.user.is_authenticated
 
 @csrf_exempt
+def chart(request):
+  channel = getChannel(request)
+  print ("channel is", channel)
+  comments = Comment.objects.filter(video__channel = channel)  
+  collections = RuleCollection.objects.filter(owner = channel)
+  matchCountDict = {}
+  for collection in collections:
+    print (collection)
+    rules = Rule.objects.filter(rule_collection = collection)
+    matched_comments = set()
+    for rule in rules:
+      phrase = rule.phrase
+      for comment in comments:
+        if (phrase in comment.text):
+          matched_comments.add(comment.comment_id)
+    matchCountDict[collection.name] = len(matched_comments)
+  return HttpResponse(json.dumps(matchCountDict), content_type='application/json')    
+  # return render (request, 'youtube/chart.html', {'channel': channelDict,})
+
+
+@csrf_exempt
 def api(request):
   if request.method == 'GET':
     api_response = {
