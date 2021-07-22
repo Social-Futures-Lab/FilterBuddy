@@ -29,7 +29,7 @@ urlpatterns = [
   path('api/createFilter', views_api.createFilter),
   path('api/updateFilter', views_api.updateFilter),
   path('api/deleteFilter', views_api.deleteFilter),
-  path('api/chart', views_api.chart),  
+  path('chart', views_api.chart),  
 
   path('api/previewRule/<int:rule_id>', views_api.previewRule),
   path('api/getComment/<int:comment_id>', views_api.getComment),
