@@ -51,8 +51,8 @@ def chart(request):
         if (phrase in comment.text):
           matched_comments.add(comment.comment_id)
     matchCountDict[collection.name] = len(matched_comments)
-  return HttpResponse(json.dumps(matchCountDict), content_type='application/json')    
-  # return render (request, 'youtube/chart.html', {'channel': channelDict,})
+  # return HttpResponse(json.dumps(matchCountDict), content_type='application/json')    
+  return render (request, 'youtube/chart.html', {'chart_data': json.dumps(matchCountDict)})
 
 
 @csrf_exempt
