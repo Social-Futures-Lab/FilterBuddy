@@ -6,21 +6,30 @@
       'dfc',
       'WordFilterModel',
       'WordFilterApi',
+      'InteractiveChart',
       'Pettan'], factory);
   } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
     factory(exports,
       require('dfc'),
       require('WordFilterModel'),
       require('WordFilterApi'),
+      require('InteractiveChart'),
       require('Pettan'));
   } else {
     factory(root,
       root.dfc,
+      root.Pettan
       root.WordFilterModel,
       root.WordFilterApi,
-      root.Pettan);
+      root.InteractiveChart);
   }
-})(this, function (exports, _, WordFilterModel, WordFilterApi, Pettan) {
+})(this, function (exports,
+    _,
+    Pettan,
+    WordFilterModel,
+    WordFilterApi,
+    InteractiveChart) {
+
   function TabManager() {
     this._tabs = {};
   }
@@ -353,11 +362,14 @@
 
 
     this._P.listen('charts.draw.filter', (function (filter) {
-
+      // Draw the stuff
+      var chart = new InteractiveChart($('chart-filter-container'));
+      return chart.drawFilterGroup(filter.getId());
     }).bind(this));
 
     this._P.listen('charts.draw.overview', (function () {
-
+      var chart = new InteractiveChart($('chart-overview-container'));
+      return chart.drawOverview();
     }).bind(this));
 
     this._model.load().then((function () {

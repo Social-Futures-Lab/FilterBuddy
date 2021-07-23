@@ -10,9 +10,8 @@
   }
 })(this, function (exports, _) {
 
-  function InteractiveChart(dom, type) {
+  function InteractiveChart(dom) {
     this._dom = dom; // where to draw the chart
-    this._type = type; // type of chart
 
     this._chart = null;
   };
