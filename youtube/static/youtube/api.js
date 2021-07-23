@@ -11,7 +11,9 @@
   const END_POINT = '/api';
   const ACTIONS = {
     'loadFilters': 'GET',
-    'updateFilter': 'POST'
+    'charts/overview': 'GET',
+    'charts/filter/*/overview': 'GET',
+    'charts/filter/*/rule/*': 'GET'
   }
 
   function FakeApiRequest(response) {
@@ -30,17 +32,35 @@
     this._body = body;
   }
 
+  WordFilterApiRequest.prototype._getRequestMethod = function () {
+    for (var action in ACTIONS) {
+      if (this._action === action) {
+        return 'GET';
+      } else {
+        var srcChunks = action.split('/'),
+          curChunks = this._action.split('/');
+        if (curChunks.reduce(function (acc, cur, i) {
+            return acc && (i < srcChunks.length) &&
+              (srcChunks[i] === cur || srcChunks[i] === '*');
+          }, true)) {
+
+          return 'GET';
+        }
+      }
+    }
+    return 'POST';
+  }
+
   WordFilterApiRequest.prototype.execute = function () {
     // Decide whether there can be a body for the request
+    var method = this._getRequestMethod();
     if (typeof this._body !== 'undefined' &&
-      this._body !== null &&
-      this._action in ACTIONS &&
-      ACTIONS[this._action] === 'GET') {
+      this._body !== null && method === 'GET') {
 
       return Promise.reject(new Error('Tried to invoke GET endpoint with body'));
     }
     var config = {
-      'method': (this._action in ACTIONS ? ACTIONS[this._action] : 'POST'),
+      'method': method,
       'headers': {}
     };
     if (typeof this._body !== 'undefined' && this._body !== null) {
