@@ -10,8 +10,9 @@
   }
 })(this, function (exports, _) {
 
-  function InteractiveChart(dom) {
+  function InteractiveChart(dom, api) {
     this._dom = dom; // where to draw the chart
+    this._api = api;
 
     this._chart = null;
   };

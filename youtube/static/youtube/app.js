@@ -362,13 +362,14 @@
 
     this._P.listen('charts.draw.filter', (function (filter) {
       console.log('About to draw per-filter chart');
-      var chart = new InteractiveChart($('chart-filter-container'));
+      var chart = new InteractiveChart($('chart-filter-container'), this._api);
       return chart.drawFilterGroup(filter.getId());
     }).bind(this));
 
     this._P.listen('charts.draw.overview', (function () {
       console.log('About to draw overview chart');
-      var chart = new InteractiveChart($('chart-overview-container'));
+      var chart = new InteractiveChart($('chart-overview-container'),
+        this._api);
       return chart.drawOverview();
     }).bind(this));
 
