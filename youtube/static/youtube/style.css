@@ -36,4 +36,5 @@ div.inline-editable br {
 
 div.chart-container {
   position: relative;
+  overflow: hidden;
 }
