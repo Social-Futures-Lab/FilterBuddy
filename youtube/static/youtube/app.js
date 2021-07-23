@@ -323,7 +323,8 @@
     this._P.listen('sidebar.select', (function (item) {
       if (item !== null) {
         this._tabs.showOnly(['filter-editor']);
-        this._sidebarOverview.className = 'list-group-item list-group-item-action';
+        this._sidebarOverview.className =
+          'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
           // Set the head text
@@ -337,11 +338,26 @@
             this._filterEditorTabs.showOnly(['preview', 'edit']);
             $('btn-delete').style.display = '';
           }
+
+          if (group.isFinalized()) {
+            return this._P.emit('charts.draw.filter', group);
+          }
         }
       } else {
         this._tabs.showOnly(['filter-overview']);
-        this._sidebarOverview.className = 'list-group-item list-group-item-action active';
+        this._sidebarOverview.className =
+          'list-group-item list-group-item-action active';
+        return this._P.emit('charts.draw.overview');
       }
+    }).bind(this));
+
+
+    this._P.listen('charts.draw.filter', (function (filter) {
+
+    }).bind(this));
+
+    this._P.listen('charts.draw.overview', (function () {
+
     }).bind(this));
 
     this._model.load().then((function () {

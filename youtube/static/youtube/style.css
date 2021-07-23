@@ -33,3 +33,7 @@ div.inline-editable * {
 div.inline-editable br {
   display: none;
 }
+
+div.chart-container {
+  position: relative;
+}

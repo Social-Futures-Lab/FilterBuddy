@@ -181,12 +181,19 @@
       this._db.delete(id);
       return new FakeApiRequest({});
     } else {
-      console.log('id')
       return this.createRequest('deleteFilter', {
         'id': id
       });
     }
   };
 
+
+  WordFilterApi.prototype.getChartMetadata = function (endpoint) {
+    if (this._mode === 'local-only') {
+      return new FakeApiRequest({});
+    } else {
+      return this.createRequest('charts/' + endpoint);
+    }
+  }
   exports.WordFilterApi = WordFilterApi;
 });

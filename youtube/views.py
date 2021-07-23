@@ -36,10 +36,7 @@ class HomePageView(FormView):
   template_name = 'youtube/home.html'
   form_class = YouTubeForm
 
-
 # Create your views here.
-
-
 def index(request):
   return render(request, "youtube/home.html")
 
@@ -174,14 +171,14 @@ def revoke(request):
   else:
     page_message = 'An error occurred.'
   return render(request, "youtube/home.html", {'page_message': page_message})
-    
+
 
 def clear_credentials(request):
   if 'credentials' in request.session:
     del request.session['credentials']
   page_message = 'Credentials have been cleared.'
   # return render(request, "youtube/home.html", {'page_message': page_message})
-  return HttpResponseRedirect(reverse('youtube:authorize'))      
+  return HttpResponseRedirect(reverse('youtube:authorize'))
 
 @csrf_exempt
 def get_videos(request):
@@ -279,7 +276,7 @@ def get_comments_from_video(youtube, video_id):
   vid_stats = youtube.videos().list(part="statistics", id=video_id).execute()
   comment_count = vid_stats.get("items")[0].get("statistics").get("commentCount")
   video = Video.objects.get(video_id=video_id)
-  
+
   if (comment_count and int(comment_count)>0):
     video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
     # Get the first set of comments

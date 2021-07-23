@@ -7,64 +7,41 @@
     <title>Manage Your Word Filters</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
-    <!--
-    <link rel="stylesheet" href="/static/youtube/style.css">
-    -->
-    <link rel="stylesheet" href="{% static 'youtube/style.css' %}">
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" ></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>    
+    <link rel="stylesheet" href="{% static 'youtube/style.css' %}">
 
     <script type="text/javascript" src="https://pettanjs.github.io/dfcjs/dfc.js"></script>
     <script type="text/javascript" src="https://pettanjs.github.io/pettanjs/src/pettan.js"></script>
 
     <script type="text/javascript" src="{% static 'youtube/api.js' %}"></script>
+    <script type="text/javascript" src="{% static 'youtube/chart.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/model.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/app.js' %}"></script>
   </head>
   <body>
-
-<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">
-      <img src="{% static 'youtube/uw-cse.png' %}" alt="" width="320" height="40">
-    </a>      
-
-      <a class="navbar-brand navbar-center mx-auto h1" href="#">YouTube Word Filters</a>
-
-      <li class="nav-item navbar-nav dropdown">
-        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-          Dropdown
+    <nav class="navbar navbar-expand-lg navbar-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">
+          <img src="{% static 'youtube/uw-cse.png' %}" alt="" width="320" height="40">
         </a>
-        <ul class="dropdown-menu " aria-labelledby="navbarDropdown">
-          <li><a class="dropdown-item" href="/clear">Sign out</a></li>
-          <li><a class="dropdown-item" href="#">Another action</a></li>
-          <li><hr class="dropdown-divider"></li>
-          <li><a class="dropdown-item" href="#">Something else here</a></li>
-        </ul>
-      </li>          
+        <a class="navbar-brand navbar-center mx-auto h1" href="#">YouTube Word Filters</a>
 
-<!--
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link" href="#">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Contact Us</a>
-        </li>        
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/clear">Sign Out</a>
-        </li>        
+        <div class="collapse navbar-collapse" id="nav-controls">
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link" href="#">About Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact Us</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/clear">Sign Out</a>
+            </li>
+          </ul>
+        </div>
 
-      </ul>
-    </div>
--->
-  </div>
-</nav>
-
-
-
+      </div>
+    </nav>
 
     <div class="container">
       <div class="row">
@@ -93,7 +70,7 @@
             <div class="card-body">
               <h3>Overview</h3>
               <div class="py-2">
-                <p>PLACEHOLDER: Put some plots here</p>
+                <div id="chart-overview-container" class="chart-container"></div>
               </div>
             </div>
           </div>
@@ -107,18 +84,14 @@
               </h3>
               <!-- end name -->
               <div id="wrap-preview" class="py-2" style="display: none;">
-                <div id="preview-data-table" style="width:100%; min-height: 150px;">
-                  <svg class="bd-placeholder-img figure-img img-fluid rounded" xmlns="http://www.w3.org/2000/svg" role="img" focusable="false">
-                    <rect width="100%" height="100%" fill="#868e96"></rect>
-                  </svg>
-                </div>
+                <div id="chart-overview-container" class="chart-container"></div>
               </div>
               <!-- end common preview -->
               <div id="wrap-edit-existing" class="py-2" style="display: none;">
                 <p>Add a rule by typing something in the text box below:</p>
                 <div class="rule-create basic row">
                   <div class="col-auto">
-                    <input class="form-control" type="text" placeholder="Default input" aria-label="default input example">
+                    <input class="form-control" type="text" placeholder="Please type word to filter here">
                   </div>
                   <div class="col-auto">
                     <a id="btn-add-rule" href="#" class="btn btn-primary mb-3">Add Rule</a>

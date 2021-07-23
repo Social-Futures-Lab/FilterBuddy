@@ -24,13 +24,20 @@ urlpatterns = [
 
   path('api', views_api.api, name='api'),
   path('api/authenticate', views_api.getUserInfo),
+
+  # Filter related modifiers
   path('api/loadFilters', views_api.loadFilters),
   path('api/loadFilter', views_api.loadFilter),
   path('api/createFilter', views_api.createFilter),
   path('api/updateFilter', views_api.updateFilter),
   path('api/deleteFilter', views_api.deleteFilter),
-  path('chart', views_api.chart),  
 
+  # Chart related stuff
+  path('api/charts/overview', views_api.overviewChart),
+  path('api/charts/filter/<int:filter_id>/overview', views_api.filterChart),
+  path('api/charts/filter/<int:filter_id>/rule/<int:rule_id>', views_api.ruleChart),
+
+  # Rule related modifiers
   path('api/previewRule/<int:rule_id>', views_api.previewRule),
   path('api/getComment/<int:comment_id>', views_api.getComment),
   path('api/previewFilter/<int:filter_id>', views_api.previewFilter),

@@ -34,26 +34,18 @@ def getChannel(request):
 def isLoggedIn(request):
   return True #request.user.is_authenticated
 
-@csrf_exempt
-def chart(request):
-  channel = getChannel(request)
-  print ("channel is", channel)
-  comments = Comment.objects.filter(video__channel = channel)  
-  collections = RuleCollection.objects.filter(owner = channel)
-  matchCountDict = {}
-  for collection in collections:
-    print (collection)
-    rules = Rule.objects.filter(rule_collection = collection)
-    matched_comments = set()
-    for rule in rules:
-      phrase = rule.phrase
-      for comment in comments:
-        if (phrase in comment.text):
-          matched_comments.add(comment.comment_id)
-    matchCountDict[collection.name] = len(matched_comments)
-  # return HttpResponse(json.dumps(matchCountDict), content_type='application/json')    
-  return render (request, 'youtube/chart.html', {'chart_data': json.dumps(matchCountDict)})
-
+def createChartConfig():
+  # TODO make this really work
+  return {
+    'type': 'bar',
+    'data': {
+      'foo': [1, 2, 3, 4],
+      'bar': [5, 6, 7, 8]
+    },
+    'label': 'This is fake data',
+    'bgColor': '#fff',
+    'borderColor': '#f00'
+  }
 
 @csrf_exempt
 def api(request):
@@ -81,7 +73,26 @@ def getUserInfo(request):
   except:
     return HttpResponse('Not logged in', status=401)
     # Redirect to login
+# -------------- CHART RELATED STUFF BELOW -------------
+@csrf_exempt
+def overviewChart(request):
+  # make a real chart config based on the one above
+  chartConfig = createChartConfig()
+  return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
+@csrf_exempt
+def filterChart(request, filter_id):
+  # make a real chart config based on the one above
+  chartConfig = createChartConfig()
+  return HttpResponse(json.dumps(chartConfig), content_type='application/json')
+
+@csrf_exempt
+def ruleChart(request, filter_id, rule_id):
+  # make a real chart config based on the one above
+  chartConfig = createChartConfig()
+  return HttpResponse(json.dumps(chartConfig), content_type='application/json')
+
+# -------------- RULE RELATED STUFF BELOW --------------
 @csrf_exempt
 def previewRule(request, rule_id):
   myChannel = getChannel(request)
