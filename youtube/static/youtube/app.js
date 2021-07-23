@@ -4,21 +4,21 @@
   if (typeof define === 'function' && define.amd) {
     define(['exports',
       'dfc',
+      'Pettan',
       'WordFilterModel',
       'WordFilterApi',
-      'InteractiveChart',
-      'Pettan'], factory);
+      'InteractiveChart'], factory);
   } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
     factory(exports,
       require('dfc'),
+      require('Pettan'),
       require('WordFilterModel'),
       require('WordFilterApi'),
-      require('InteractiveChart'),
-      require('Pettan'));
+      require('InteractiveChart'));
   } else {
     factory(root,
       root.dfc,
-      root.Pettan
+      root.Pettan,
       root.WordFilterModel,
       root.WordFilterApi,
       root.InteractiveChart);
@@ -346,13 +346,12 @@
           } else {
             this._filterEditorTabs.showOnly(['preview', 'edit']);
             $('btn-delete').style.display = '';
-          }
 
-          if (group.isFinalized()) {
             return this._P.emit('charts.draw.filter', group);
           }
         }
       } else {
+        // Overview tab
         this._tabs.showOnly(['filter-overview']);
         this._sidebarOverview.className =
           'list-group-item list-group-item-action active';
@@ -362,12 +361,13 @@
 
 
     this._P.listen('charts.draw.filter', (function (filter) {
-      // Draw the stuff
+      console.log('About to draw per-filter chart');
       var chart = new InteractiveChart($('chart-filter-container'));
       return chart.drawFilterGroup(filter.getId());
     }).bind(this));
 
     this._P.listen('charts.draw.overview', (function () {
+      console.log('About to draw overview chart');
       var chart = new InteractiveChart($('chart-overview-container'));
       return chart.drawOverview();
     }).bind(this));
