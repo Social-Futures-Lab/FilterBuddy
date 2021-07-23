@@ -8,7 +8,8 @@
   } else {
     factory(root, root.dfc);
   }
-})(this, function (exports, _) {
+})
+(this, function (exports, _) {
   function InteractiveTable(dom, rows) {
     this._dom = dom;
     this._rows = rows;
