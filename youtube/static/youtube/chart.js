@@ -70,11 +70,11 @@
   };
 
   InteractiveChart.prototype.drawFilterGroup = function (id) {
-    return this._drawWithData('collection/' + id + '/overview');
+    return this._drawWithData('filter/' + id + '/overview');
   };
 
   InteractiveChart.prototype.drawFilterRule = function (id, ruleId) {
-    return this._drawWithData('collection/' + id + '/rule/' + ruleId);
+    return this._drawWithData('filter/' + id + '/rule/' + ruleId);
   };
 
   exports.InteractiveChart = InteractiveChart;
