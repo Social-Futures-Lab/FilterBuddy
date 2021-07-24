@@ -151,6 +151,11 @@ def loadFilters(request):
     collectionObject = serializeCollection(collection)
     filters.append(collectionObject)
 
+  # filters = [
+  # {"id": 8, "name": "Test Group", "rules": []}, 
+  # {"id": 9, "name": "Swear Words", "rules": []},
+  # ]
+
   response = {
     'filters': filters
   }
