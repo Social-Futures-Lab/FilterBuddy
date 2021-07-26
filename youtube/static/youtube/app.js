@@ -347,8 +347,10 @@
         this._P.emit('rules.preview');
       }).bind(this));
     }).bind(this));
-    this._P.listen('rules.preview', (function () {
-      var currentFilter = this._sidebar.selected();
+    this._P.listen('rules.preview', (function (item) {
+      var currentFilter = (typeof item !== 'undefined') ?
+        item :
+        this._sidebar.selected();
       if (currentFilter !== null) {
         this._tableRules.setRows(currentFilter.getRules());
       }
@@ -436,20 +438,24 @@
           'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
-          // Viewing an existing group
-          $('rule-explore').value = ''; // should trigger a preview
-
+          // Viewing some group
           $('filter-name').innerText = group.getName();
           $('name-wrapper').className = !group.isFinalized() ?
             'name-wrapper default' : 'name-wrapper';
           if (!group.isFinalized()) {
+            // Viewing the add group group
             this._filterEditorTabs.showOnly(['new']);
             $('btn-delete').style.display = 'none';
           } else {
+            // Viewing existing group
+            $('rule-explore').value = ''; // should trigger a preview
             this._filterEditorTabs.showOnly(['preview', 'edit']);
             $('btn-delete').style.display = '';
 
-            return this._P.emit('charts.draw.filter', group);
+            return Promise.all([
+              this._P.emit('charts.draw.filter', group),
+              this._P.emit('rules.preview', item)
+            ]);
           }
         }
       } else {
