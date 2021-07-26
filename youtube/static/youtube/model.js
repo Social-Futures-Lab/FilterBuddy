@@ -89,7 +89,7 @@
 
   WordFilterGroup.createRules = function (api, rules) {
     if (!Array.isArray(rules)) {
-      return []
+      return [];
     } else {
       return rules.map((function (ruleDef) {
         return new WordFilter(api, this, ruleDef);
@@ -104,7 +104,7 @@
   WordFilterGroup.prototype.finalizePreviewRule = function () {
     return this._previewRule.finalize().then((function () {
       this._rules.push(this._previewRule);
-      this._previewRule = new WordFilter(api, this)
+      this._previewRule = new WordFilter(this._api, this);
     }).bind(this));
   };
 

@@ -53,7 +53,9 @@
           row.dom.appendChild(_('td', {}));
         }
       }).bind(this));
-      this._rows.push;
+
+      this._body.appendChild(row.dom);
+      this._rows.push(row);
     }).bind(this));
   };
 

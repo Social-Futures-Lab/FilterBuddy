@@ -36,6 +36,10 @@ div.inline-editable br {
 
 div.chart-container {
   position: relative;
-  overflow: scroll;  
-  /*overflow: hidden;*/
+  overflow: hidden;
+}
+
+table.interactive tbody tr.placeholder > td {
+  font-style: italic;
+  text-align: center;
 }

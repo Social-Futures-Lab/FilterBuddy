@@ -259,13 +259,13 @@
       'time'
     ], (function (src, col) {
       if (col === 'actions') {
-
+        return null;
       } else if (col === 'comment') {
-
+        return src['text'];
       } else if (col === 'video') {
-
+        return src['video'];
       } else if (col === 'time') {
-
+        return src['time'];
       } else {
         return null;
       }
@@ -328,9 +328,9 @@
     }).bind(this));
 
     this._P.listen('comments.preview', (function (filter) {
-      return filter.previewRule().preview().then(function (comments) {
+      return filter.previewRule().preview().then((function (comments) {
         this._tablePreview.setRows(comments['comments']);
-      });
+      }).bind(this));
     }).bind(this));
 
     this._P.bind($('btn-add-rule'), 'click', 'gui.rule.add');
