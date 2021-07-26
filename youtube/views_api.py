@@ -48,6 +48,17 @@ def createChartConfig():
     'borderColor': '#f00'
   }
 
+def unifiedRule(rule):
+  if type(rule) is dict:
+    return rule
+  elif type(rule) is Rule:
+    return {
+      'id': rule.id,
+      'phrase': rule.phrase
+    }
+  else:
+    raise Error('Unknown type for rule')
+
 @csrf_exempt
 def api(request):
   if request.method == 'GET':
@@ -86,7 +97,7 @@ def overviewChart(request):
     rules = Rule.objects.filter(rule_collection = collection)
     matched_comments = set()
     for rule in rules:
-      for c in getMatchedComments(rule, myChannel):
+      for c in getMatchedComments(unifiedRule(rule), myChannel):
         matched_comments.add(c['id'])
     myData[collection.name] = len(matched_comments)
 
@@ -109,7 +120,7 @@ def filterChart(request, filter_id):
 
   rules = Rule.objects.filter(rule_collection = collection)
   for rule in rules:
-    rule_matched_comments = getMatchedComments(rule, myChannel)
+    rule_matched_comments = getMatchedComments(unifiedRule(rule), myChannel)
     myData[rule.phrase] = len(rule_matched_comments)
 
   chartConfig = {}
@@ -136,7 +147,7 @@ def previewRule(request):
   # context is the filter group id
   context, rule = payload['id'], payload['rule']
   response = {
-    'comments': getMatchedComments(rule, myChannel)
+    'comments': getMatchedComments(unifiedRule(rule), myChannel)
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
 
@@ -158,7 +169,7 @@ def previewFilter(request, filter_id):
     matched_comments = []
     rules = Rule.objects.filter(rule_collection = collection)
     for rule in rules:
-      matched_comments += getMatchedComments(rule, myChannel)
+      matched_comments += getMatchedComments(unifiedRule(rule), myChannel)
     response = {
       'comments': matched_comments
     }
