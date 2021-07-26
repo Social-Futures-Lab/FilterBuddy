@@ -345,7 +345,7 @@
 
       return currentFilter.finalizePreviewRule().then((function () {
         this._P.emit('rules.preview');
-      }).bind(this);
+      }).bind(this));
     }).bind(this));
     this._P.listen('rules.preview', (function () {
       var currentFilter = this._sidebar.selected();
