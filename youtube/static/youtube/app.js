@@ -344,7 +344,11 @@
       }
 
       return currentFilter.finalizePreviewRule().then((function () {
-        this._P.emit('rules.preview');
+        // Trigger both an update in the rules list and an update for the chart
+        return Promise.all([
+          this._P.emit('charts.draw.filter', currentFilter),
+          this._P.emit('rules.preview', currentFilter)
+        ]);
       }).bind(this));
     }).bind(this));
     this._P.listen('rules.preview', (function (item) {
@@ -469,13 +473,11 @@
 
 
     this._P.listen('charts.draw.filter', (function (filter) {
-      console.log('About to draw per-filter chart');
       var chart = new InteractiveChart($('chart-filter-container'), this._api);
       return chart.drawFilterGroup(filter.getId());
     }).bind(this));
 
     this._P.listen('charts.draw.overview', (function () {
-      console.log('About to draw overview chart');
       var chart = new InteractiveChart($('chart-overview-container'),
         this._api);
       return chart.drawOverview();
