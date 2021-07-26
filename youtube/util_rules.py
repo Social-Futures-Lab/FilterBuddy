@@ -1,10 +1,14 @@
 import re
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
-def serializeComment(myComment, phrase):
+def serializeCommentWithPhrase(myComment, phrase, isComment=True):
 	k = re.search(r'\b({})\b'.format(phrase), myComment.text)
+	if (isComment):
+		commentId = myComment.comment_id
+	else:
+		commentId = myComment.reply_id
 	commentObject = {
-		'id': myComment.id,
+		'id': commentId,
 		'text': myComment.text,
 		'author': myComment.author,
 		'likeCount': myComment.likeCount,
@@ -14,9 +18,13 @@ def serializeComment(myComment, phrase):
 	return commentObject
 
 
-def serializeComment(myComment):
+def serializeComment(myComment, isComment=True):
+	if (isComment):
+		commentId = myComment.comment_id
+	else:
+		commentId = myComment.reply_id	
 	commentObject = {
-		'id': myComment.id,
+		'id': commentId,
 		'text': myComment.text,
 		'author': myComment.author,
 		'likeCount': myComment.likeCount,
@@ -29,12 +37,12 @@ def getMatchedComments(rule, myChannel):
 	myComments = Comment.objects.filter(video__channel=myChannel)
 	matched_comments = []
 	for myComment in myComments:
-		if (phrase in myComment.text):
-			matched_comment = serializeComment(myComment, phrase)
+		if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
+			matched_comment = serializeCommentWithPhrase(myComment, phrase, True)
 			matched_comments.append(matched_comment)
 		replies = Reply.objects.filter(comment=myComment)
 		for reply in replies:
 			if (phrase in reply.text):
-				matched_comment = serializeComment(reply, phrase)
+				matched_comment = serializeCommentWithPhrase(reply, phrase, False)
 				matched_comments.append(matched_comment)
 	return matched_comments

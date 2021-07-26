@@ -4,12 +4,13 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, serializeComment
+from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase
 from .util_filters import serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
 from datetime import datetime
 import urllib.request, json
+import random
 
 def makeDebugChannel():
   try:
@@ -74,10 +75,28 @@ def getUserInfo(request):
     return HttpResponse('Not logged in', status=401)
     # Redirect to login
 # -------------- CHART RELATED STUFF BELOW -------------
+
 @csrf_exempt
 def overviewChart(request):
-  # make a real chart config based on the one above
-  chartConfig = createChartConfig()
+  myData = {}  
+  myChannel = getChannel(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+  for collection in collections:
+    rules = Rule.objects.filter(rule_collection = collection)
+    matched_comments = set()
+    for rule in rules:
+      for c in getMatchedComments(rule, myChannel):
+        matched_comments.add(c['id'])
+    myData[collection.name] = len(matched_comments)
+
+  chartConfig = {}
+  chartConfig['type'] = 'bar'
+  chartConfig['data'] = myData
+  chartConfig['label'] = 'Number of Comments Caught'
+  myColors = random.choices(range(256), k=len(myData))
+  chartConfig['bgColor'] = myColors
+  chartConfig['borderColor'] = myColors
+
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
 @csrf_exempt
