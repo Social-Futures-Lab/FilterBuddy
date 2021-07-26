@@ -12,7 +12,10 @@
   function WordFilter(api, def) {
     // Current impl assumes a string for def
     if (typeof def !== 'string') {
-      throw new Error('NotImplemented: Complex word filters');
+      // throw new Error('NotImplemented: Complex word filters');
+      this._id = (typeof def === 'undefined' ? '' : ('' + def['id']));
+      this._phrase = (typeof def === 'undefined' ? 'Unnamed Phrase' : def['phrase']);
+
     }
     this._def = def;
     this._api = api;
