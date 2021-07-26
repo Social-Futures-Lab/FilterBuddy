@@ -370,9 +370,13 @@
       } else if (mode === 'template') {
         mode = $('dropdown-template').value;
       }
-      return this._model.finalizeNew(mode).then((function () {
+      return this._model.finalizeNew(mode).then((function (id) {
         this._model._reshiftNewGroup();
-        return this._P.emit('sidebar.update');
+        return this._P.emit('sidebar.update').then((function () {
+          this._sidebar.select(function (item) {
+            return item.getId() === id;
+          });
+        }).bind(this));
       }).bind(this)).catch(function (e) {
         alert(e);
         throw e;
