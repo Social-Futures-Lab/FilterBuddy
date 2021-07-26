@@ -101,8 +101,24 @@ def overviewChart(request):
 
 @csrf_exempt
 def filterChart(request, filter_id):
-  # make a real chart config based on the one above
-  chartConfig = createChartConfig()
+  myData = {}  
+  myChannel = getChannel(request)
+  collections = RuleCollection.objects.filter(owner = myChannel, id=filter_id)
+  collection = collections[0]
+  
+  rules = Rule.objects.filter(rule_collection = collection)
+  for rule in rules:
+    rule_matched_comments = getMatchedComments(rule, myChannel)
+    myData[rule.phrase] = len(rule_matched_comments)
+
+  chartConfig = {}
+  chartConfig['type'] = 'bar'
+  chartConfig['data'] = myData
+  chartConfig['label'] = 'Number of Comments Caught'
+  myColors = random.choices(range(256), k=len(myData))
+  chartConfig['bgColor'] = myColors
+  chartConfig['borderColor'] = myColors
+
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
 @csrf_exempt
