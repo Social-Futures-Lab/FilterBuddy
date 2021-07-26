@@ -149,19 +149,19 @@ def getComment(request, comment_id):
 
 @csrf_exempt
 def previewFilter(request, filter_id):
-	myChannel = getChannel(request)
-	collections = RuleCollection.objects.filter(id = filter_id)
-	if (collections):
-		collection = collections[0]
-		matched_comments = []
-		rules = Rule.objects.filter(rule_collection = collection)
-		for rule in rules:
-			matched_comments += getMatchedComments(rule, myChannel)
-		response = {
-			'comments': matched_comments
-	  }
+  myChannel = getChannel(request)
+  collections = RuleCollection.objects.filter(id = filter_id)
+  if (collections):
+    collection = collections[0]
+    matched_comments = []
+    rules = Rule.objects.filter(rule_collection = collection)
+    for rule in rules:
+      matched_comments += getMatchedComments(rule, myChannel)
+    response = {
+      'comments': matched_comments
+    }
     return HttpResponse(json.dumps(response), content_type='application/json')
-	return HttpResponse('Filter not found'.encode('utf-8'), status = 404)
+  return HttpResponse('Filter not found'.encode('utf-8'), status = 404)
 
 @csrf_exempt
 def loadFilters(request):
