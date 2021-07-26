@@ -38,9 +38,9 @@ urlpatterns = [
   path('api/charts/filter/<int:filter_id>/rule/<int:rule_id>', views_api.ruleChart),
 
   # Rule related modifiers
-  path('api/previewRule/<int:rule_id>', views_api.previewRule),
-  path('api/getComment/<int:comment_id>', views_api.getComment),
+  path('api/previewRule', views_api.previewRule), # Preview rule is used to preview BEFORE a rule ID has been assigned
   path('api/previewFilter/<int:filter_id>', views_api.previewFilter),
+  path('api/getComment/<int:comment_id>', views_api.getComment),
 ]
 
 if settings.DEBUG:

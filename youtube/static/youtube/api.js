@@ -208,7 +208,7 @@
     }
   };
 
-  WordFilterApi.prototype.getRuleExamples = function (parentId, data, limit) {
+  WordFilterApi.prototype.getRulePreview = function (parentId, data, limit) {
     if (this._mode === 'local-only') {
       return new FakeApiRequest({'comments': []});
     } else {

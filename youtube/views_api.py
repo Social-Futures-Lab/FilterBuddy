@@ -74,11 +74,12 @@ def getUserInfo(request):
   except:
     return HttpResponse('Not logged in', status=401)
     # Redirect to login
+
 # -------------- CHART RELATED STUFF BELOW -------------
 
 @csrf_exempt
 def overviewChart(request):
-  myData = {}  
+  myData = {}
   myChannel = getChannel(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
   for collection in collections:
@@ -101,11 +102,11 @@ def overviewChart(request):
 
 @csrf_exempt
 def filterChart(request, filter_id):
-  myData = {}  
+  myData = {}
   myChannel = getChannel(request)
   collections = RuleCollection.objects.filter(owner = myChannel, id=filter_id)
   collection = collections[0]
-  
+
   rules = Rule.objects.filter(rule_collection = collection)
   for rule in rules:
     rule_matched_comments = getMatchedComments(rule, myChannel)
@@ -129,34 +130,22 @@ def ruleChart(request, filter_id, rule_id):
 
 # -------------- RULE RELATED STUFF BELOW --------------
 @csrf_exempt
-def previewRule(request, rule_id):
+def previewRule(request):
   myChannel = getChannel(request)
-  rules = Rule.objects.filter(id=rule_id)
-  if (rules):
-    rule = rules[0]
-    matched_comments = getMatchedComments(rule, myChannel)
-    response = {
-    	'matched_comments': matched_comments,
-    }
-  else:
-  	response = {
-  		'matched_comments': None,
-  	}
+  rule = json.loads(request.body.decode('utf-8'))
+  response = {
+    'comments': getMatchedComments(rule, myChannel)
+  }
   return HttpResponse(json.dumps(response), content_type='application/json')
 
 @csrf_exempt
 def getComment(request, comment_id):
-	myComment = Comment.objects.filter(id = comment_id)
-	if (myComment):
-		commentObject = serializeComment(myComment)
-		response = {
-			'comment': commentObject
-		}
-	else:
-		response = {
-			'comment': None
-		}
-	return HttpResponse(json.dumps(response), content_type='application/json')
+  myChannel = getChannel(request)
+  # TODO: Fix this!
+  response = {
+
+  }
+  return HttpResponse(json.dumps(response), content_type='application/json')
 
 @csrf_exempt
 def previewFilter(request, filter_id):
@@ -169,13 +158,10 @@ def previewFilter(request, filter_id):
 		for rule in rules:
 			matched_comments += getMatchedComments(rule, myChannel)
 		response = {
-			'matched_comments': matched_comments,
+			'comments': matched_comments
 	  }
-	else:
-		response = {
-	    'matched_comments': None,
-	  }
-	return HttpResponse(json.dumps(response), content_type='application/json')
+    return HttpResponse(json.dumps(response), content_type='application/json')
+	return HttpResponse('Filter not found'.encode('utf-8'), status = 404)
 
 @csrf_exempt
 def loadFilters(request):
@@ -185,11 +171,6 @@ def loadFilters(request):
   for collection in collections:
     collectionObject = serializeCollection(collection)
     filters.append(collectionObject)
-
-  # filters = [
-  # {"id": 8, "name": "Test Group", "rules": []}, 
-  # {"id": 9, "name": "Swear Words", "rules": []},
-  # ]
 
   response = {
     'filters': filters

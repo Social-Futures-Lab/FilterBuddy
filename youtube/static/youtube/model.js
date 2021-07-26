@@ -148,10 +148,9 @@
     }
   };
 
-  WordFilterGroup.prototype.getExamples = function (wordFilter) {
-    // Get some examples that would be caught
-    return this._api.getExamplesInContext(this._id, wordFilter).execute();
-  };
+  WordFilterGroup.prototype.getRules = function () {
+    return this._rules.slice(0);
+  }
 
   WordFilterGroup.prototype.finalize = function (reference) {
     if (this.isFinalized()) {

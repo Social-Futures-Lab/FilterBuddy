@@ -314,17 +314,44 @@
     }).bind(this));
 
     // Previewing caught comments when adding a new rule
-    this._P.bind($('rule-explore'), 'keyup', 'gui.rule-explore.change');
-    this._P.listen('gui.rule-explore.change', (function (e) {
+    this._P.bind($('rule-explore'), 'keyup', 'gui.rule.change');
+    this._P.listen('gui.rule.change', (function (e) {
       var currentFilter = this._sidebar.selected();
       if (currentFilter === null) {
         throw new Error('Illegal state. Cannot preview rule with no filter.');
       }
-      // Get the stuff
-      var phrase = e.target.value;
-      // Do debouncing???
-      console.log(phrase);
-      // Render stuff in the
+      // Get the phrase
+      var phrase = e.target.value.trim();
+
+      currentFilter.previewRule().setPhrase(phrase);
+      return this._P.emit('comments.preview', currentFilter);
+    }).bind(this));
+
+    this._P.listen('comments.preview', (function (filter) {
+      return filter.previewRule().preview().then(function (comments) {
+        this._tablePreview.setRows(comments['comments']);
+      });
+    }).bind(this));
+
+    this._P.bind($('btn-add-rule'), 'click', 'gui.rule.add');
+    this._P.listen('gui.rule.add', (function (e) {
+      // The add rule button was clicked
+      e.preventDefault();
+
+      var currentFilter = this._sidebar.selected();
+      if (currentFilter === null) {
+        throw new Error('Illegal action. Cannot add rule to no filter.')
+      }
+
+      return currentFilter.finalizePreviewRule().then((function () {
+        this._P.emit('rules.preview');
+      }).bind(this);
+    }).bind(this));
+    this._P.listen('rules.preview', (function () {
+      var currentFilter = this._sidebar.selected();
+      if (currentFilter !== null) {
+        this._tableRules.setRows(currentFilter.getRules());
+      }
     }).bind(this));
 
 
@@ -345,6 +372,7 @@
         throw e;
       });
     }).bind(this));
+
     this._P.bind($('btn-delete'), 'click', 'gui.filter.delete');
     this._P.listen('gui.filter.delete', (function (e) {
       var selected = this._sidebar.selected();
@@ -399,6 +427,9 @@
         $('wiz-mode-clone').removeAttribute('disabled');
         dropdown.removeAttribute('disabled');
       }
+
+      // Do any async actions
+      this._P.emit('rules.preview');
     }).bind(this));
 
     this._P.listen('sidebar.select', (function (item) {
