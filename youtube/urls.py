@@ -22,7 +22,9 @@ urlpatterns = [
   path('get_rule_collection_templates', views.get_rule_collection_templates, name='get_rule_collection_templates'),
   path('get_matching_comments/<str:phrase>', views.get_matching_comments, name='get_matching_comments'),
 
+
   path('api', views_api.api, name='api'),
+  path('api/debug', views_api.debug),
   path('api/authenticate', views_api.getUserInfo),
 
   # Filter related modifiers
