@@ -82,17 +82,20 @@
       ('id' in def ? ('' + def['id']) : ''));
     this._name = (typeof def === 'undefined' ? 'Unnamed Group' : def['name']);
 
-    this._rules = (typeof def !== 'undefined' ?
-      WordFilterGroup.createRules(this._api, def['rules']) : []);
+    this._rules = [];
     this._previewRule = new WordFilter(api, this, {'phrase': ''});
+
+    if (typeof def !== 'undefined' && 'rules' in def) {
+      this._loadRules(def['rules'])
+    }
   }
 
-  WordFilterGroup.createRules = function (api, rules) {
+  WordFilterGroup.prototype._loadRules = function (rules) {
     if (!Array.isArray(rules)) {
-      return [];
+      this._rules = [];
     } else {
-      return rules.map((function (ruleDef) {
-        return new WordFilter(api, this, ruleDef);
+      this._rules = rules.map((function (ruleDef) {
+        return new WordFilter(this._api, this, ruleDef);
       }).bind(this));
     }
   };
@@ -166,9 +169,10 @@
     }
     return this._api.createFilter(this._name, reference).
       execute().
-      then((function (id) {
-        this._id = id.id;
-        return id;
+      then((function (serialized) {
+        this._id = serialized.id;
+        this._loadRules(serialized['rules']);
+        return this._id;
       }).bind(this));
   };
 

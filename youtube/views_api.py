@@ -235,9 +235,8 @@ def createFilter(request):
   if collection is None:
     return HttpResponse('Creation of filter failed'.encode('utf-8'), status = 500)
   else:
-    return HttpResponse(json.dumps({
-        'id': collection.id
-      }), content_type='application/json')
+    return HttpResponse(json.dumps(serializeCollection(collection)),
+      content_type='application/json')
 
 @csrf_exempt
 def updateFilter(request):
