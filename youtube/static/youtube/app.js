@@ -256,6 +256,26 @@
         this._P.emit('sidebar.update.labels');
       }).bind(this))
     }).bind(this));
+
+    // Previewing caught comments when adding a new rule
+    this._P.bind($('rule-explore'), 'keyup', 'gui.rule-explore.change');
+    this._P.listen('gui.rule-explore.change', (function (e) {
+      if (this._sidebar.selected() === null) {
+        throw new Error('Name changed but nothing selected!');
+      }      
+      var currentId = this._sidebar.selected().getId();
+      var currentFilter = this._model.getGroup(currentId);
+      var ruleText = e.key;
+      wordfilter = WordFilter({'phrase': ruleText});
+      console.log(wordfilter);
+      return currentFilter.getExamplesInContext(e.key).then((function () {
+        this._P.emit();
+      }).bind(this))
+    }).bind(this));
+
+
+
+
     this._P.bind($('btn-create-rule-group'), 'click', 'gui.filter.create');
     this._P.listen('gui.filter.create', (function (e) {
       // Can only be clicked in the case where it is new
