@@ -132,7 +132,9 @@ def ruleChart(request, filter_id, rule_id):
 @csrf_exempt
 def previewRule(request):
   myChannel = getChannel(request)
-  rule = json.loads(request.body.decode('utf-8'))
+  payload = json.loads(request.body.decode('utf-8'))
+  # context is the filter group id
+  context, rule = payload['id'], payload['rule']
   response = {
     'comments': getMatchedComments(rule, myChannel)
   }

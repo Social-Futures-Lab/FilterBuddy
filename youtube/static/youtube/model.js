@@ -14,7 +14,8 @@
     this._parent = parent;
 
     this._id = (typeof def === 'undefined') ?
-      '' : ('' + def['id']);
+      '' :
+      ('id' in def ? ('' + def['id']) : '');
     this._phrase = (typeof def === 'undefined') ?
       '(Empty)' : def['phrase'];
   }
@@ -71,7 +72,8 @@
     this._parent = parent;
     this._api = api;
 
-    this._id = (typeof def === 'undefined' ? '' : ('' + def['id']));
+    this._id = (typeof def === 'undefined' ? '' :
+      ('id' in def ? ('' + def['id']) : ''));
     this._name = (typeof def === 'undefined' ? 'Unnamed Group' : def['name']);
 
     this._rules = (typeof def !== 'undefined' ?
@@ -96,7 +98,7 @@
   WordFilterGroup.prototype.finalizePreviewRule = function () {
     return this._previewRule.finalize().then((function () {
       this._rules.push(this._previewRule);
-      this._previewRule = new WordFilter(api, this, {'phrase': ''})
+      this._previewRule = new WordFilter(api, this)
     }).bind(this));
   };
 
