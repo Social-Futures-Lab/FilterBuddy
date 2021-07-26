@@ -6,9 +6,9 @@ def serializeRules(collection):
   rulesList = []
   for rule in rules:
     ruleObject = {
-    'id': rule.id,
-    'phrase': rule.phrase,
-    'exception_phrase': rule.exception_phrase,
+      'id': rule.id,
+      'phrase': rule.phrase,
+      'exception_phrase': rule.exception_phrase,
     }
     rulesList.append(ruleObject)
   return rulesList

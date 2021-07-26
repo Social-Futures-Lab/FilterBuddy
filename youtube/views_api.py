@@ -243,11 +243,14 @@ def updateFilter(request):
     collection.save()
     return HttpResponse(json.dumps({}), content_type='application/json')
   elif (updateAction == 'rules:add'):
+    phrase = updateValue['phrase']
     rule = Rule.objects.create(
-      phrase = updateValue,
+      phrase = phrase,
       rule_collection = collection,
     )
-    return HttpResponse(json.dumps({}), content_type='application/json')
+    return HttpResponse(json.dumps({
+      'id': rule.id
+    }), content_type='application/json')
   elif (updateAction == 'rules:remove'):
     rules = Rule.objects.filter(id = updateValue)
     if (rules):

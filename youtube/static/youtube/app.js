@@ -322,7 +322,6 @@
       }
       // Get the phrase
       var phrase = e.target.value.trim();
-      console.log(currentFilter.previewRule());
       currentFilter.previewRule().setPhrase(phrase);
       return this._P.emit('comments.preview', currentFilter);
     }).bind(this));

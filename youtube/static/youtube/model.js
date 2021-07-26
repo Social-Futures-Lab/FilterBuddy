@@ -29,10 +29,12 @@
       return Promise.reject(new Error(
         'Cannot finalize an already finalized rule'));
     } else {
-      return this._api.updateFilter(this._id, 'rules:add', this.serialize()).
-        execute().
-        then((function (id) {
-          this._id = id;
+      console.log(this._parent);
+      return this._api.updateFilter(
+        this._parent.getId(),
+        'rules:add',
+        this.serialize()).execute().then((function (id) {
+          this._id = id.id;
         }).bind(this));
     }
   };
@@ -43,8 +45,10 @@
       return Promise.resolve();
     } else {
       this._phrase = phrase;
-      return this._api.updateFilter(this._id, 'rules:modify', this.serialize()).
-        execute();
+      return this._api.updateFilter(
+        this._parent.getId(),
+        'rules:modify',
+        this.serialize()).execute();
     }
   };
 
@@ -53,8 +57,10 @@
   };
 
   WordFilter.prototype.preview = function (numExamples) {
-    return this._api.getRulePreview(this._parent.getId(),
-      this.serialize(), numExamples).execute();
+    return this._api.getRulePreview(
+      this._parent.getId(),
+      this.serialize(),
+      numExamples).execute();
   };
 
   WordFilter.prototype.toString = function () {
