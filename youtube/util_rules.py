@@ -22,7 +22,7 @@ def serializeComment(myComment, isComment=True):
 	if (isComment):
 		commentId = myComment.comment_id
 	else:
-		commentId = myComment.reply_id	
+		commentId = myComment.reply_id
 	commentObject = {
 		'id': commentId,
 		'text': myComment.text,
@@ -33,7 +33,7 @@ def serializeComment(myComment, isComment=True):
 	return commentObject
 
 def getMatchedComments(rule, myChannel):
-	phrase = rule.phrase
+	phrase = rule['phrase']
 	myComments = Comment.objects.filter(video__channel=myChannel)
 	matched_comments = []
 	for myComment in myComments:

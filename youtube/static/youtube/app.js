@@ -314,15 +314,15 @@
     }).bind(this));
 
     // Previewing caught comments when adding a new rule
-    this._P.bind($('rule-explore'), 'keyup', 'gui.rule.change');
-    this._P.listen('gui.rule.change', (function (e) {
+    this._P.bind($('rule-explore'), 'keyup', 'gui.rule.preview.change');
+    this._P.listen('gui.rule.preview.change', (function (e) {
       var currentFilter = this._sidebar.selected();
       if (currentFilter === null) {
         throw new Error('Illegal state. Cannot preview rule with no filter.');
       }
       // Get the phrase
       var phrase = e.target.value.trim();
-
+      console.log(currentFilter.previewRule());
       currentFilter.previewRule().setPhrase(phrase);
       return this._P.emit('comments.preview', currentFilter);
     }).bind(this));
