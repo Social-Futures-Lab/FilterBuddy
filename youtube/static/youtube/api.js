@@ -63,6 +63,7 @@
       'method': method,
       'headers': {}
     };
+
     if (typeof this._body !== 'undefined' && this._body !== null) {
       config['body'] = JSON.stringify(this._body);
       config.headers['Content-Type']= 'application/json';
