@@ -315,6 +315,7 @@
 
     // Previewing caught comments when adding a new rule
     this._P.bind($('rule-explore'), 'keyup', 'gui.rule.preview.change');
+    this._P.bind($('rule-explore'), 'change', 'gui.rule.preview.change');
     this._P.listen('gui.rule.preview.change', (function (e) {
       var currentFilter = this._sidebar.selected();
       if (currentFilter === null) {
@@ -426,9 +427,6 @@
         $('wiz-mode-clone').removeAttribute('disabled');
         dropdown.removeAttribute('disabled');
       }
-
-      // Do any async actions
-      this._P.emit('rules.preview');
     }).bind(this));
 
     this._P.listen('sidebar.select', (function (item) {
@@ -438,7 +436,9 @@
           'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
-          // Set the head text
+          // Viewing an existing group
+          $('rule-explore').value = ''; // should trigger a preview
+
           $('filter-name').innerText = group.getName();
           $('name-wrapper').className = !group.isFinalized() ?
             'name-wrapper default' : 'name-wrapper';
