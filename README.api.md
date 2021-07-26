@@ -28,7 +28,7 @@
   - Remove the filter with ID
 
 ## Rules
-- previewRule(rule)
+- previewRule(filterGroup, rule)
   - Return comments that match rule
     - Comment id
     - Comment text

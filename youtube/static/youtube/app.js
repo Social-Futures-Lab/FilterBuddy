@@ -14,21 +14,24 @@
       require('Pettan'),
       require('WordFilterModel'),
       require('WordFilterApi'),
-      require('InteractiveChart'));
+      require('InteractiveChart'),
+      require('InteractiveTable'));
   } else {
     factory(root,
       root.dfc,
       root.Pettan,
       root.WordFilterModel,
       root.WordFilterApi,
-      root.InteractiveChart);
+      root.InteractiveChart,
+      root.InteractiveTable);
   }
 })(this, function (exports,
     _,
     Pettan,
     WordFilterModel,
     WordFilterApi,
-    InteractiveChart) {
+    InteractiveChart,
+    InteractiveTable) {
 
   function TabManager() {
     this._tabs = {};
@@ -199,8 +202,12 @@
     this._tabs = new TabManager();
     this._radioManager = new RadioManager();
     this._filterEditorTabs = new TabManager();
+
     this._sidebar = null;
     this._sidebarOverview = null;
+
+    this._tablePreview = null;
+    this._tableRules = null;
   }
 
   App.prototype._onLoad = function () {
@@ -244,14 +251,63 @@
       this._sidebar.select(function () { return false; });
     }).bind(this));
 
+    // Setup the tables
+    this._tablePreview = new InteractiveTable($('table-preview'), [
+      'actions',
+      'comment',
+      'video',
+      'time'
+    ], (function (src, col) {
+      if (col === 'actions') {
+
+      } else if (col === 'comment') {
+
+      } else if (col === 'video') {
+
+      } else if (col === 'time') {
+
+      } else {
+        return null;
+      }
+    }).bind(this));
+    this._tableRules = new InteractiveTable($('table-rules'), [
+      'actions',
+      'phrase',
+      'chart'
+    ], (function (src, col) {
+      if (col === 'actions') {
+        var delButton = _('a', {
+          'className': 'btn btn-danger',
+          'href': '#'
+        }, _('i', {'className': 'bi bi-trash'}));
+        delButton.addEventListener('click', (function (e) {
+          e.preventDefault();
+          src.delete().then((function () {
+            this._tableRules.removeRows(function (r) { return r === src; });
+          }).bind(this)).catch(function (e) {
+            alert('Delete filter rule failed with: ' + e)
+          });
+        }).bind(this));
+        return delButton;
+      } else if (col === 'phrase') {
+        return src.toString();
+      } else if (col === 'chart') {
+        return _('div', {
+          'className': 'rule-spark'
+        });
+      } else {
+        return null;
+      }
+    }).bind(this));
+
     // Bind some GUI elements
+    // = Binding for filter name setup
     this._P.bind($('filter-name'), 'input', 'gui.filter-name.change');
     this._P.listen('gui.filter-name.change', (function (e) {
-      if (this._sidebar.selected() === null) {
+      var currentFilter = this._sidebar.selected();
+      if (currentFilter === null) {
         throw new Error('Name changed but nothing selected!');
       }
-      var currentId = this._sidebar.selected().getId();
-      var currentFilter = this._model.getGroup(currentId);
       return currentFilter.setName(e.target.innerText).then((function () {
         this._P.emit('sidebar.update.labels');
       }).bind(this))
@@ -260,20 +316,16 @@
     // Previewing caught comments when adding a new rule
     this._P.bind($('rule-explore'), 'keyup', 'gui.rule-explore.change');
     this._P.listen('gui.rule-explore.change', (function (e) {
-      if (this._sidebar.selected() === null) {
-        throw new Error('Name changed but nothing selected!');
-      }      
-      var currentId = this._sidebar.selected().getId();
-      var currentFilter = this._model.getGroup(currentId);
-      var ruleText = e.key;
-      wordfilter = WordFilter({'phrase': ruleText});
-      console.log(wordfilter);
-      return currentFilter.getExamplesInContext(e.key).then((function () {
-        this._P.emit();
-      }).bind(this))
+      var currentFilter = this._sidebar.selected();
+      if (currentFilter === null) {
+        throw new Error('Illegal state. Cannot preview rule with no filter.');
+      }
+      // Get the stuff
+      var phrase = e.target.value;
+      // Do debouncing???
+      console.log(phrase);
+      // Render stuff in the
     }).bind(this));
-
-
 
 
     this._P.bind($('btn-create-rule-group'), 'click', 'gui.filter.create');

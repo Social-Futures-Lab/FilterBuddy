@@ -208,6 +208,17 @@
     }
   };
 
+  WordFilterApi.prototype.getRuleExamples = function (parentId, data, limit) {
+    if (this._mode === 'local-only') {
+      return new FakeApiRequest({'comments': []});
+    } else {
+      return this.createRequest('previewRule', {
+        'id': parentId,
+        'rule': data,
+        'limit': limit
+      });
+    }
+  };
 
   WordFilterApi.prototype.getChartMetadata = function (endpoint) {
     if (this._mode === 'local-only') {

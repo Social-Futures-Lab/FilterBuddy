@@ -9,32 +9,62 @@
     factory(root);
   }
 })(this, function (exports) {
-  function WordFilter(api, def) {
-    // Current impl assumes a string for def
-    if (typeof def !== 'string') {
-      // throw new Error('NotImplemented: Complex word filters');
-      this._id = (typeof def === 'undefined' ? '' : ('' + def['id']));
-      this._phrase = (typeof def === 'undefined' ? 'Unnamed Phrase' : def['phrase']);
-
-    }
-    this._def = def;
+  function WordFilter(api, parent, def) {
     this._api = api;
+    this._parent = parent;
+
+    this._id = (typeof def === 'undefined') ?
+      '' : ('' + def['id']);
+    this._phrase = (typeof def === 'undefined') ?
+      '(Empty)' : def['phrase'];
   }
+
+  WordFilter.prototype.isFinalized = function () {
+    return this._id !== '';
+  };
+
+  WordFilter.prototype.finalize = function () {
+    if (this.isFinalized()) {
+      return Promise.reject(new Error(
+        'Cannot finalize an already finalized rule'));
+    } else {
+      return this._api.updateFilter(this._id, 'rules:add', this.serialize()).
+        execute().
+        then((function (id) {
+          this._id = id;
+        }).bind(this));
+    }
+  };
+
+  WordFilter.prototype.setPhrase = function (phrase) {
+    if (!this.isFinalized()) {
+      this._phrase = phrase;
+      return Promise.resolve();
+    } else {
+      this._phrase = phrase;
+      return this._api.updateFilter(this._id, 'rules:modify', this.serialize()).
+        execute();
+    }
+  };
 
   WordFilter.prototype.getId = function () {
-    return 'id' in this._def ? this._def['id'] : null;
-  }
+    return this._id;
+  };
 
-  WordFilter.prototype.getExamples = function (numExamples) {
-    return this._api;
+  WordFilter.prototype.preview = function (numExamples) {
+    return this._api.getRulePreview(this._parent.getId(),
+      this.serialize(), numExamples).execute();
   };
 
   WordFilter.prototype.toString = function () {
-    return this._def;
+    return this._phrase;
   };
 
   WordFilter.prototype.serialize = function () {
-    return this._def;
+    return {
+      'id': this._id,
+      'phrase': this._phrase
+    };
   };
 
   function WordFilterGroup(parent, api, def) {
@@ -45,27 +75,42 @@
     this._name = (typeof def === 'undefined' ? 'Unnamed Group' : def['name']);
 
     this._rules = (typeof def !== 'undefined' ?
-      WordFilterGroup.createRules(api, def['rules']) : []);
+      WordFilterGroup.createRules(this._api, def['rules']) : []);
+    this._previewRule = new WordFilter(api, this, {'phrase': ''});
   }
 
   WordFilterGroup.createRules = function (api, rules) {
-    return rules.map(function (rule) {
-      return new WordFilter(api, rule);
-    });
+    if (!Array.isArray(rules)) {
+      return []
+    } else {
+      return rules.map((function (ruleDef) {
+        return new WordFilter(api, this, ruleDef);
+      }).bind(this));
+    }
   };
 
-  WordFilterGroup.prototype.addRule = function (rule) {
-    return this._api.updateFilter(this._id, 'rules:add', rule).execute().
-      then((function () {
-        this._rules.push(rule);
-      }).bind(this));
+  WordFilterGroup.prototype.previewRule = function () {
+    return this._previewRule;
+  }
+
+  WordFilterGroup.prototype.finalizePreviewRule = function () {
+    return this._previewRule.finalize().then((function () {
+      this._rules.push(this._previewRule);
+      this._previewRule = new WordFilter(api, this, {'phrase': ''})
+    }).bind(this));
   };
 
   WordFilterGroup.prototype.removeRule = function (rule) {
-    return this._api.updateFilter(this._id, 'rules:add', rule).execute().
-      then((function () {
+    if (rule._parent !== this) {
+      return Promise.reject(new Error('Cannot remove foreign rule'));
+    }
+    return this._api.updateFilter(
+      this._id,
+      'rules:remove',
+      rule.serialize()).execute().then((function () {
+        // Remove the rule locally
         this._rules = this._rules.filter(function (r) {
-          return r.getId() !== rule['id'];
+          return r === rule || r.getId() === rule.getId();
         });
       }).bind(this));
   }
@@ -105,17 +150,8 @@
 
   WordFilterGroup.prototype.getExamples = function (wordFilter) {
     // Get some examples that would be caught
-    return this._api.getExamplesInContext(this._id, wordFilter);
+    return this._api.getExamplesInContext(this._id, wordFilter).execute();
   };
-
-  WordFilterGroup.prototype.deleteRule = function (rule) {
-    return this._api.removeRule(this._id, rule).then((function () {
-      var index = this._rules.indexOf(rule);
-      if (index >= 0) {
-        this._rules.splice(index, 1);
-      }
-    }).bind(this));
-  }
 
   WordFilterGroup.prototype.finalize = function (reference) {
     if (this.isFinalized()) {
