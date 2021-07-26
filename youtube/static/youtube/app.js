@@ -454,7 +454,7 @@
 
             return Promise.all([
               this._P.emit('charts.draw.filter', group),
-              this._P.emit('rules.preview', item)
+              this._P.emit('rules.preview', group)
             ]);
           }
         }

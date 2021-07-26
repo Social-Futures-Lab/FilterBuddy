@@ -158,7 +158,7 @@
 
   WordFilterGroup.prototype.getRules = function () {
     return this._rules.slice(0);
-  }
+  };
 
   WordFilterGroup.prototype.finalize = function (reference) {
     if (this.isFinalized()) {
