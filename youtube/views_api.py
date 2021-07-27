@@ -130,7 +130,7 @@ def overviewChart(request):
 
 @csrf_exempt
 def filterChart(request, filter_id):
-  
+
   myChannel = getChannel(request)
   collections = RuleCollection.objects.filter(owner = myChannel, id=filter_id)
   collection = collections[0]
@@ -290,7 +290,11 @@ def updateFilter(request):
       'id': rule.id
     }), content_type='application/json')
   elif (updateAction == 'rules:remove'):
-    rules = Rule.objects.filter(id = updateValue)
+    if 'id' in updateValue:
+      id = updateValue['id']
+      rules = Rule.objects.filter(id = id)
+    else:
+      return HttpResponse('Rule id not supplied'.encode('utf-8'), status = 400)
     if (rules):
       rule = rules[0]
       rule.delete()
