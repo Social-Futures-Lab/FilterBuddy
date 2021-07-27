@@ -4,14 +4,13 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase, getColors
+from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter
 from .util_filters import serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
 from datetime import datetime
 import urllib.request, json
 import random
-from collections import defaultdict
 
 def makeDebugChannel(channel_id = ''):
   try:
@@ -126,30 +125,6 @@ def overviewChart(request):
   chartConfig['borderColor'] = myColors
 
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
-
-def convertDate(myDate):
-  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')  
-  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
-  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S')
-  newDate = json.dumps(newDate.isoformat())
-  return newDate
-
-def ruleDateCounter(rule_matched_comments):
-  myData = defaultdict(int)
-  for comment in rule_matched_comments:
-    pub_date = comment['pub_date']
-    pub_date = convertDate(pub_date)
-    myData[pub_date] += 1
-
-  data = []
-  for pub_date in sorted(myData.keys()):
-    data.append(
-        {
-          'x': pub_date,
-          'y': myData[pub_date]
-        }
-      )
-  return data
 
 
 @csrf_exempt

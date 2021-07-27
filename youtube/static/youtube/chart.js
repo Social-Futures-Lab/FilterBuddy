@@ -87,14 +87,16 @@
         scales: {
           xAxes: [{
             type: 'time',
-            distribution: 'series',
+            distribution: 'linear',
           }],
-          yAxes: {
-            beginAtZero: true
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
           }
         }
-      }
-    });
+      });
 
     // Add the canvas to the dom
     this._dom.appendChild(_('div', {

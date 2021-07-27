@@ -1,5 +1,7 @@
 import re
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+from collections import defaultdict
+from datetime import datetime
 
 t_col = "#235dba"
 c_col = "#a50808"
@@ -61,3 +63,27 @@ def getMatchedComments(rule, myChannel):
         matched_comment = serializeCommentWithPhrase(reply, phrase, False)
         matched_comments.append(matched_comment)
   return matched_comments
+
+def convertDate(myDate):
+  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')  
+  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
+  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S')
+  # newDate = json.dumps(newDate.isoformat())
+  return newDate
+
+def ruleDateCounter(rule_matched_comments):
+  myData = defaultdict(int)
+  for comment in rule_matched_comments:
+    pub_date = comment['pub_date']
+    pub_date = convertDate(pub_date)
+    myData[pub_date] += 1
+
+  data = []
+  for pub_date in sorted(myData.keys()):
+    data.append(
+        {
+          'x': pub_date,
+          'y': myData[pub_date]
+        }
+      )
+  return data
