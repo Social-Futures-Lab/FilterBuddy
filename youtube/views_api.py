@@ -256,7 +256,18 @@ def createFilter(request):
         exception_phrase = rule.exception_phrase,
         rule_collection = collection)
   elif reference.startswith('template:'):
-    pass
+    print ("reference is: ", reference)
+    collection = RuleCollection.objects.create(
+      name = name,
+      create_date = datetime.now(),
+      owner = myChannel,
+      is_template = False)
+    referenceCollection = RuleCollection.objects.get(id = reference[9:])
+    for rule in Rule.objects.filter(rule_collection = referenceCollection):
+      newRule = Rule.objects.create(
+        phrase = rule.phrase,
+        exception_phrase = rule.exception_phrase,
+        rule_collection = collection)    
   else:
     return HttpResponse('Unrecognized reference'.encode('utf-8'), status = 400)
 
