@@ -263,9 +263,11 @@
       } else if (col === 'comment') {
         return src['text'];
       } else if (col === 'video') {
-        return src['video'];
+        return _('a', {
+          'href': 'https://www.youtube.com/watch?v=' + src['video_id']
+        }, src['video_title']);
       } else if (col === 'time') {
-        return src['time'];
+        return src['pub_date'];
       } else {
         return null;
       }

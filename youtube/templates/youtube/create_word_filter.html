@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 
     <!-- internal libraries -->
     <script type="text/javascript" src="{% static 'youtube/api.js' %}"></script>
@@ -95,18 +95,12 @@
               </div>
               <!-- end common preview -->
               <div id="wrap-edit-existing" class="py-2" style="display: none;">
-                <p>Add a rule by typing something in the text box below:</p>
-                <div class="rule-create basic row">
-                  <div class="col-auto">
-                    <input class="form-control" id="rule-explore" type="text" placeholder="Please type word to filter here">
-                  </div>
-                  <div class="col-auto">
-                    <a id="btn-add-rule" href="#" class="btn btn-primary mb-3">Add Rule</a>
-                  </div>
-                </div>
                 <div id="rule-edit-preview">
                   <h4>Preview</h4>
-                  <p>Matching comments</p>
+                  <p>
+                    The table below shows a sample of comments that are matched by
+                    <span id="label-preview-mode">any rule in the current filter group</span>
+                  </p>
                   <table id="table-preview" class="table table-striped table-hover interactive">
                     <thead>
                       <tr>
@@ -119,6 +113,19 @@
                     <tbody>
                     </tbody>
                   </table>
+                </div>
+                <div id="rule-new-input">
+                  <p>To add another word filter, enter a word into the box below:</p>
+                  <div class="rule-create basic row">
+                    <div class="col-auto">
+                      <input class="form-control" id="rule-explore" type="text" placeholder="Please type word to filter here">
+                    </div>
+                    <div class="col-auto">
+                      <a id="btn-add-rule" href="#" class="btn btn-primary mb-3">Add Rule</a>
+                    </div>
+                  </div>
+                  <p>As you type the preview above will show comments that would be filtered by the new rule.
+                    Clear the text entry box to switch back to a preview of the entire group.</p>
                 </div>
                 <div id="rule-edit-others">
                   <table id="table-rules" class="table table-striped table-hover interactive">
@@ -152,9 +159,9 @@
                     <div id="sec-template" class="py-1" style="display: none;">
                       <div class="mb-3">
                         <label for="templateName" class="form-label">Base this list on the following template:</label>
-                        <select id="dropdown-template" name="templateName" class="form-select" aria-label="Default select example">
-                          <option value="template:23" selected> Identity Hate - Racism</option>                          
-                          <option value="template:22"> Identity Hate - Sexism</option>                                                    
+                        <select id="dropdown-template" name="templateName" class="form-select">
+                          <option value="template:23" selected> Identity Hate - Racism</option>
+                          <option value="template:22"> Identity Hate - Sexism</option>
                         </select>
                       </div>
                       <!--
