@@ -39,6 +39,7 @@
         ]
   	  },
   	  options: {
+        maintainAspectRatio: false,
   	    scales: {
           yAxes: [{
             ticks: {
@@ -84,6 +85,7 @@
         datasets: chartData
       },
       options: {
+        maintainAspectRatio: false,
         scales: {
           xAxes: [{
             type: 'time',
