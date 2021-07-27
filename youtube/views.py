@@ -27,6 +27,7 @@ import copy
 
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 from .utils import *
+from .views_api import getChannel as getChannelFromRequest
 
 class YouTubeForm(forms.Form):
   pass
@@ -406,6 +407,30 @@ def get_rule_collection_templates(request):
     'filters': templates
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
+
+@csrf_exempt
+def sync(request):
+  myChannel = getChannelFromRequest(request)
+  myChannelId = myChannel.channel_id
+  videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
+  myVideoIds = []
+  with urllib.request.urlopen(videoFetchUrl) as url:
+    data = json.loads(url.read().decode())
+    for item in data['items']:
+      if 'videoId' in item['id'].keys():      
+        publishedAt = item['snippet']['publishedAt']
+        title = item['snippet']['title']        
+        videoId = item['id']['videoId']
+        myVideoIds.append(videoId)
+        pub_date = dateutil.parser.parse(publishedAt)
+        video, created = Video.objects.get_or_create(title = title, pub_date = pub_date, video_id = videoId, channel = myChannel)
+
+  youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
+
+  for video_id in myVideoIds:
+    get_comments_from_video(youtube, video_id)
+
+  return HttpResponse('Done.'.encode('utf-8'))  
 
 if __name__ == '__main__':
   # When running locally, disable OAuthlib's HTTPs verification.

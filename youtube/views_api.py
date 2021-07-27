@@ -29,7 +29,7 @@ def getChannel(request):
     return myChannel
   else:
     #return makeDebugChannel()
-    raise Exception('Could not get login gredentials')
+    raise Exception('Could not get login credentials')
 
 def isLoggedIn(request):
   return True #request.user.is_authenticated
@@ -72,6 +72,7 @@ def debug(request):
   if not 'myChannelId' in request.session['credentials']:
     request.session['credentials']['myChannelId'] = channel.channel_id
   return HttpResponse('Done.'.encode('utf-8'))
+
 
 @csrf_exempt
 def api(request):
