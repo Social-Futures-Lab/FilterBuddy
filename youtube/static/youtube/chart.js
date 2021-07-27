@@ -41,9 +41,11 @@
   	  },
   	  options: {
   	    scales: {
-  	      y: {
-  	        beginAtZero: true
-  	      }
+          yAxes: [{
+            ticks: {
+              beginAtZero: true
+            }
+          }]
   	    }
   	  }
   	});
