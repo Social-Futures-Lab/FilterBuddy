@@ -19,7 +19,7 @@
 
   InteractiveChart.prototype._drawChartData = function (chartConfig) {
     this._dom.innerHTML = ''; // clear the container
-    var canvas = _('canvas', {'width': '100%', 'height': '100%'}); // make the canvas
+    var canvas = _('canvas', {}); // make the canvas
     var ctx = canvas.getContext('2d');
 
     var chartData = chartConfig.data;
@@ -73,7 +73,7 @@
 
   InteractiveChart.prototype._drawFilterChartData = function (chartConfig) {
     this._dom.innerHTML = ''; // clear the container
-    var canvas = _('canvas', {'width': '100%', 'height': '100%'}); // make the canvas
+    var canvas = _('canvas', {}); // make the canvas
     var ctx = canvas.getContext('2d');
 
     var chartData = chartConfig.data;
@@ -101,11 +101,9 @@
     // Add the canvas to the dom
     this._dom.appendChild(_('div', {
       'style': {
-        'position': 'absolute',
-        'top': 0,
-        'left': 0,
-        'bottom': 0,
-        'right': 0
+        'position': 'relative',
+        'width': '100%',
+        'height': '100%'
       }
     }, [canvas]));
   };
