@@ -128,7 +128,10 @@ def overviewChart(request):
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
 def convertDate(myDate):
-  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y/%m/%d')  
+  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')  
+  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
+  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S')
+  newDate = json.dumps(newDate.isoformat())
   return newDate
 
 def ruleDateCounter(rule_matched_comments):

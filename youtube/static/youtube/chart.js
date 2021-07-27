@@ -87,17 +87,12 @@
         scales: {
           xAxes: [{
             type: 'time',
-            scaleLabel: {
-              display: true,
-              labelSting: "Date",
-            }
+            distribution: 'series',
           }],
-          yAxes: [{
-            ticks: {
-              beginAtZero: true,
-            }
-          }]
-        }        
+          yAxes: {
+            beginAtZero: true
+          }
+        }
       }
     });
 
