@@ -34,6 +34,8 @@ def serializeComment(myComment, isComment=True):
 
 def getMatchedComments(rule, myChannel):
   phrase = rule['phrase']
+  if (phrase == ''):
+    return []
   myComments = Comment.objects.filter(video__channel=myChannel)
   matched_comments = []
   for myComment in myComments:
