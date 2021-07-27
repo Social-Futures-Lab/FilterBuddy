@@ -70,8 +70,58 @@
     return this._drawWithData('overview');
   };
 
+
+  InteractiveChart.prototype._drawFilterChartData = function (chartConfig) {
+    this._dom.innerHTML = ''; // clear the container
+    var canvas = _('canvas', {}); // make the canvas
+    var ctx = canvas.getContext('2d');
+
+    var chartData = chartConfig.data;
+
+    this._chart = new Chart(ctx, {
+      type: chartConfig.type,
+      data: {
+        datasets: chartData
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            scaleLabel: {
+              display: true,
+              labelSting: "Date",
+            }
+          }],
+          yAxes: [{
+            ticks: {
+              beginAtZero: true,
+            }
+          }]
+        }        
+      }
+    });
+
+    // Add the canvas to the dom
+    this._dom.appendChild(_('div', {
+      'style': {
+        'position': 'absolute',
+        'top': 0,
+        'left': 0,
+        'bottom': 0,
+        'right': 0
+      }
+    }, [canvas]));
+  };
+
+
+  InteractiveChart.prototype._drawFilterChartWithData = function (endpoint) {
+    return this._api.getChartMetadata(endpoint).execute().then((function (c) {
+      this._drawFilterChartData(c);
+    }).bind(this));
+  };
+
   InteractiveChart.prototype.drawFilterGroup = function (id) {
-    return this._drawWithData('filter/' + id + '/overview');
+    return this._drawFilterChartWithData('filter/' + id + '/overview');
   };
 
   InteractiveChart.prototype.drawFilterRule = function (id, ruleId) {

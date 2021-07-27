@@ -11,6 +11,7 @@ from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 from datetime import datetime
 import urllib.request, json
 import random
+from collections import defaultdict
 
 def makeDebugChannel(channel_id = ''):
   try:
@@ -126,23 +127,55 @@ def overviewChart(request):
 
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
+def convertDate(myDate):
+  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y/%m/%d')  
+  return newDate
+
+def ruleDateCounter(rule_matched_comments):
+  myData = defaultdict(int)
+  for comment in rule_matched_comments:
+    pub_date = comment['pub_date']
+    pub_date = convertDate(pub_date)
+    myData[pub_date] += 1
+
+  data = []
+  for pub_date in sorted(myData.keys()):
+    data.append(
+        {
+          'x': pub_date,
+          'y': myData[pub_date]
+        }
+      )
+  return data
+
+
 @csrf_exempt
 def filterChart(request, filter_id):
-  myData = {}
+  
   myChannel = getChannel(request)
   collections = RuleCollection.objects.filter(owner = myChannel, id=filter_id)
   collection = collections[0]
 
   rules = Rule.objects.filter(rule_collection = collection)
+  myColors = getColors(len(rules))
+
+  ruleCounter = 0
+  myData = []
   for rule in rules:
+    ruleDict = {
+      'label': rule.phrase,
+      'borderColor': myColors[ruleCounter],
+    }
     rule_matched_comments = getMatchedComments(unifiedRule(rule), myChannel)
-    myData[rule.phrase] = len(rule_matched_comments)
+    ruleDict['data'] = ruleDateCounter(rule_matched_comments)
+    myData.append(ruleDict)
+    ruleCounter += 1
+
 
   chartConfig = {}
-  chartConfig['type'] = 'bar'
+  chartConfig['type'] = 'line'
   chartConfig['data'] = myData
   chartConfig['label'] = 'Number of Comments Caught'
-  # myColors = random.choices(range(256), k=len(myData))
   myColors = getColors(len(myData))
   chartConfig['bgColor'] = myColors
   chartConfig['borderColor'] = myColors
