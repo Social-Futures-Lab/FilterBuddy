@@ -220,6 +220,14 @@
     }
   };
 
+  WordFilterApi.prototype.getGroupPreview = function (groupId, limit) {
+    if (this._mode === 'local-only') {
+      return new FakeApiRequest({'comments': []});
+    } else {
+      return this.createRequest('previewFilter/' + groupId);
+    }
+  };
+
   WordFilterApi.prototype.getChartMetadata = function (endpoint) {
     if (this._mode === 'local-only') {
       return new FakeApiRequest({});

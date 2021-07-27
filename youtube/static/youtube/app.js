@@ -330,9 +330,20 @@
     }).bind(this));
 
     this._P.listen('comments.preview', (function (filter) {
-      return filter.previewRule().preview().then((function (comments) {
-        this._tablePreview.setRows(comments['comments']);
-      }).bind(this));
+      if (filter.previewRule().getPhrase().length > 0) {
+        return filter.previewRule().preview().then((function (comments) {
+          $('label-preview-mode').innerText = 'the word "' +
+            filter.previewRule().toString() + '"';
+          this._tablePreview.setRows(comments['comments']);
+        }).bind(this));
+      } else {
+        return filter.preview().then(function (comments) {
+          $('label-preview-mode').innerText =
+            'any rule in the current filter group';
+          this._tablePreview.setRows(comments['comments']);
+        });
+      }
+
     }).bind(this));
 
     this._P.bind($('btn-add-rule'), 'click', 'gui.rule.add');
@@ -345,8 +356,13 @@
         throw new Error('Illegal action. Cannot add rule to no filter.')
       }
 
+      if (currentFilter.previewRule().getPhrase().length === 0) {
+        return; // Nothings
+      }
+
       return currentFilter.finalizePreviewRule().then((function () {
         // Trigger both an update in the rules list and an update for the chart
+        $('rule-explore').value = '';
         return Promise.all([
           this._P.emit('charts.draw.filter', currentFilter),
           this._P.emit('rules.preview', currentFilter)
@@ -464,7 +480,8 @@
 
             return Promise.all([
               this._P.emit('charts.draw.filter', group),
-              this._P.emit('rules.preview', group)
+              this._P.emit('rules.preview', group),
+              this._P.emit('comments.preview', group)
             ]);
           }
         }

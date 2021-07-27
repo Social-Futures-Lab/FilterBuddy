@@ -17,7 +17,7 @@
       '' :
       ('id' in def ? ('' + def['id']) : '');
     this._phrase = (typeof def === 'undefined') ?
-      '(Empty)' : def['phrase'];
+      '' : def['phrase'];
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -52,6 +52,10 @@
     }
   };
 
+  WordFilter.prototype.getPhrase = function () {
+    return this._phrase;
+  }
+
   WordFilter.prototype.getId = function () {
     return this._id;
   };
@@ -71,7 +75,7 @@
   }
 
   WordFilter.prototype.toString = function () {
-    return this._phrase;
+    return this._phrase !== '' ? this._phrase : '(Empty)';
   };
 
   WordFilter.prototype.serialize = function () {
@@ -168,6 +172,14 @@
 
   WordFilterGroup.prototype.getRules = function () {
     return this._rules.slice(0);
+  };
+
+  WordFilterGroup.prototype.preview = function () {
+    if (this.isFinalized()) {
+      return this._api.getGroupPreview(this._id).execute();
+    } else {
+      return Promise.reject(new Error('Cannot preview non-final group.'))
+    }
   };
 
   WordFilterGroup.prototype.finalize = function (reference) {
