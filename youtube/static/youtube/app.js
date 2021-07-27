@@ -337,11 +337,11 @@
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
       } else {
-        return filter.preview().then(function (comments) {
+        return filter.preview().then((function (comments) {
           $('label-preview-mode').innerText =
             'any rule in the current filter group';
           this._tablePreview.setRows(comments['comments']);
-        });
+        }).bind(this));
       }
 
     }).bind(this));
