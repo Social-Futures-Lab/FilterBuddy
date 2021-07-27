@@ -27,7 +27,8 @@ def serializeCommentWithPhrase(myComment, phrase, isComment=True):
     'author': myComment.author,
     'likeCount': myComment.likeCount,
     'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
-    'span': k.span()
+    'span': k.span(),
+    'is_comment': isComment,
   }
   return commentObject
 
@@ -48,8 +49,6 @@ def serializeComment(myComment, isComment=True):
 
 def getMatchedComments(rule, myChannel):
   phrase = rule['phrase']
-  if (phrase == ''):
-    return []
   myComments = Comment.objects.filter(video__channel=myChannel)
   matched_comments = []
   for myComment in myComments:
