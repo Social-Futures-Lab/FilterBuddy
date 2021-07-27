@@ -28,7 +28,8 @@ def serializeCommentWithPhrase(myComment, phrase, isComment=True):
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
-    'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+    # 'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+    'pub_date': myComment.pub_date.isoformat(),
     'span': k.span(),
     'is_comment': isComment,
   }
@@ -45,7 +46,8 @@ def serializeComment(myComment, isComment=True):
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
-    'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+    # 'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
+    'pub_date': myComment.pub_date.isoformat(),    
   }
   return commentObject
 
@@ -65,10 +67,8 @@ def getMatchedComments(rule, myChannel):
   return matched_comments
 
 def convertDate(myDate):
-  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d %H:%M:%S')  
-  newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
-  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S')
-  # newDate = json.dumps(newDate.isoformat())
+  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
+  newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')    
   return newDate
 
 def ruleDateCounter(rule_matched_comments):
