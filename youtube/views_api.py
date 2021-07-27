@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase
+from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase, getColors
 from .util_filters import serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
@@ -119,7 +119,8 @@ def overviewChart(request):
   chartConfig['type'] = 'bar'
   chartConfig['data'] = myData
   chartConfig['label'] = 'Number of Comments Caught'
-  myColors = random.choices(range(256), k=len(myData))
+  # myColors = random.choices(range(256), k=len(myData))
+  myColors = getColors(len(myData))
   chartConfig['bgColor'] = myColors
   chartConfig['borderColor'] = myColors
 
@@ -141,7 +142,8 @@ def filterChart(request, filter_id):
   chartConfig['type'] = 'bar'
   chartConfig['data'] = myData
   chartConfig['label'] = 'Number of Comments Caught'
-  myColors = random.choices(range(256), k=len(myData))
+  # myColors = random.choices(range(256), k=len(myData))
+  myColors = getColors(len(myData))
   chartConfig['bgColor'] = myColors
   chartConfig['borderColor'] = myColors
 
