@@ -63,6 +63,13 @@
       numExamples).execute();
   };
 
+  WordFilter.prototype.delete = function () {
+    if (!this.isFinalized()) {
+      return Promise.reject(new Error('Delete only works for finalized rules'));
+    }
+    return this._parent.removeRule(this);
+  }
+
   WordFilter.prototype.toString = function () {
     return this._phrase;
   };
@@ -124,7 +131,7 @@
           return r === rule || r.getId() === rule.getId();
         });
       }).bind(this));
-  }
+  };
 
   WordFilterGroup.prototype.isFinalized = function () {
     return this._id !== '';
