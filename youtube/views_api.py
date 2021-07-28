@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter
+from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter
 from .util_filters import serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 
@@ -175,7 +175,7 @@ def previewRule(request):
   # context is the filter group id
   context, rule = payload['id'], payload['rule']
   response = {
-    'comments': getMatchedComments(unifiedRule(rule), myChannel)
+    'comments': getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
 
@@ -197,7 +197,7 @@ def previewFilter(request, filter_id):
     matched_comments = []
     rules = Rule.objects.filter(rule_collection = collection)
     for rule in rules:
-      matched_comments += getMatchedComments(unifiedRule(rule), myChannel)
+      matched_comments += getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
     response = {
       'comments': matched_comments
     }
