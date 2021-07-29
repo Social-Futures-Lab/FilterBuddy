@@ -17,6 +17,8 @@ class RuleCollection(models.Model):
   create_date = models.DateTimeField('date published')
   owner = models.ForeignKey(Channel, on_delete=models.CASCADE, blank=True, null=True)
   is_template = models.BooleanField()
+  description = models.TextField(default="")
+  num_subscribers = models.IntegerField(default=0)
 
   def __str__(self):
     return u'%s' % (self.name)
