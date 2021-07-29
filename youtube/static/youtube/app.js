@@ -255,13 +255,16 @@
     this._tablePreview = new InteractiveTable($('table-preview'), [
       'actions',
       'comment',
-      'video',
+      'author',      
+      'video',      
       'time'
     ], (function (src, col) {
       if (col === 'actions') {
         return null;
       } else if (col === 'comment') {
         return src['text'];
+      } else if (col === 'author') {
+        return src['author'];        
       } else if (col === 'video') {
         return _('a', {
           'href': 'https://www.youtube.com/watch?v=' + src['video_id']

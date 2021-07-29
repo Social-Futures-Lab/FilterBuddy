@@ -278,7 +278,6 @@ def createFilter(request):
         exception_phrase = rule.exception_phrase,
         rule_collection = collection)
   elif reference.startswith('template:'):
-    print ("reference is: ", reference)
     collection = RuleCollection.objects.create(
       name = name,
       create_date = datetime.now(),
