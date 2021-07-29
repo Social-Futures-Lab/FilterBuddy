@@ -62,15 +62,6 @@
     }, [canvas]));
   };
 
-  InteractiveChart.prototype._drawWithData = function (endpoint) {
-    return this._api.getChartMetadata(endpoint).execute().then((function (c) {
-      this._drawChartData(c);
-    }).bind(this));
-  };
-
-  InteractiveChart.prototype.drawOverview = function () {
-    return this._drawWithData('overview');
-  };
 
   InteractiveChart.prototype._drawFilterChartData = function (chartConfig) {
     this._dom.innerHTML = ''; // clear the container
@@ -120,6 +111,16 @@
   InteractiveChart.prototype.drawFilterGroup = function (id) {
     return this._drawFilterChartWithData('filter/' + id + '/overview');
   };
+
+  InteractiveChart.prototype._drawWithData = function (endpoint) {
+    return this._api.getChartMetadata(endpoint).execute().then((function (c) {
+      this._drawChartData(c);
+    }).bind(this));
+  };
+
+  InteractiveChart.prototype.drawOverview = function () {
+    return this._drawFilterChartWithData('overview');
+  };  
 
   InteractiveChart.prototype.drawFilterRule = function (id, ruleId) {
     return this._drawWithData('filter/' + id + '/rule/' + ruleId);

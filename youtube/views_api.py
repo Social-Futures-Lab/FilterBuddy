@@ -105,25 +105,44 @@ def getUserInfo(request):
 
 @csrf_exempt
 def overviewChart(request):
-  myData = {}
+  myData = []
   myChannel = getChannel(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
+  myColors = getColors(len(collections))
+
+  colorCounter = 0
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
-    matched_comments = set()
+    matched_comments_ids = set()
+    matched_replies_ids = set()
+    all_matched_comments = []
     for rule in rules:
       for c in getMatchedComments(unifiedRule(rule), myChannel):
-        matched_comments.add(c['id'])
-    myData[collection.name] = len(matched_comments)
+        if (c['is_comment'] == True):
+          if (c['id'] not in matched_comments_ids):
+            all_matched_comments.append(c)
+            matched_comments_ids.add(c['id'])
+        else:
+          if (c['id'] not in matched_replies_ids):
+            all_matched_comments.append(c)          
+            matched_replies_ids.add(c['id'])
+    collectionDict = {
+          'label': collection.name,
+          'borderColor': myColors[colorCounter],
+          'data': ruleDateCounter(all_matched_comments),
+          'fill': False,
+        }  
+    myData.append(collectionDict)      
+    colorCounter += 1
+    
 
   chartConfig = {}
-  chartConfig['type'] = 'bar'
+  chartConfig['type'] = 'line'
   chartConfig['data'] = myData
   chartConfig['label'] = 'Number of Comments Caught'
-  # myColors = random.choices(range(256), k=len(myData))
   myColors = getColors(len(myData))
   chartConfig['bgColor'] = myColors
-  chartConfig['borderColor'] = myColors
+  chartConfig['borderColor'] = myColors    
 
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
@@ -144,6 +163,7 @@ def filterChart(request, filter_id):
     ruleDict = {
       'label': rule.phrase,
       'borderColor': myColors[ruleCounter],
+      'fill': False,
     }
     rule_matched_comments = getMatchedComments(unifiedRule(rule), myChannel)
     ruleDict['data'] = ruleDateCounter(rule_matched_comments)

@@ -72,7 +72,6 @@ def getMatchedComments(rule, myChannel):
   return matched_comments
 
 def convertDate(myDate):
-  # newDate = datetime.strptime(myDate, '%m/%d/%Y, %H:%M:%S').strftime('%Y-%m-%d')    
   newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')    
   return newDate
 
