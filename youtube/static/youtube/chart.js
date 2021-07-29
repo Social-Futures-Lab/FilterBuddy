@@ -84,7 +84,8 @@
           }],
           yAxes: [{
             ticks: {
-              beginAtZero: true
+              beginAtZero: true,
+              callback: function(value) {if (value % 1 === 0) {return value;}}
             }
           }]
           }

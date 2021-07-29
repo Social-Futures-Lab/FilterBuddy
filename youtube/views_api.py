@@ -131,6 +131,7 @@ def overviewChart(request):
           'borderColor': myColors[colorCounter],
           'data': ruleDateCounter(all_matched_comments),
           'fill': False,
+          'lineTension': 0,
         }  
     myData.append(collectionDict)      
     colorCounter += 1
@@ -164,6 +165,7 @@ def filterChart(request, filter_id):
       'label': rule.phrase,
       'borderColor': myColors[ruleCounter],
       'fill': False,
+      'lineTension': 0,
     }
     rule_matched_comments = getMatchedComments(unifiedRule(rule), myChannel)
     ruleDict['data'] = ruleDateCounter(rule_matched_comments)
