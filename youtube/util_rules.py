@@ -29,12 +29,11 @@ def serializeCommentWithPhrase(myComment, phrase, isComment=True):
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
-    # 'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
     'pub_date': myComment.pub_date.isoformat(),
-    'span': k.span(),
     'is_comment': isComment,
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
+    'span': k.span(),    
   }
   return commentObject
 
@@ -49,8 +48,8 @@ def serializeComment(myComment, isComment=True):
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
-    # 'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
     'pub_date': myComment.pub_date.isoformat(),    
+    'is_comment': isComment,    
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
   }
