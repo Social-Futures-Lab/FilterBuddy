@@ -54,7 +54,7 @@ urlpatterns = [
   # Django rest frameworks datatables
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
-  path('capi/commentTable', views_api.indexCommentCollection, name='commentTables'),  
+  path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
 
 ]
 

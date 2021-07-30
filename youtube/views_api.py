@@ -29,8 +29,8 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
       query_set = queryset.filter(owner = myChannel)
       return query_set    
 
-def indexCommentCollection(request):
-    return render(request, 'youtube/commentsTable.html')      
+def indexCommentCollection(request, filter_id):
+    return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
