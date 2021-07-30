@@ -11,6 +11,7 @@ from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
 from datetime import datetime
 import urllib.request, json
 import random
+import re
 
 from rest_framework import viewsets
 from .serializers import RuleCollectionSerializer, CommentSerializer
@@ -39,7 +40,18 @@ class CommentViewSet(viewsets.ModelViewSet):
       queryset = self.queryset
       myChannel = getChannel(self.request)
       myChannelComments = queryset.filter(video__channel = myChannel)
-      return myChannelComments        
+
+      rule_collection_id = self.kwargs['username']
+      rules = Rule.objects.filter(rule_collection__id = rule_collection_id)
+      phrases = [rule.phrase for rule in rules]
+
+      matched_comment_ids = []
+      for comment in myChannelComments:
+        if any(re.search(r'\b({})\b'.format(phrase), comment.text) for phrase in phrases):
+          matched_comment_ids.append(comment.comment_id)
+
+      matched_comments = Comment.objects.filter(comment_id__in = matched_comment_ids)   
+      return matched_comments        
 
 def makeDebugChannel(channel_id = ''):
   try:

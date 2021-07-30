@@ -10,7 +10,7 @@ from . import views_api
 
 router = routers.DefaultRouter()
 router.register(r'collections', views_api.RuleCollectionViewSet)
-router.register(r'commentTables', views_api.CommentViewSet)
+router.register(r'commentTables/(?P<username>\d+)', views_api.CommentViewSet)
 
 app_name = 'youtube'
 urlpatterns = [

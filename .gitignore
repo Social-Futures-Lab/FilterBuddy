@@ -161,7 +161,7 @@ youtube/static/youtube/.*
 youtube/templates/youtube/.*
 youtube/static/.*
 youtube/templates/.*
-
+._*
 
 
 # End of https://www.toptal.com/developers/gitignore/api/django

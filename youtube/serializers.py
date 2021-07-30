@@ -22,6 +22,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super(CommentSerializer, self).to_representation(instance)
-
         representation['pub_date'] = pretty_date(instance.pub_date.isoformat())
         return representation        
