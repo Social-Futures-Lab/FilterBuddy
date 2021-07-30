@@ -13,11 +13,10 @@ import urllib.request, json
 import random
 
 from rest_framework import viewsets
-from .serializers import RuleCollectionSerializer
+from .serializers import RuleCollectionSerializer, CommentSerializer
 
 def indexRuleCollection(request):
     return render(request, 'youtube/ruleCollections.html')
-
 
 class RuleCollectionViewSet(viewsets.ModelViewSet):
     queryset = RuleCollection.objects.all().order_by('create_date')
@@ -28,6 +27,19 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
       myChannel = getChannel(self.request)
       query_set = queryset.filter(owner = myChannel)
       return query_set    
+
+def indexCommentCollection(request):
+    return render(request, 'youtube/commentsTable.html')      
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all().order_by('pub_date')
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+      queryset = self.queryset
+      myChannel = getChannel(self.request)
+      myChannelComments = queryset.filter(video__channel = myChannel)
+      return myChannelComments        
 
 def makeDebugChannel(channel_id = ''):
   try:

@@ -10,6 +10,7 @@ from . import views_api
 
 router = routers.DefaultRouter()
 router.register(r'collections', views_api.RuleCollectionViewSet)
+router.register(r'commentTables', views_api.CommentViewSet)
 
 app_name = 'youtube'
 urlpatterns = [
@@ -53,6 +54,7 @@ urlpatterns = [
   # Django rest frameworks datatables
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
+  path('capi/commentTable', views_api.indexCommentCollection, name='commentTables'),  
 
 ]
 
