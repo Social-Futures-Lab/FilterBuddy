@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Rule Collections</title>
+  <meta name="description" content="Rolling Stone magazine's 2012 list of 500 greatest albums of all time with genres.">
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
+  <link rel="stylesheet" href="//cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
+</head>
+
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-12">
+        <table id="albums" class="table table-striped table-bordered" style="width:100%" data-server-side="true" data-ajax="/capi/collections/?format=datatables">
+          <thead>
+            <tr>
+              <th data-data="id">ID</th>
+              <th data-data="name">Name</th>
+              <th data-data="create_date">Creation Date</th>             
+            </tr>
+          </thead>
+        </table>
+      </div>
+    </div>
+  </div>
+  <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+  <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
+  <script>
+      $(document).ready(function() {
+          $('#albums').DataTable();
+      });
+  </script>
+</body>
+</html>

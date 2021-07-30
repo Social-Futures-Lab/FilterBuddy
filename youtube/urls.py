@@ -1,10 +1,15 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
+from django.conf.urls import url, include
+from rest_framework import routers
 
 from .views import HomePageView
 from . import views
 from . import views_api
+
+router = routers.DefaultRouter()
+router.register(r'collections', views_api.RuleCollectionViewSet)
 
 app_name = 'youtube'
 urlpatterns = [
@@ -44,6 +49,11 @@ urlpatterns = [
   path('api/previewRule', views_api.previewRule), # Preview rule is used to preview BEFORE a rule ID has been assigned
   path('api/previewFilter/<int:filter_id>', views_api.previewFilter),
   path('api/getComment/<int:comment_id>', views_api.getComment),
+
+  # Django rest frameworks datatables
+  path('capi/', include(router.urls)),
+  path('capi/collection', views_api.indexRuleCollection, name='collections'),
+
 ]
 
 if settings.DEBUG:
