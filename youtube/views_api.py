@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter
 from .util_filters import serializeRules, serializeCollection
-from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+from .models import Channel, RuleCollection, Rule, Video, Comment
 
 from datetime import datetime
 import urllib.request, json

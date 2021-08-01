@@ -34,22 +34,22 @@ class Rule(models.Model):
 class Video(models.Model):
   title = models.CharField(max_length=500)
   pub_date = models.DateTimeField('date published')
-  video_id = models.CharField(max_length=100, primary_key=True)
+  video_id = models.CharField(max_length=100)
   channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
 
 class Comment(models.Model):
   text = models.CharField(max_length=5000)
   pub_date = models.DateTimeField('date published')
+  author = models.CharField(max_length=200)
+  likeCount = models.IntegerField()
+  comment_id = models.CharField(max_length=100)
   video = models.ForeignKey(Video, on_delete=models.CASCADE)
-  author = models.CharField(max_length=200)
-  likeCount = models.IntegerField()
-  comment_id = models.CharField(max_length=100, primary_key=True)
-  thread_id = models.CharField(max_length=100)
+  parent_id = models.CharField(max_length=100, blank=True)
 
-class Reply(models.Model):
-  text = models.CharField(max_length=5000)
-  pub_date = models.DateTimeField('date published')
-  author = models.CharField(max_length=200)
-  likeCount = models.IntegerField()
-  comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-  reply_id = models.CharField(max_length=100, primary_key=True)
+# class Reply(models.Model):
+#   text = models.CharField(max_length=5000)
+#   pub_date = models.DateTimeField('date published')
+#   author = models.CharField(max_length=200)
+#   likeCount = models.IntegerField()
+#   comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+#   reply_id = models.CharField(max_length=100, primary_key=True)

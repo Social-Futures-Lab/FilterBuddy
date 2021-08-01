@@ -1,4 +1,4 @@
-from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+from .models import Channel, RuleCollection, Rule, Video, Comment
 import json
 
 def serializeRules(collection):

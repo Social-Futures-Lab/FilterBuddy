@@ -25,7 +25,7 @@ import urllib.request, json
 import re
 import copy
 
-from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+from .models import Channel, RuleCollection, Rule, Video, Comment
 from .utils import *
 from .views_api import getChannel as getChannelFromRequest
 
@@ -272,6 +272,23 @@ def get_video_comments(request, video_id):
   video_url = "https://www.youtube.com/watch?v=%s" % (video_id,)
   return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id, 'video_url': video_url})
 
+def saveCommentObject(youtube, item, video):
+  text = item['snippet']['topLevelComment']['snippet']['textDisplay']
+  pub_date = dateutil.parser.parse(item['snippet']['topLevelComment']['snippet']['publishedAt'])
+  author = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
+  likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
+  comment_id = item['snippet']['topLevelComment']['id']
+  updated_values = {
+    'text': text,
+    'pub_date': pub_date,
+    'author': author,
+    'likeCount': likeCount
+  }
+  comment, created = Comment.objects.update_or_create(video=video, comment_id=comment_id, defaults=updated_values)
+  if (item['snippet']['totalReplyCount'] > 0):
+    replies = get_replies(youtube, comment)  
+  return comment
+
 def get_comments_from_video(youtube, video_id):
   comments = []
   vid_stats = youtube.videos().list(part="statistics", id=video_id).execute()
@@ -282,30 +299,14 @@ def get_comments_from_video(youtube, video_id):
     video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, textFormat="plainText").execute()
     # Get the first set of comments
     for item in video_response['items']:
-      # Extracting comments
-      text = item['snippet']['topLevelComment']['snippet']['textDisplay']
-      pub_date = dateutil.parser.parse(item['snippet']['topLevelComment']['snippet']['publishedAt'])
-      author = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
-      likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
-      comment_id = item['snippet']['topLevelComment']['id']
-      comment, created = Comment.objects.get_or_create(text=text, pub_date=pub_date, video=video, author=author, likeCount=likeCount, comment_id=comment_id)
-      if (item['snippet']['totalReplyCount'] > 0):
-        replies = get_replies(youtube, comment)
+      comment = saveCommentObject(youtube, item, video)
       comments.append(comment)
 
     # Keep getting comments from the following pages
     while ("nextPageToken" in video_response):
       video_response = youtube.commentThreads().list(part="snippet", videoId=video_id, pageToken=video_response["nextPageToken"], textFormat="plainText").execute()
       for item in video_response['items']:
-        # Extracting comments
-        text = item['snippet']['topLevelComment']['snippet']['textDisplay']
-        pub_date = dateutil.parser.parse(item['snippet']['topLevelComment']['snippet']['publishedAt'])
-        author = item['snippet']['topLevelComment']['snippet']['authorDisplayName']
-        likeCount = item['snippet']['topLevelComment']['snippet']['likeCount']
-        comment_id = item['snippet']['topLevelComment']['id']
-        comment, created = Comment.objects.get_or_create(text=text, pub_date=pub_date, video=video, author=author, likeCount=likeCount, comment_id=comment_id)
-        if (item['snippet']['totalReplyCount'] > 0):
-          replies = get_replies(youtube, comment)
+        comment = saveCommentObject(youtube, item, video)
         comments.append(comment)
   return comments
 
@@ -314,11 +315,17 @@ def get_replies(youtube, parent):
   replies = []
   for item in results['items']:
     text = item['snippet']['textDisplay']
-    publishedAt = dateutil.parser.parse(item['snippet']['publishedAt'])
+    pub_date = dateutil.parser.parse(item['snippet']['publishedAt'])
     author = item['snippet']['authorDisplayName']
     likeCount = item['snippet']['likeCount']
     reply_id = item['id']
-    reply, created = Reply.objects.get_or_create(text=text, pub_date=publishedAt, author=author, likeCount=likeCount, comment=parent, reply_id=reply_id)
+    updated_values = {
+      'text': text,
+      'pub_date': pub_date,
+      'author': author,
+      'likeCount': likeCount
+    }    
+    reply, created = Comment.objects.update_or_create(video=parent.video, comment_id=reply_id, parent_id=parent.comment_id, defaults=updated_values)
     replies.append(reply)
   return replies
 
@@ -353,19 +360,7 @@ def get_matching_comments(request, phrase):
       'likeCount': myComment.likeCount,
       'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
       }
-
       matched_comments.append(matched_comment)
-    replies = Reply.objects.filter(comment = myComment)
-    for reply in replies:
-      if (phrase in reply.text):
-        matched_comment = {
-        'text': reply.text,
-        'author': reply.author,
-        'likeCount': reply.likeCount,
-        'pub_date': reply.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
-        }
-        matched_comments.append(matched_comment)
-
   response = {
       'matched_comments': matched_comments,
     }

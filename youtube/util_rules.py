@@ -1,5 +1,5 @@
 import re
-from .models import Channel, RuleCollection, Rule, Video, Comment, Reply
+from .models import Channel, RuleCollection, Rule, Video, Comment
 from collections import defaultdict
 from datetime import datetime
 from dateutil import parser
@@ -63,11 +63,6 @@ def getMatchedComments(rule, myChannel):
     if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
       matched_comment = serializeCommentWithPhrase(myComment, phrase, True)
       matched_comments.append(matched_comment)
-    replies = Reply.objects.filter(comment=myComment)
-    for reply in replies:
-      if (phrase in reply.text):
-        matched_comment = serializeCommentWithPhrase(reply, phrase, False)
-        matched_comments.append(matched_comment)
   return matched_comments
 
 def convertDate(myDate):
