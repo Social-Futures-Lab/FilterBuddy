@@ -48,9 +48,9 @@ class CommentViewSet(viewsets.ModelViewSet):
       matched_comment_ids = []
       for comment in myChannelComments:
         if any(re.search(r'\b({})\b'.format(phrase), comment.text) for phrase in phrases):
-          matched_comment_ids.append(comment.comment_id)
+          matched_comment_ids.append(comment.id)
 
-      matched_comments = Comment.objects.filter(comment_id__in = matched_comment_ids)   
+      matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
       return matched_comments        
 
 def makeDebugChannel(channel_id = ''):
@@ -155,18 +155,12 @@ def overviewChart(request):
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
     matched_comments_ids = set()
-    matched_replies_ids = set()
     all_matched_comments = []
     for rule in rules:
       for c in getMatchedComments(unifiedRule(rule), myChannel):
-        if (c['is_comment'] == True):
-          if (c['id'] not in matched_comments_ids):
-            all_matched_comments.append(c)
-            matched_comments_ids.add(c['id'])
-        else:
-          if (c['id'] not in matched_replies_ids):
-            all_matched_comments.append(c)          
-            matched_replies_ids.add(c['id'])
+        if (c['id'] not in matched_comments_ids):
+          all_matched_comments.append(c)
+          matched_comments_ids.add(c['id'])
     collectionDict = {
           'label': collection.name,
           'borderColor': myColors[colorCounter],

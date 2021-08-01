@@ -18,19 +18,14 @@ def getColors(n):
   colors = colors[:n]
   return colors
 
-def serializeCommentWithPhrase(myComment, phrase, isComment=True):
+def serializeCommentWithPhrase(myComment, phrase):
   k = re.search(r'\b({})\b'.format(phrase), myComment.text)
-  if (isComment):
-    commentId = myComment.comment_id
-  else:
-    commentId = myComment.reply_id
   commentObject = {
-    'id': commentId,
+    'id': myComment.comment_id,
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
     'pub_date': myComment.pub_date.isoformat(),
-    'is_comment': isComment,
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
     'span': k.span(),    
@@ -38,18 +33,13 @@ def serializeCommentWithPhrase(myComment, phrase, isComment=True):
   return commentObject
 
 
-def serializeComment(myComment, isComment=True):
-  if (isComment):
-    commentId = myComment.comment_id
-  else:
-    commentId = myComment.reply_id
+def serializeComment(myComment):
   commentObject = {
-    'id': commentId,
+    'id': myComment.comment_id,
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
     'pub_date': myComment.pub_date.isoformat(),    
-    'is_comment': isComment,    
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
   }
@@ -61,7 +51,7 @@ def getMatchedComments(rule, myChannel):
   matched_comments = []
   for myComment in myComments:
     if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
-      matched_comment = serializeCommentWithPhrase(myComment, phrase, True)
+      matched_comment = serializeCommentWithPhrase(myComment, phrase)
       matched_comments.append(matched_comment)
   return matched_comments
 
