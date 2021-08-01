@@ -55,6 +55,7 @@ urlpatterns = [
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
   path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
+  # path('api/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
 
 ]
 

@@ -13,7 +13,8 @@
     'loadFilters': 'GET',
     'charts/overview': 'GET',
     'charts/filter/*/overview': 'GET',
-    'charts/filter/*/rule/*': 'GET'
+    'charts/filter/*/rule/*': 'GET',
+    // 'api/commentTable/*': 'GET',
   }
 
   function FakeApiRequest(response) {
