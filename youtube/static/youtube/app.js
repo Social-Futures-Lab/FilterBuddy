@@ -7,6 +7,7 @@
       'Pettan',
       'WordFilterModel',
       'WordFilterApi',
+      'InteractiveDataTable',
       'InteractiveChart'], factory);
   } else if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
     factory(exports,
@@ -14,6 +15,7 @@
       require('Pettan'),
       require('WordFilterModel'),
       require('WordFilterApi'),
+      require('InteractiveDataTable'),
       require('InteractiveChart'),
       require('InteractiveTable'));
   } else {
@@ -22,6 +24,7 @@
       root.Pettan,
       root.WordFilterModel,
       root.WordFilterApi,
+      root.InteractiveDataTable,
       root.InteractiveChart,
       root.InteractiveTable);
   }
@@ -30,6 +33,7 @@
     Pettan,
     WordFilterModel,
     WordFilterApi,
+    InteractiveDataTable,
     InteractiveChart,
     InteractiveTable) {
 
@@ -222,6 +226,10 @@
   };
 
   App.prototype._bind = function (userInfo) {
+    // Add the channel name
+    $('nav-channel-name').innerText = userInfo.name;
+
+
     // Build the tab interface
     this._tabs.addTab('filter-editor', $('filter-editor'));
     this._tabs.addTab('filter-overview', $('filter-overview'));
@@ -339,14 +347,7 @@
             filter.previewRule().toString() + '"';
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
-      } else {
-        return filter.preview().then((function (comments) {
-          $('label-preview-mode').innerText =
-            'any rule in the current filter group';
-          this._tablePreview.setRows(comments['comments']);
-        }).bind(this));
-      }
-
+      } 
     }).bind(this));
 
     this._P.bind($('btn-add-rule'), 'click', 'gui.rule.add');
@@ -367,6 +368,7 @@
         // Trigger both an update in the rules list and an update for the chart
         $('rule-explore').value = '';
         return Promise.all([
+          this._P.emit('dataTables.load.filter', currentFilter),
           this._P.emit('charts.draw.filter', currentFilter),
           this._P.emit('rules.preview', currentFilter)
         ]);
@@ -467,7 +469,8 @@
           'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
-          // Viewing some group
+          // Viewing some group      
+
           $('filter-name').innerText = group.getName();
           $('name-wrapper').className = !group.isFinalized() ?
             'name-wrapper default' : 'name-wrapper';
@@ -482,6 +485,7 @@
             $('btn-delete').style.display = '';
 
             return Promise.all([
+              this._P.emit('dataTables.load.filter', group),
               this._P.emit('charts.draw.filter', group),
               this._P.emit('rules.preview', group),
               this._P.emit('comments.preview', group)
@@ -495,6 +499,11 @@
           'list-group-item list-group-item-action active';
         return this._P.emit('charts.draw.overview');
       }
+    }).bind(this));
+
+    this._P.listen('dataTables.load.filter', (function (filter) {
+      var dataTable = new InteractiveDataTable();
+      return dataTable.drawCommentTableData(filter.getId());
     }).bind(this));
 
 

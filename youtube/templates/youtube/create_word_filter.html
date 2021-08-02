@@ -17,12 +17,17 @@
     <script type="text/javascript" src="https://pettanjs.github.io/pettanjs/src/pettan.js"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+                <script src="//code.jquery.com/jquery-1.12.4.js"></script>
+                <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+                <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
 
     <!-- internal libraries -->
     <script type="text/javascript" src="{% static 'youtube/api.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/tables.js' %}"></script>
+    <script type="text/javascript" src="{% static 'youtube/datatables.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/chart.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/model.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/app.js' %}"></script>
@@ -41,7 +46,7 @@
               <a class="nav-link" href="#">About Us</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Contact Us</a>
+              <a class="nav-link" id="nav-channel-name" href="#">Channel Name</a>
             </li>
             <li class="nav-item">
               <a class="nav-link active" aria-current="page" href="/clear">Sign Out</a>
@@ -97,41 +102,34 @@
               </div>
               <!-- end common preview -->
 
+
+              <div id="wrap-edit-existing" class="py-2" style="display: none;">
+
                 <div class="container">
+                  <h4>Preview</h4>
+                  <p>
+                    The table below shows the comments that are matched by
+                    <span id="label-preview-mode">any rule in the current filter group</span>
+                  </p>                  
                   <div class="row">
                     <div class="col-sm-12">
-                      <table id="albums" class="table table-striped table-bordered" style="width:100%" data-server-side="true" data-ajax="/capi/commentTables/1/?format=datatables">
+                      <table id="albums" class="table table-striped table-bordered" style="width:100%">
                         <thead>
                           <tr>
-                            <th data-data="text">Comment</th>
-                            <th data-data="author">Commenter</th>
-                            <th data-data="pub_date">Date/Time</th>             
+                            <th>Comment</th>
+                            <th>Commenter</th>
+                            <th>Date/Time</th>                            
                           </tr>
                         </thead>
                       </table>
                     </div>
                   </div>
                 </div>
-                <script src="//code.jquery.com/jquery-1.12.4.js"></script>
-                <script src="//cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
-                <script src="//cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js"></script>
-                <script>
-                    $(document).ready(function() {
-                        $('#albums').DataTable();
-                    });
-                </script>
+                <br>
 
-
-                
-
-
-              <div id="wrap-edit-existing" class="py-2" style="display: none;">
                 <div id="rule-edit-preview">
-                  <h4>Preview</h4>
-                  <p>
-                    The table below shows a sample of comments that are matched by
-                    <span id="label-preview-mode">any rule in the current filter group</span>
-                  </p>
+                  <h3>Add New Rule</h3>
+
                   <table id="table-preview" class="table table-striped table-hover interactive">
                     <thead>
                       <tr>
@@ -156,8 +154,7 @@
                       <a id="btn-add-rule" href="#" class="btn btn-primary mb-3">Add Rule</a>
                     </div>
                   </div>
-                  <p>As you type the preview above will show comments that would be filtered by the new rule.
-                    Clear the text entry box to switch back to a preview of the entire group.</p>
+                  <p>As you type the preview above will show comments that would be filtered by the new rule. </p>
                 </div>
                 <div id="rule-edit-others">
                   <table id="table-rules" class="table table-striped table-hover interactive">
