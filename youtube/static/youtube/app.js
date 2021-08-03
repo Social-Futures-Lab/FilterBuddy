@@ -347,6 +347,9 @@
             filter.previewRule().toString() + '"';
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
+      }
+      else {
+        this._tablePreview.setRows([]);
       } 
     }).bind(this));
 

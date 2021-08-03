@@ -26,6 +26,12 @@
         {'data': 'text'},
         {'data': 'author'},
         {'data': 'pub_date'},
+        {
+          'data': 'video.title',
+          'render': function (data){
+            return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
+          }
+        },
       ]
     });  	
    
