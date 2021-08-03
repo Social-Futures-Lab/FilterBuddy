@@ -32,10 +32,10 @@
         {'data': 'author'},
         {'data': 'pub_date'},
         {
-          'data': 'video.title',
+          'data': 'video.url_id_and_title',
           'render': function (data){
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
-          }
+          }          
         },
       ]
     });    
@@ -61,7 +61,7 @@
         {'data': 'author'},
         {'data': 'pub_date'},
         {
-          'data': 'video.title',
+          'data': 'video.url_id_and_title',
           'render': function (data){
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
           }

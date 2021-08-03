@@ -13,17 +13,18 @@ class RuleCollectionSerializer(serializers.ModelSerializer):
 
 class VideoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
+    url_id_and_title = serializers.ReadOnlyField()
 
     class Meta:
         model = Video
         fields = (
-            'id', 'video_id', 'title'
+            'id', 'video_id', 'title', 'url_id_and_title',
         )        
 
 
     def to_representation(self, instance):
         representation = super(VideoSerializer, self).to_representation(instance)
-        representation['title'] = (instance.video_id, instance.title)
+        representation['url_id_and_title'] = (instance.video_id, instance.title)
         return representation         
            
 

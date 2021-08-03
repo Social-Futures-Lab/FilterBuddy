@@ -37,6 +37,9 @@ class Video(models.Model):
   video_id = models.CharField(max_length=100)
   channel = models.ForeignKey(Channel, on_delete=models.CASCADE)
 
+  def url_id_and_title(self):
+    return 'stuff'
+
 class Comment(models.Model):
   text = models.CharField(max_length=5000)
   pub_date = models.DateTimeField('date published')
@@ -46,10 +49,5 @@ class Comment(models.Model):
   video = models.ForeignKey(Video, on_delete=models.CASCADE)
   parent_id = models.CharField(max_length=100, blank=True)
 
-# class Reply(models.Model):
-#   text = models.CharField(max_length=5000)
-#   pub_date = models.DateTimeField('date published')
-#   author = models.CharField(max_length=200)
-#   likeCount = models.IntegerField()
-#   comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
-#   reply_id = models.CharField(max_length=100, primary_key=True)
+  def matched_phrases(self):
+    return []  
