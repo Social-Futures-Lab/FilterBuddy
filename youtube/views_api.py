@@ -53,6 +53,26 @@ class CommentViewSet(viewsets.ModelViewSet):
       matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
       return matched_comments        
 
+class AllCommentsViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all().order_by('pub_date')
+    serializer_class = CommentSerializer
+
+    def get_queryset(self):
+      queryset = self.queryset
+      myChannel = getChannel(self.request)
+      myChannelComments = queryset.filter(video__channel = myChannel)
+
+      rules = Rule.objects.filter(rule_collection__owner = myChannel)
+      phrases = [rule.phrase for rule in rules]
+
+      matched_comment_ids = []
+      for comment in myChannelComments:
+        if any(re.search(r'\b({})\b'.format(phrase), comment.text) for phrase in phrases):
+          matched_comment_ids.append(comment.id)
+
+      matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
+      return matched_comments                   
+
 def makeDebugChannel(channel_id = ''):
   try:
     return Channel.objects.get(channel_id = channel_id)

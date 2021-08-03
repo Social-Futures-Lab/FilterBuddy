@@ -500,6 +500,7 @@
         this._tabs.showOnly(['filter-overview']);
         this._sidebarOverview.className =
           'list-group-item list-group-item-action active';
+        this._P.emit('dataTables.load.overview');
         return this._P.emit('charts.draw.overview');
       }
     }).bind(this));
@@ -508,6 +509,11 @@
       var dataTable = new InteractiveDataTable();
       return dataTable.drawCommentTableData(filter.getId());
     }).bind(this));
+
+    this._P.listen('dataTables.load.overview', (function () {
+      var dataTable = new InteractiveDataTable();
+      return dataTable.drawAllCommentsTableData();
+    }).bind(this));    
 
 
     this._P.listen('charts.draw.filter', (function (filter) {

@@ -11,6 +11,7 @@ from . import views_api
 router = routers.DefaultRouter()
 router.register(r'collections', views_api.RuleCollectionViewSet)
 router.register(r'commentTables/(?P<username>\d+)', views_api.CommentViewSet)
+router.register(r'allCommentTables', views_api.AllCommentsViewSet)
 
 app_name = 'youtube'
 urlpatterns = [
@@ -55,7 +56,6 @@ urlpatterns = [
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
   path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
-  # path('api/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
 
 ]
 
