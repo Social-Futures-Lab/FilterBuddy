@@ -17,7 +17,7 @@ class RuleCollection(models.Model):
   create_date = models.DateTimeField('date published')
   owner = models.ForeignKey(Channel, on_delete=models.CASCADE, blank=True, null=True)
   is_template = models.BooleanField()
-  description = models.TextField(default="")
+  description = models.TextField(default="", blank=True, null=True)
   num_subscribers = models.IntegerField(default=0)
 
   def __str__(self):
@@ -27,6 +27,8 @@ class Rule(models.Model):
   phrase = models.CharField(max_length=500)
   exception_phrase = models.CharField(max_length=500, blank=True, null=True)
   rule_collection = models.ForeignKey(RuleCollection, on_delete=models.CASCADE)
+  case_sensitive = models.BooleanField(default=False)
+  spell_variants = models.BooleanField(default=True)
 
   def __str__(self):
     return u'%s %s' % (self.phrase, self.rule_collection)
