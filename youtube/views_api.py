@@ -32,21 +32,32 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 def indexCommentCollection(request, filter_id):
     return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
 
+def variantReg(phrase):
+  myList = []
+  for k in phrase:
+    myList.append(k)
+    myList.append('+')
+  myString = ""
+  for elem in myList:
+    myString += elem
+  return myString
+
+
 def get_matched_comment_ids(myChannelComments, rules):    
   matched_comment_ids = []
   for comment in myChannelComments:
     lookups = []
     for rule in rules:
+      rule_phrase = rule.phrase
+      if (rule.spell_variants):
+        rule_phrase = variantReg(rule_phrase)
       if (rule.case_sensitive):
-        lookup = re.search(r'\b({})\b'.format(rule.phrase), comment.text)
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
       else:
-        lookup = re.search(r'\b({})\b'.format(rule.phrase), comment.text, re.IGNORECASE)
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
       lookups.append(lookup)
     if any(lookups):
       matched_comment_ids.append(comment.id)  
-
-    # if any(re.search(r'\b({})\b'.format(rule.phrase), comment.text) for rule in rules):
-    #   matched_comment_ids.append(comment.id)  
   return matched_comment_ids
 
 class CommentViewSet(viewsets.ModelViewSet):
@@ -378,6 +389,16 @@ def updateRule(request):
       'id': rule.id,
       'case_sensitive': rule.case_sensitive,
     }), content_type='application/json')    
+  elif (updateAction == 'toggle_spell_variants'):
+    if (rule.spell_variants == True):
+      rule.spell_variants = False
+    else:
+      rule.spell_variants = True
+    rule.save()
+    return HttpResponse(json.dumps({
+      'id': rule.id,
+      'spell_variants': rule.spell_variants,
+    }), content_type='application/json')        
   else:
     return HttpResponse('Unsupported action'.encode('utf-8'), status = 400)    
 

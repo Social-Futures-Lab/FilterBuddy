@@ -20,6 +20,8 @@
       '' : def['phrase'];
     this._case_sensitive = (typeof def === 'undefined') ?
       '' : def['case_sensitive'];      
+    this._spell_variants = (typeof def === 'undefined') ?
+      '' : def['spell_variants'];            
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -60,7 +62,6 @@
 
   WordFilter.prototype.getCaseSensitive = function () {
     return this._case_sensitive;
-    // return this._case_sensitive !== '' ? this._case_sensitive : '(Empty)';
   }
 
   WordFilter.prototype.setCaseSensitive = function () {
@@ -78,6 +79,26 @@
         }).bind(this));
     }    
   }
+
+  WordFilter.prototype.getSpellVariants = function () {
+    return this._spell_variants;
+  }  
+
+  WordFilter.prototype.setSpellVariants = function () {
+    if (!this.isFinalized()) {
+      this._spell_variants = true;
+      return Promise.resolve();
+    } else {
+      return this._api.updateRule(
+        this.getId(),
+        'toggle_spell_variants').execute().
+        then((function (serialized) {
+          this._id = serialized.id;
+          this._spell_variants = serialized.spell_variants;
+          return this._spell_variants;
+        }).bind(this));
+    }    
+  }  
 
   WordFilter.prototype.getId = function () {
     return this._id;

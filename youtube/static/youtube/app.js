@@ -288,6 +288,7 @@
       'actions',
       'phrase',
       'case_sensitive',
+      'spell_variants',
       'chart'
     ], (function (src, col) {
       if (col === 'actions') {
@@ -304,8 +305,10 @@
           });
         }).bind(this));
         return delButton;
+
       } else if (col === 'phrase') {
         return src.toString();
+
       } else if (col === 'case_sensitive') {
         var initClassName;
         if (src.getCaseSensitive() === true){
@@ -335,6 +338,37 @@
           });
         }).bind(this));                               
         return checkboxButton;
+
+      } else if (col === 'spell_variants') {
+        var initClassName;
+        if (src.getSpellVariants() === true){
+          initClassName = 'btn btn-toggle active';
+        }
+        else {
+          initClassName = 'btn btn-toggle';
+        }
+        var checkboxSpellButton = _('button', {
+          'type': 'button',
+          'className': initClassName,
+          'data-toggle': 'button',
+          'aria-pressed': 'true',
+          'autocomplete': 'off',          
+        }, _('div', {'className': 'handle'}));
+        checkboxSpellButton.addEventListener('click', (function (e){
+          e.preventDefault();                      
+          src.setSpellVariants().then((function (new_spell_variants) {
+            if (new_spell_variants === true){
+              checkboxSpellButton.className = 'btn btn-toggle active';
+            }
+            else if (new_spell_variants === false){
+              checkboxSpellButton.className = 'btn btn-toggle';
+            }
+          }).bind(this)).catch(function (e) {
+            alert('Update spell variants checkboxButton for rule failed with: ' + e)
+          });
+        }).bind(this));                               
+        return checkboxSpellButton;        
+
       } else if (col === 'chart') {
         return _('div', {
           'className': 'rule-spark'
