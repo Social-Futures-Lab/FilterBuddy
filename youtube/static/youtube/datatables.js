@@ -21,6 +21,7 @@
 
     $('#recent_comments_table').DataTable({
       'serverSide': true,
+      'order': [[2, "desc"]],
       'ajax': "/capi/allCommentTables" + "/?format=datatables",
       'columns': [
         {
@@ -50,6 +51,7 @@
 
     $('#albums').DataTable({
       'serverSide': true,
+      'order': [[2, "desc"]],
       'ajax': "/capi/commentTables/" + filter_id + "/?format=datatables",
       'columns': [
         {
