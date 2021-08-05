@@ -374,12 +374,13 @@
     this._P.listen('comments.preview', (function (filter) {
       if (filter.previewRule().getPhrase().length > 0) {
         return filter.previewRule().preview().then((function (comments) {
-          $('label-preview-mode').innerText = 'the word "' +
+          $('label-preview-mode').innerText = 'The table below shows the comments that are matched by the word "' +
             filter.previewRule().toString() + '"';
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
       }
       else {
+        $('label-preview-mode').innerText = '';
         this._tablePreview.setRows([]);
       } 
     }).bind(this));

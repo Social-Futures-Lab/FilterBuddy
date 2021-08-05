@@ -127,10 +127,9 @@
               <div id="wrap-edit-existing" class="py-2" style="display: none;">
 
                 
-                  <h4>Preview</h4>
+                  <h3>Preview</h3>
                   <p>
-                    The table below shows the comments that are matched by
-                    <span id="label-preview-mode">any rule in the current filter group</span>
+                    The table below shows the comments that are matched by any rule in the current filter group.
                   </p>                  
                   <div class="row">
                     <div class="col-sm-12">
@@ -149,8 +148,27 @@
                 
                 <br>
 
+                <div id="rule-edit-others">
+                  <h3>Rules in this Filter Group</h3>
+                  <table id="table-rules" class="table table-striped table-hover interactive">
+                    <thead>
+                      <tr>
+                        <th scope="col" width="10%"></th>
+                        <th scope="col" width="40%">Phrase</th>
+                        <th scope="col" width="20%">Case Sensitive</th>
+                        <th scope="col" width="30%">Stats</th>                        
+                      </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                  </table>
+                </div>
+
                 <div id="rule-edit-preview">
-                  <h3>Add New Rule</h3>
+                  <h4>Add New Rule</h4>
+                  <p>
+                    <span id="label-preview-mode"> </span>
+                  </p>                                    
 
                   <table id="table-preview" class="table table-striped table-hover interactive">
                     <thead>
@@ -178,20 +196,8 @@
                   </div>
                   <p>As you type the preview above will show comments that would be filtered by the new rule. </p>
                 </div>
-                <div id="rule-edit-others">
-                  <table id="table-rules" class="table table-striped table-hover interactive">
-                    <thead>
-                      <tr>
-                        <th scope="col" width="10%"></th>
-                        <th scope="col" width="40%">Phrase</th>
-                        <th scope="col" width="20%">Case Sensitive</th>
-                        <th scope="col" width="30%">Stats</th>                        
-                      </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                  </table>
-                </div>
+
+
               </div>
               <!-- end edit existing ui -->
               <div id="wrap-create-from-scratch" class="py-2" style="display: none;">
