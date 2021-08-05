@@ -14,7 +14,6 @@
     'charts/overview': 'GET',
     'charts/filter/*/overview': 'GET',
     'charts/filter/*/rule/*': 'GET',
-    // 'api/commentTable/*': 'GET',
   }
 
   function FakeApiRequest(response) {
@@ -196,6 +195,23 @@
       });
     }
   };
+
+  WordFilterApi.prototype.updateRule = function (id, key, item) {
+    if (this._mode === 'local-only') {
+      if (this._db.has(id)) {
+        var record = this._db.get(id);
+        record[key] = item;
+        this._db.put(key, record);
+      }
+      return new FakeApiRequest({});
+    } else {
+      return this.createRequest('updateRule', {
+        'id': id,
+        'updateAction': key,
+        'updateValue': item
+      });
+    }
+  };  
 
   WordFilterApi.prototype.removeFilter = function (id) {
     // there is no id yet so

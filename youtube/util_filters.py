@@ -9,6 +9,7 @@ def serializeRules(collection):
       'id': rule.id,
       'phrase': rule.phrase,
       'exception_phrase': rule.exception_phrase,
+      'case_sensitive': rule.case_sensitive,
     }
     rulesList.append(ruleObject)
   return rulesList

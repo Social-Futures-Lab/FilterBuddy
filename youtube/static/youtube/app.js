@@ -283,9 +283,11 @@
         return null;
       }
     }).bind(this));
+
     this._tableRules = new InteractiveTable($('table-rules'), [
       'actions',
       'phrase',
+      'case_sensitive',
       'chart'
     ], (function (src, col) {
       if (col === 'actions') {
@@ -304,6 +306,35 @@
         return delButton;
       } else if (col === 'phrase') {
         return src.toString();
+      } else if (col === 'case_sensitive') {
+        var initClassName;
+        if (src.getCaseSensitive() === true){
+          initClassName = 'btn btn-toggle active';
+        }
+        else {
+          initClassName = 'btn btn-toggle';
+        }
+        var checkboxButton = _('button', {
+          'type': 'button',
+          'className': initClassName,
+          'data-toggle': 'button',
+          'aria-pressed': 'true',
+          'autocomplete': 'off',          
+        }, _('div', {'className': 'handle'}));
+        checkboxButton.addEventListener('click', (function (e){
+          e.preventDefault();                      
+          src.setCaseSensitive().then((function (new_case_sensitive) {
+            if (new_case_sensitive === true){
+              checkboxButton.className = 'btn btn-toggle active';
+            }
+            else if (new_case_sensitive === false){
+              checkboxButton.className = 'btn btn-toggle';
+            }
+          }).bind(this)).catch(function (e) {
+            alert('Update case sensitive checkboxButton for rule failed with: ' + e)
+          });
+        }).bind(this));                               
+        return checkboxButton;
       } else if (col === 'chart') {
         return _('div', {
           'className': 'rule-spark'

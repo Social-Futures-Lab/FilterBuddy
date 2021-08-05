@@ -18,6 +18,8 @@
       ('id' in def ? ('' + def['id']) : '');
     this._phrase = (typeof def === 'undefined') ?
       '' : def['phrase'];
+    this._case_sensitive = (typeof def === 'undefined') ?
+      '' : def['case_sensitive'];      
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -54,6 +56,27 @@
 
   WordFilter.prototype.getPhrase = function () {
     return this._phrase;
+  }
+
+  WordFilter.prototype.getCaseSensitive = function () {
+    return this._case_sensitive;
+    // return this._case_sensitive !== '' ? this._case_sensitive : '(Empty)';
+  }
+
+  WordFilter.prototype.setCaseSensitive = function () {
+    if (!this.isFinalized()) {
+      this._case_sensitive = true;
+      return Promise.resolve();
+    } else {
+      return this._api.updateRule(
+        this.getId(),
+        'toggle_case_sensitive').execute().
+        then((function (serialized) {
+          this._id = serialized.id;
+          this._case_sensitive = serialized.case_sensitive;
+          return this._case_sensitive;
+        }).bind(this));
+    }    
   }
 
   WordFilter.prototype.getId = function () {

@@ -32,6 +32,23 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 def indexCommentCollection(request, filter_id):
     return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
 
+def get_matched_comment_ids(myChannelComments, rules):    
+  matched_comment_ids = []
+  for comment in myChannelComments:
+    lookups = []
+    for rule in rules:
+      if (rule.case_sensitive):
+        lookup = re.search(r'\b({})\b'.format(rule.phrase), comment.text)
+      else:
+        lookup = re.search(r'\b({})\b'.format(rule.phrase), comment.text, re.IGNORECASE)
+      lookups.append(lookup)
+    if any(lookups):
+      matched_comment_ids.append(comment.id)  
+
+    # if any(re.search(r'\b({})\b'.format(rule.phrase), comment.text) for rule in rules):
+    #   matched_comment_ids.append(comment.id)  
+  return matched_comment_ids
+
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
     serializer_class = CommentSerializer
@@ -43,13 +60,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 
       rule_collection_id = self.kwargs['username']
       rules = Rule.objects.filter(rule_collection__id = rule_collection_id)
-      phrases = [rule.phrase for rule in rules]
 
-      matched_comment_ids = []
-      for comment in myChannelComments:
-        if any(re.search(r'\b({})\b'.format(phrase), comment.text) for phrase in phrases):
-          matched_comment_ids.append(comment.id)
-
+      matched_comment_ids = get_matched_comment_ids(myChannelComments, rules)
       matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
       return matched_comments        
 
@@ -63,13 +75,8 @@ class AllCommentsViewSet(viewsets.ModelViewSet):
       myChannelComments = queryset.filter(video__channel = myChannel)
 
       rules = Rule.objects.filter(rule_collection__owner = myChannel)
-      phrases = [rule.phrase for rule in rules]
 
-      matched_comment_ids = []
-      for comment in myChannelComments:
-        if any(re.search(r'\b({})\b'.format(phrase), comment.text) for phrase in phrases):
-          matched_comment_ids.append(comment.id)
-
+      matched_comment_ids = get_matched_comment_ids(myChannelComments, rules)
       matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
       return matched_comments                   
 
@@ -352,6 +359,27 @@ def createFilter(request):
   else:
     return HttpResponse(json.dumps(serializeCollection(collection)),
       content_type='application/json')
+
+@csrf_exempt
+def updateRule(request):
+  myChannel = getChannel(request)  
+  request_data = json.loads(request.body.decode('utf-8'))
+  rule = Rule.objects.get(id=request_data['id'])  
+
+  updateAction = request_data['updateAction']
+
+  if (updateAction == 'toggle_case_sensitive'):
+    if (rule.case_sensitive == True):
+      rule.case_sensitive = False
+    else:
+      rule.case_sensitive = True
+    rule.save()
+    return HttpResponse(json.dumps({
+      'id': rule.id,
+      'case_sensitive': rule.case_sensitive,
+    }), content_type='application/json')    
+  else:
+    return HttpResponse('Unsupported action'.encode('utf-8'), status = 400)    
 
 @csrf_exempt
 def updateFilter(request):
