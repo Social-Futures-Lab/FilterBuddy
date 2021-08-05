@@ -452,4 +452,6 @@ body {
 .btn-toggle.btn-secondary.active {
   background-color: #ff8300;
 }
-
+.highlight {
+  background-color: yellow;
+}

@@ -7,7 +7,7 @@
     factory(exports, exports.jQuery);
   } else {
     factory(root, root.jQuery);
-  }
+}
 })(this, function (exports, $) {
 
   function InteractiveDataTable() {
@@ -19,6 +19,29 @@
         $('#recent_comments_table').DataTable().destroy();
     }    
 
+    function pipeKeywords(myList){
+      const myNewList = [];
+      for (var i = 0; i < myList.length; i++) {
+        var elem = "\\b" + myList[i] + "\\b";
+        myNewList.push(elem);
+      }
+      var output = myNewList.join('|');
+      return output;
+    }
+
+    function highlight(data, phrases) {
+      var innerHTML = '<span>' + data + ' </span>';
+
+      var textD = pipeKeywords(phrases);
+      var textPattern = new RegExp(textD, 'i');
+      var match = textPattern.exec(data);
+      if (match){
+        const index = match.index + 6;
+        innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+match[0].length) + "</span>" + innerHTML.substring(index + match[0].length);        
+      } 
+      return innerHTML;
+    }    
+
     $('#recent_comments_table').DataTable({
       'serverSide': true,
       'order': [[2, "desc"]],
@@ -27,7 +50,7 @@
         {
           'data': 'text',
           'render': function (data){
-            return '<span>' + data + ' </span>';
+            return highlight(data, ['the', 'this']);
           }          
         },
         {'data': 'author'},
