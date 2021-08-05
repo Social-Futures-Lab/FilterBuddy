@@ -1,3 +1,4 @@
+appnope==0.1.2
 asgiref==3.3.1
 backcall==0.2.0
 cachetools==4.2.1
@@ -7,6 +8,8 @@ click==7.1.2
 decorator==5.0.9
 Django==3.1.6
 django-bootstrap3==15.0.0
+djangorestframework==3.12.4
+djangorestframework-datatables==0.6.0
 Flask==1.1.2
 google-api-core==1.26.0
 google-api-python-client==1.12.8
