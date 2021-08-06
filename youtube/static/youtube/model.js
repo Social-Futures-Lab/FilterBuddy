@@ -24,6 +24,8 @@
       '' : def['spell_variants'];          
     this._phrase_regex = (typeof def === 'undefined') ?
       '' : def['phrase_regex'];                  
+    this._num_matched_comments = (typeof def === 'undefined') ?
+      '' : def['num_matched_comments'];                        
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -105,6 +107,10 @@
   WordFilter.prototype.getPhraseRegex = function () {
     return this._phrase_regex;
   }  
+
+  WordFilter.prototype.getNumMatchedComments = function () {
+    return this._num_matched_comments;
+  }   
 
   WordFilter.prototype.getId = function () {
     return this._id;

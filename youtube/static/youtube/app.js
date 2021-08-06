@@ -289,7 +289,7 @@
       'phrase',
       'case_sensitive',
       'spell_variants',
-      'chart'
+      'caught_comments'
     ], (function (src, col) {
       if (col === 'actions') {
         var delButton = _('a', {
@@ -369,10 +369,10 @@
         }).bind(this));                               
         return checkboxSpellButton;        
 
-      } else if (col === 'chart') {
-        return _('div', {
-          'className': 'rule-spark'
-        });
+      } else if (col === 'caught_comments') {      
+        const matched_comments = src.getNumMatchedComments()
+        console.log(matched_comments);
+        return matched_comments.toString();
       } else {
         return null;
       }

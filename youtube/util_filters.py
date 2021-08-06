@@ -12,6 +12,7 @@ def serializeRules(collection):
       'case_sensitive': rule.case_sensitive,
       'spell_variants': rule.spell_variants,
       'phrase_regex': rule.get_phrase(),
+      'num_matched_comments': rule.num_matched_comments(),
     }
     rulesList.append(ruleObject)
   return rulesList

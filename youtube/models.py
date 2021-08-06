@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import re
 
 # Create your models here.
 
@@ -48,6 +49,27 @@ class Rule(models.Model):
       return variantReg(self.phrase)    
     else:
       return self.phrase      
+
+  def get_matched_comments(self):
+    channel = self.rule_collection.owner
+    allComments = Comment.objects.filter(video__channel = channel)
+
+    matched_comment_ids = []
+    for comment in allComments:
+      lookups = []      
+      rule_phrase = self.get_phrase()
+      if (self.case_sensitive):
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
+      else:
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
+      lookups.append(lookup)
+      if any(lookups):
+        matched_comment_ids.append(comment.id)  
+    return matched_comment_ids  
+
+  def num_matched_comments(self):
+    matched_comment_ids = self.get_matched_comments()
+    return len(matched_comment_ids)
 
 class Video(models.Model):
   title = models.CharField(max_length=500)
