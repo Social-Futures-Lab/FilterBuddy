@@ -39,7 +39,7 @@
     this._model.getGroups().forEach(function (group) {
       if (group.getId().length > 0){
         group.getRules().forEach(function (rule) {
-          all_phrases.push(rule._phrase);
+          all_phrases.push(rule._phrase_regex);
         })
       }
     })
@@ -85,7 +85,7 @@
     this._model.getGroups().forEach(function (group) {      
       if (group.getId() === filter_id){
         group.getRules().forEach(function (rule) {
-          group_phrases.push(rule._phrase);
+          group_phrases.push(rule._phrase_regex);
         })
       }    
     });    

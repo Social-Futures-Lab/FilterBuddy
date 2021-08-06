@@ -21,7 +21,9 @@
     this._case_sensitive = (typeof def === 'undefined') ?
       '' : def['case_sensitive'];      
     this._spell_variants = (typeof def === 'undefined') ?
-      '' : def['spell_variants'];            
+      '' : def['spell_variants'];          
+    this._phrase_regex = (typeof def === 'undefined') ?
+      '' : def['phrase_regex'];                  
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -98,6 +100,10 @@
           return this._spell_variants;
         }).bind(this));
     }    
+  }  
+
+  WordFilter.prototype.getPhraseRegex = function () {
+    return this._phrase_regex;
   }  
 
   WordFilter.prototype.getId = function () {
