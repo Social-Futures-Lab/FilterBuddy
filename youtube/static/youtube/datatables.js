@@ -10,6 +10,29 @@
 }
 })(this, function (exports, $) {
 
+  function pipeKeywords(myList){
+    const myNewList = [];
+    for (var i = 0; i < myList.length; i++) {
+      var elem = "\\b" + myList[i] + "\\b";
+      myNewList.push(elem);
+    }
+    var output = myNewList.join('|');
+    return output;
+  }  
+
+  function highlight(data, phrases) {
+    var innerHTML = '<span>' + data + ' </span>';
+
+    var textD = pipeKeywords(phrases);
+    var textPattern = new RegExp(textD, 'i');
+    var match = textPattern.exec(data);
+    if (match){
+      const index = match.index + 6;
+      innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+match[0].length) + "</span>" + innerHTML.substring(index + match[0].length);        
+    } 
+    return innerHTML;
+  }  
+
   function InteractiveDataTable(model) {
     this._model = model;
     const all_phrases = [];
@@ -20,7 +43,6 @@
         })
       }
     })
-    console.log(all_phrases);
     this._all_phrases = all_phrases;
   };
 
@@ -28,30 +50,7 @@
     const all_phrases = this._all_phrases;    
     if ( $.fn.dataTable.isDataTable( '#recent_comments_table' ) ) {
         $('#recent_comments_table').DataTable().destroy();
-    }    
-
-    function pipeKeywords(myList){
-      const myNewList = [];
-      for (var i = 0; i < myList.length; i++) {
-        var elem = "\\b" + myList[i] + "\\b";
-        myNewList.push(elem);
-      }
-      var output = myNewList.join('|');
-      return output;
-    }
-
-    function highlight(data, phrases) {
-      var innerHTML = '<span>' + data + ' </span>';
-
-      var textD = pipeKeywords(phrases);
-      var textPattern = new RegExp(textD, 'i');
-      var match = textPattern.exec(data);
-      if (match){
-        const index = match.index + 6;
-        innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+match[0].length) + "</span>" + innerHTML.substring(index + match[0].length);        
-      } 
-      return innerHTML;
-    }    
+    }        
 
     $('#recent_comments_table').DataTable({
       'serverSide': true,
@@ -75,14 +74,21 @@
         },
       ]
     });    
-
-
   }
 
   InteractiveDataTable.prototype.drawCommentTableData = function (filter_id) {
   	if ( $.fn.dataTable.isDataTable( '#albums' ) ) {
   	    $('#albums').DataTable().destroy();
   	}
+
+    const group_phrases = []
+    this._model.getGroups().forEach(function (group) {      
+      if (group.getId() === filter_id){
+        group.getRules().forEach(function (rule) {
+          group_phrases.push(rule._phrase);
+        })
+      }    
+    });    
 
     $('#albums').DataTable({
       'serverSide': true,
@@ -92,7 +98,7 @@
         {
           'data': 'text',
           'render': function (data){
-            return '<span>' + data + ' </span>';
+            return highlight(data, group_phrases);
           }          
         },
         {'data': 'author'},

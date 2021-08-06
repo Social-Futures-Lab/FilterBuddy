@@ -3,6 +3,16 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+def variantReg(phrase):
+  myList = []
+  for k in phrase:
+    myList.append(k)
+    myList.append('+')
+  myString = ""
+  for elem in myList:
+    myString += elem
+  return myString  
+
 class Channel(models.Model):
   title = models.CharField(max_length=500)
   description = models.CharField(max_length=5000)
@@ -32,6 +42,12 @@ class Rule(models.Model):
 
   def __str__(self):
     return u'%s %s' % (self.phrase, self.rule_collection)
+
+  def get_phrase(self):
+    if (self.spell_variants):
+      return variantReg(self.phrase)    
+    else:
+      return self.phrase      
 
 class Video(models.Model):
   title = models.CharField(max_length=500)

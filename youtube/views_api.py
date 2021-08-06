@@ -32,25 +32,12 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 def indexCommentCollection(request, filter_id):
     return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
 
-def variantReg(phrase):
-  myList = []
-  for k in phrase:
-    myList.append(k)
-    myList.append('+')
-  myString = ""
-  for elem in myList:
-    myString += elem
-  return myString
-
-
 def get_matched_comment_ids(myChannelComments, rules):    
   matched_comment_ids = []
   for comment in myChannelComments:
     lookups = []
     for rule in rules:
-      rule_phrase = rule.phrase
-      if (rule.spell_variants):
-        rule_phrase = variantReg(rule_phrase)
+      rule_phrase = rule.get_phrase()
       if (rule.case_sensitive):
         lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
       else:
