@@ -76,12 +76,52 @@ def ruleDateCounter(rule_matched_comments):
       )
   return data
 
+def getChannel(request):
+  if 'credentials' in request.session and 'myChannelId' in request.session['credentials']:
+    myChannelId = request.session['credentials']['myChannelId']
+    myChannel = Channel.objects.get(channel_id = myChannelId)
+    return myChannel
+  else:
+    #return makeDebugChannel()
+    raise Exception('Could not get login credentials')  
+
+def get_matched_comment_ids(myChannelComments, rules):    
+  matched_comment_ids = []
+  for comment in myChannelComments:
+    lookups = []
+    for rule in rules:
+      rule_phrase = rule.get_phrase()
+      if (rule.case_sensitive):
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
+      else:
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
+      lookups.append(lookup)
+    if any(lookups):
+      matched_comment_ids.append(comment.id)  
+  return matched_comment_ids    
+
+def getCatchingCollection(comment, myCollections):
+  for collection in myCollections:
+    rules = Rule.objects.filter(rule_collection = collection)
+    lookups = []
+    for rule in rules:
+      rule_phrase = rule.get_phrase()
+      if (rule.case_sensitive):
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
+      else:
+        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
+      lookups.append(lookup)
+    if any(lookups):
+      return collection.name
+  return None    
+
+  return comment.pub_date.isoformat()
+
 def getMatchedCommentsAndPrettify(rule, myChannel):
   comments = getMatchedComments(rule, myChannel)
   for comment in comments:
     comment['pub_date'] = pretty_date(comment['pub_date'])
   return comments
-
 
 def pretty_date(time=False):
     """

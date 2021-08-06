@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter
+from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment
 
@@ -14,7 +14,7 @@ import random
 import re
 
 from rest_framework import viewsets
-from .serializers import RuleCollectionSerializer, CommentSerializer
+from .serializers import RuleCollectionSerializer, CommentSerializer, AllCommentsSerializer
 
 def indexRuleCollection(request):
     return render(request, 'youtube/ruleCollections.html')
@@ -31,21 +31,6 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 
 def indexCommentCollection(request, filter_id):
     return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
-
-def get_matched_comment_ids(myChannelComments, rules):    
-  matched_comment_ids = []
-  for comment in myChannelComments:
-    lookups = []
-    for rule in rules:
-      rule_phrase = rule.get_phrase()
-      if (rule.case_sensitive):
-        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
-      else:
-        lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
-      lookups.append(lookup)
-    if any(lookups):
-      matched_comment_ids.append(comment.id)  
-  return matched_comment_ids
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
@@ -65,18 +50,13 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class AllCommentsViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
-    serializer_class = CommentSerializer
+    serializer_class = AllCommentsSerializer
 
     def get_queryset(self):
       queryset = self.queryset
       myChannel = getChannel(self.request)
       myChannelComments = queryset.filter(video__channel = myChannel)
-
-      rules = Rule.objects.filter(rule_collection__owner = myChannel)
-
-      matched_comment_ids = get_matched_comment_ids(myChannelComments, rules)
-      matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
-      return matched_comments                   
+      return myChannelComments                   
 
 def makeDebugChannel(channel_id = ''):
   try:
@@ -87,15 +67,6 @@ def makeDebugChannel(channel_id = ''):
       channel_id=channel_id,
       description='This is a temporary debugging channel',
       pub_date=datetime.now())
-
-def getChannel(request):
-  if 'credentials' in request.session and 'myChannelId' in request.session['credentials']:
-    myChannelId = request.session['credentials']['myChannelId']
-    myChannel = Channel.objects.get(channel_id = myChannelId)
-    return myChannel
-  else:
-    #return makeDebugChannel()
-    raise Exception('Could not get login credentials')
 
 def isLoggedIn(request):
   return True #request.user.is_authenticated

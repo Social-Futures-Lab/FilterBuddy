@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Comment, Video, RuleCollection
-from .util_rules import pretty_date
+from .util_rules import pretty_date, getCatchingCollection, getChannel
 
 class RuleCollectionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -42,3 +42,23 @@ class CommentSerializer(serializers.ModelSerializer):
         representation = super(CommentSerializer, self).to_representation(instance)
         representation['pub_date'] = pretty_date(instance.pub_date.isoformat())
         return representation        
+
+class AllCommentsSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    video = VideoSerializer()
+    caught_by_collection = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Comment
+        fields = (
+            'id', 'text', 'author', 'pub_date', 'video', 'caught_by_collection'
+        )        
+
+    def to_representation(self, instance):
+        myChannel = getChannel(self.context['request'])
+        myCollections = RuleCollection.objects.filter(owner = myChannel)
+
+        representation = super(AllCommentsSerializer, self).to_representation(instance)
+        representation['pub_date'] = pretty_date(instance.pub_date.isoformat())
+        representation['caught_by_collection'] = getCatchingCollection(instance, myCollections)
+        return representation                
