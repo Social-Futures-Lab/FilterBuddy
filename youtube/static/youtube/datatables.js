@@ -10,11 +10,22 @@
 }
 })(this, function (exports, $) {
 
-  function InteractiveDataTable() {
-
+  function InteractiveDataTable(model) {
+    this._model = model;
+    const all_phrases = [];
+    this._model.getGroups().forEach(function (group) {
+      if (group.getId().length > 0){
+        group.getRules().forEach(function (rule) {
+          all_phrases.push(rule._phrase);
+        })
+      }
+    })
+    console.log(all_phrases);
+    this._all_phrases = all_phrases;
   };
 
-  InteractiveDataTable.prototype.drawAllCommentsTableData = function(){
+  InteractiveDataTable.prototype.drawAllCommentsTableData = function(){    
+    const all_phrases = this._all_phrases;    
     if ( $.fn.dataTable.isDataTable( '#recent_comments_table' ) ) {
         $('#recent_comments_table').DataTable().destroy();
     }    
@@ -50,13 +61,14 @@
         {
           'data': 'text',
           'render': function (data){
-            return highlight(data, ['the', 'this']);
+            return highlight(data, all_phrases);
           }          
         },
         {'data': 'author'},
         {'data': 'pub_date'},
         {
           'data': 'video.url_id_and_title',
+          'searchable': false,
           'render': function (data){
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
           }          
@@ -87,6 +99,7 @@
         {'data': 'pub_date'},
         {
           'data': 'video.url_id_and_title',
+          'searchable': false,
           'render': function (data){
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
           }

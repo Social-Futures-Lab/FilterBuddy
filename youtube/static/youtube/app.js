@@ -572,12 +572,12 @@
     }).bind(this));
 
     this._P.listen('dataTables.load.filter', (function (filter) {
-      var dataTable = new InteractiveDataTable();
+      var dataTable = new InteractiveDataTable(this._model);
       return dataTable.drawCommentTableData(filter.getId());
     }).bind(this));
 
     this._P.listen('dataTables.load.overview', (function () {
-      var dataTable = new InteractiveDataTable();
+      var dataTable = new InteractiveDataTable(this._model);
       return dataTable.drawAllCommentsTableData();
     }).bind(this));    
 
