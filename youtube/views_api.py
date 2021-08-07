@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
 from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
-from .util_filters import serializeRules, serializeCollection
+from .util_filters import serializeRule, serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
 
 from datetime import datetime
@@ -305,7 +305,10 @@ def createFilter(request):
       newRule = Rule.objects.create(
         phrase = rule.phrase,
         exception_phrase = rule.exception_phrase,
-        rule_collection = collection)
+        rule_collection = collection,
+        case_sensitive = rule.case_sensitive,
+        spell_variants = rule.spell_variants,        
+        )
   elif reference.startswith('template:'):
     collection = RuleCollection.objects.create(
       name = name,
@@ -333,7 +336,7 @@ def createFilter(request):
 def updateRule(request):
   myChannel = getChannel(request)  
   request_data = json.loads(request.body.decode('utf-8'))
-  rule = Rule.objects.get(id=request_data['id'])  
+  rule = Rule.objects.get(id=int(request_data['id']))  
 
   updateAction = request_data['updateAction']
 
@@ -344,7 +347,7 @@ def updateRule(request):
       rule.case_sensitive = True
     rule.save()
     return HttpResponse(json.dumps({
-      'id': rule.id,
+      'id': str(rule.id),
       'case_sensitive': rule.case_sensitive,
     }), content_type='application/json')    
   elif (updateAction == 'toggle_spell_variants'):
@@ -354,7 +357,7 @@ def updateRule(request):
       rule.spell_variants = True
     rule.save()
     return HttpResponse(json.dumps({
-      'id': rule.id,
+      'id': str(rule.id),
       'spell_variants': rule.spell_variants,
     }), content_type='application/json')        
   else:
@@ -380,12 +383,12 @@ def updateFilter(request):
       phrase = phrase,
       rule_collection = collection,
     )
-    return HttpResponse(json.dumps({
-      'id': rule.id
-    }), content_type='application/json')
+    return HttpResponse(json.dumps(
+      serializeRule(rule)
+    ), content_type='application/json')
   elif (updateAction == 'rules:remove'):
     if 'id' in updateValue:
-      id = updateValue['id']
+      id = int(updateValue['id'])
       rules = Rule.objects.filter(id = id)
     else:
       return HttpResponse('Rule id not supplied'.encode('utf-8'), status = 400)
