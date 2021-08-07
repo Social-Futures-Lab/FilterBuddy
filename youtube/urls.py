@@ -58,6 +58,9 @@ urlpatterns = [
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
   path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
 
+  # Test
+  path('mytest', views.mytest, name='mytest'),
+
 ]
 
 if settings.DEBUG:

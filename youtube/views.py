@@ -59,6 +59,10 @@ def getChannel(credentials):
     channel_id=myChannel['id'])
   return djangoChannel
 
+def mytest(request):
+  return render(request, 'youtube/mytest.html', {})
+
+
 def test_api_request(request):
   if 'credentials' not in request.session:
     return authorize(request)
