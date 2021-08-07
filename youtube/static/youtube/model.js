@@ -25,7 +25,7 @@
     this._phrase_regex = (typeof def === 'undefined') ?
       '' : def['phrase_regex'];                  
     this._num_matched_comments = (typeof def === 'undefined') ?
-      '' : def['num_matched_comments'];                        
+      0 : def['num_matched_comments'];                        
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -37,12 +37,14 @@
       return Promise.reject(new Error(
         'Cannot finalize an already finalized rule'));
     } else {
-      console.log(this._parent);
       return this._api.updateFilter(
         this._parent.getId(),
         'rules:add',
         this.serialize()).execute().then((function (id) {
           this._id = id.id;
+          this._case_sensitive = false;
+          this._spell_variants = true;
+          this._num_matched_comments = 0;
         }).bind(this));
     }
   };
@@ -137,7 +139,11 @@
   WordFilter.prototype.serialize = function () {
     return {
       'id': this._id,
-      'phrase': this._phrase
+      'phrase': this._phrase,
+      'case_sensitive': this._case_sensitive,
+      'spell_variants': this._spell_variants,
+      'phrase_regex': this._phrase_regex,
+      'num_matched_comments': this._num_matched_comments,
     };
   };
 

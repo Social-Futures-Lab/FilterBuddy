@@ -370,7 +370,7 @@
         return checkboxSpellButton;        
 
       } else if (col === 'caught_comments') {      
-        const matched_comments = src.getNumMatchedComments()
+        const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
       } else {
         return null;
