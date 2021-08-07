@@ -371,7 +371,6 @@
 
       } else if (col === 'caught_comments') {      
         const matched_comments = src.getNumMatchedComments()
-        console.log(matched_comments);
         return matched_comments.toString();
       } else {
         return null;

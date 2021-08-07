@@ -6,7 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRules, serializeCollection
-from .models import Channel, RuleCollection, Rule, Video, Comment
+from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
 
 from datetime import datetime
 import urllib.request, json
@@ -294,14 +294,12 @@ def createFilter(request):
     collection = RuleCollection.objects.create(
       name = name,
       create_date = datetime.now(),
-      owner = myChannel,
-      is_template = False)
+      owner = myChannel)
   elif reference.startswith('existing:'):
     collection = RuleCollection.objects.create(
       name = name,
       create_date = datetime.now(),
-      owner = myChannel,
-      is_template = False)
+      owner = myChannel)
     referenceCollection = RuleCollection.objects.get(id = reference[9:])
     for rule in Rule.objects.filter(rule_collection = referenceCollection):
       newRule = Rule.objects.create(
@@ -312,14 +310,16 @@ def createFilter(request):
     collection = RuleCollection.objects.create(
       name = name,
       create_date = datetime.now(),
-      owner = myChannel,
-      is_template = False)
-    referenceCollection = RuleCollection.objects.get(id = reference[9:])
+      owner = myChannel)
+    referenceCollection = RuleColTemplate.objects.get(id = reference[9:])
     for rule in Rule.objects.filter(rule_collection = referenceCollection):
       newRule = Rule.objects.create(
         phrase = rule.phrase,
         exception_phrase = rule.exception_phrase,
-        rule_collection = collection)    
+        rule_collection = collection,
+        case_sensitive = rule.case_sensitive,
+        spell_variants = rule.spell_variants,
+        )    
   else:
     return HttpResponse('Unrecognized reference'.encode('utf-8'), status = 400)
 

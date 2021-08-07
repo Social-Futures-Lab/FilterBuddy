@@ -27,12 +27,13 @@ class RuleCollection(models.Model):
   name = models.CharField(max_length=500)
   create_date = models.DateTimeField('date published')
   owner = models.ForeignKey(Channel, on_delete=models.CASCADE, blank=True, null=True)
-  is_template = models.BooleanField()
   description = models.TextField(default="", blank=True, null=True)
-  num_subscribers = models.IntegerField(default=0)
 
   def __str__(self):
     return u'%s' % (self.name)
+
+class RuleColTemplate(RuleCollection):
+  num_users = models.IntegerField()
 
 class Rule(models.Model):
   phrase = models.CharField(max_length=500)
