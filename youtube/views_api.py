@@ -27,10 +27,10 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
       queryset = self.queryset
       myChannel = getChannel(self.request)
       query_set = queryset.filter(owner = myChannel)
-      return query_set    
+      return query_set
 
 def indexCommentCollection(request, filter_id):
-    return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})      
+    return render(request, 'youtube/commentsTable.html', {'filter_id': filter_id})
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
@@ -45,8 +45,8 @@ class CommentViewSet(viewsets.ModelViewSet):
       rules = Rule.objects.filter(rule_collection__id = rule_collection_id)
 
       matched_comment_ids = get_matched_comment_ids(myChannelComments, rules)
-      matched_comments = Comment.objects.filter(id__in = matched_comment_ids)   
-      return matched_comments        
+      matched_comments = Comment.objects.filter(id__in = matched_comment_ids)
+      return matched_comments
 
 class AllCommentsViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('pub_date')
@@ -56,7 +56,7 @@ class AllCommentsViewSet(viewsets.ModelViewSet):
       queryset = self.queryset
       myChannel = getChannel(self.request)
       myChannelComments = queryset.filter(video__channel = myChannel)
-      return myChannelComments                   
+      return myChannelComments
 
 def makeDebugChannel(channel_id = ''):
   try:
@@ -110,7 +110,6 @@ def debug(request):
     request.session['credentials']['myChannelId'] = channel.channel_id
   return HttpResponse('Done.'.encode('utf-8'))
 
-
 @csrf_exempt
 def api(request):
   if request.method == 'GET':
@@ -163,10 +162,10 @@ def overviewChart(request):
           'data': ruleDateCounter(all_matched_comments),
           'fill': False,
           'lineTension': 0,
-        }  
-    myData.append(collectionDict)      
+        }
+    myData.append(collectionDict)
     colorCounter += 1
-    
+
 
   chartConfig = {}
   chartConfig['type'] = 'line'
@@ -174,7 +173,7 @@ def overviewChart(request):
   chartConfig['label'] = 'Number of Comments Caught'
   myColors = getColors(len(myData))
   chartConfig['bgColor'] = myColors
-  chartConfig['borderColor'] = myColors    
+  chartConfig['borderColor'] = myColors
 
   return HttpResponse(json.dumps(chartConfig), content_type='application/json')
 
@@ -307,7 +306,7 @@ def createFilter(request):
         exception_phrase = rule.exception_phrase,
         rule_collection = collection,
         case_sensitive = rule.case_sensitive,
-        spell_variants = rule.spell_variants,        
+        spell_variants = rule.spell_variants,
         )
   elif reference.startswith('template:'):
     collection = RuleCollection.objects.create(
@@ -322,7 +321,7 @@ def createFilter(request):
         rule_collection = collection,
         case_sensitive = rule.case_sensitive,
         spell_variants = rule.spell_variants,
-        )    
+        )
   else:
     return HttpResponse('Unrecognized reference'.encode('utf-8'), status = 400)
 
@@ -334,9 +333,9 @@ def createFilter(request):
 
 @csrf_exempt
 def updateRule(request):
-  myChannel = getChannel(request)  
+  myChannel = getChannel(request)
   request_data = json.loads(request.body.decode('utf-8'))
-  rule = Rule.objects.get(id=int(request_data['id']))  
+  rule = Rule.objects.get(id=int(request_data['id']))
 
   updateAction = request_data['updateAction']
 
@@ -349,7 +348,7 @@ def updateRule(request):
     return HttpResponse(json.dumps({
       'id': str(rule.id),
       'case_sensitive': rule.case_sensitive,
-    }), content_type='application/json')    
+    }), content_type='application/json')
   elif (updateAction == 'toggle_spell_variants'):
     if (rule.spell_variants == True):
       rule.spell_variants = False
@@ -359,9 +358,9 @@ def updateRule(request):
     return HttpResponse(json.dumps({
       'id': str(rule.id),
       'spell_variants': rule.spell_variants,
-    }), content_type='application/json')        
+    }), content_type='application/json')
   else:
-    return HttpResponse('Unsupported action'.encode('utf-8'), status = 400)    
+    return HttpResponse('Unsupported action'.encode('utf-8'), status = 400)
 
 @csrf_exempt
 def updateFilter(request):

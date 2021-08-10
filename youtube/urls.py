@@ -15,7 +15,12 @@ router.register(r'allCommentTables', views_api.AllCommentsViewSet)
 
 app_name = 'youtube'
 urlpatterns = [
-  path('', views.create_word_filter, name='home'),
+  path('', views.home, name='home'),
+
+  path('/overview', views.overview),
+  path('/collection/<int:filter_id>/overview', views.edit_word_filter),
+  path('/collection/<int:filter_id>/edit', views.overview_word_filter),
+  path('/collection/new', views.create_word_filter),
 
   path('test', views.test_api_request, name='test'),
   path('authorize', views.authorize, name='authorize'),
@@ -56,7 +61,7 @@ urlpatterns = [
   # Django rest frameworks datatables
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
-  path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),  
+  path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),
 
   # Test
   path('mytest', views.mytest, name='mytest'),

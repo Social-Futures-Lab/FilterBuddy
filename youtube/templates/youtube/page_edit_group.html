@@ -30,7 +30,7 @@
     <script type="text/javascript" src="{% static 'youtube/datatables.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/chart.js' %}"></script>
     <script type="text/javascript" src="{% static 'youtube/model.js' %}"></script>
-    <script type="text/javascript" src="{% static 'youtube/app.js' %}"></script>
+    <script type="text/javascript" src="{% static 'youtube/app.edit_group.js' %}"></script>
 
   </head>
   <body>
@@ -78,38 +78,8 @@
 
         </div>
         <div class="col-md-9">
-          <div id="filter-overview" class="card">
-            <div class="card-body">
-              <h3>Overview</h3>
-              <div class="py-2">
-                <div id="chart-overview-container" class="chart-container" style="height: 600px;"></div>
-              </div>
-
-                <!-- <div class="container"> -->
-                  <h4>All Comments Posted on Your Channel</h4>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <table id="recent_comments_table" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
-                          <tr>
-                            <th>Comment</th>
-                            <th>Commenter</th>
-                            <th>Date/Time</th>
-                            <th>Video</th>
-                            <th>Caught By</th>
-                          </tr>
-                        </thead>
-                      </table>
-                    </div>
-                  </div>
-                <!-- </div>               -->
-
-
-
-            </div>
-          </div>
           <!-- filter editor -->
-          <div id="filter-editor" class="card" style="display: none;">
+          <div id="filter-editor" class="card">
             <div class="card-body">
               <h3 id="name-wrapper" class="name-wrapper">
                 <a id="btn-delete" href="#" class="btn btn-danger float-end"><i class="bi bi-trash"></i></a>
@@ -122,30 +92,25 @@
               </div>
               <!-- end common preview -->
 
-
               <div id="wrap-edit-existing" class="py-2" style="display: none;">
-
-
-                  <h3>Preview</h3>
-                  <p>
-                    The table below shows the comments that are matched by any rule in the current filter group.
-                  </p>
-                  <div class="row">
-                    <div class="col-sm-12">
-                      <table id="albums" class="table table-striped table-bordered" style="width:100%">
-                        <thead>
-                          <tr>
-                            <th>Comment</th>
-                            <th>Commenter</th>
-                            <th>Date/Time</th>
-                            <th>Video</th>
-                          </tr>
-                        </thead>
-                      </table>
-                    </div>
+                <h3>Preview</h3>
+                <p>
+                  The table below shows the comments that are matched by any rule in the current filter group.
+                </p>
+                <div class="row">
+                  <div class="col-sm-12">
+                    <table id="albums" class="table table-striped table-bordered" style="width:100%">
+                      <thead>
+                        <tr>
+                          <th>Comment</th>
+                          <th>Commenter</th>
+                          <th>Date/Time</th>
+                          <th>Video</th>
+                        </tr>
+                      </thead>
+                    </table>
                   </div>
-
-                <br>
+                </div>
 
                 <div id="rule-edit-others">
                   <h3>Rules in this Filter Group</h3>
@@ -188,6 +153,7 @@
                     </tbody>
                   </table>
                 </div>
+
                 <div id="rule-new-input">
                   <p>To add another word filter, enter a word into the box below:</p>
                   <div class="rule-create basic row">
@@ -200,61 +166,9 @@
                   </div>
                   <p>As you type the preview above will show comments that would be filtered by the new rule. </p>
                 </div>
-
-
               </div>
               <!-- end edit existing ui -->
-              <div id="wrap-create-from-scratch" class="py-2" style="display: none;">
-                <p>Select how you want to create the filter list:</p>
-                <div class="px-2">
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-empty" checked value="empty">
-                    <label class="form-check-label" for="wiz-mode-empty">
-                      Create an empty filter list
-                    </label>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-preset" value="template">
-                    <label class="form-check-label" for="wiz-mode-preset">
-                      Create a list based on a platform template
-                    </label>
-                    <div id="sec-template" class="py-1" style="display: none;">
-                      <div class="mb-3">
-                        <label for="templateName" class="form-label">Base this list on the following template:</label>
-                        <select id="dropdown-template" name="templateName" class="form-select">
-                          <option value="template:12" selected> Identity Hate - Racism</option>
-                          <option value="template:13"> Identity Hate - Sexism</option>
-                        </select>
-                      </div>
-                      <!--
-                      <div class="mb-3">
-                        <label for="strength" class="form-label">Select the filtering strength you want to base this list on:</label>
-                        <div class="px-3">
-                          <input type="range" class="form-range" min="1" max="4" step="1" id="strength">
-                        </div>
-                      </div>
-                      -->
-                    </div>
-                  </div>
-                  <div class="form-check">
-                    <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-clone" value="existing">
-                    <label class="form-check-label" for="wiz-mode-clone">
-                      Clone another existing filter list
-                    </label>
-                    <div id="sec-existing" class="py-1" style="display: none;">
-                      <div class="mb-3">
-                        <select id="dropdown-existing-groups" name="existingGroupName" class="form-select">
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="d-grid d-md-flex justify-content-md-end">
-                    <button id="btn-create-rule-group" class="btn btn-primary me-md-2" type="button">Create</button>
-                  </div>
-                </div>
-              </div>
             </div>
-            <!-- end create new wizard -->
           </div>
         </div>
       </div>
