@@ -72,7 +72,10 @@
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
           }          
         },
-        {'data': 'caught_by_collection'},
+        {
+          'data': 'caught_by_collection',
+          'searchable': false,
+        },
       ]
     });    
   }
