@@ -64,18 +64,18 @@
       <div class="col-md-3">
         <div class="row">
           <div class="list-group col">
-            <a id="sidebar-overview" class="list-group-item list-group-item-action {{ sidebar-indicate-active current 'overview' }}" href="#">
+            <a id="sidebar-overview" class="list-group-item list-group-item-action {{ sidebar current 'overview' }}" href="#">
             Overview</a>
           </div>
         </div>
         <div class="row py-3">
           <div class="list-group col">
             {% for collection in collections %}
-              <a class="list-group-item list-group-item-action {{ sidebar-indicate-active current 'edit' collection }}" href="/collections/{{collection.id}}/edit">
+              <a class="list-group-item list-group-item-action {{ sidebar current 'edit' collection }}" href="/collections/{{collection.id}}/edit">
                 {{ collection.name }}
               </a>
             {% endfor %}
-            <a class="list-group-item list-group-item-action {{ sidebar-indicate-active current 'add' }}" href="collection/new">
+            <a class="list-group-item list-group-item-action {{ sidebar current 'add' }}" href="collection/new">
               + Add
             </a>
           </div>
