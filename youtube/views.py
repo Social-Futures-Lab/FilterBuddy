@@ -347,10 +347,10 @@ def home(request):
 def overview(request):
   return render(request, "youtube/page_overview.html")
 
-def edit_word_filter(request):
+def edit_word_filter(request, filter_id):
   return render(request, "youtube/page_edit_group.html")
 
-def overview_word_filter(request):
+def overview_word_filter(request, filter_id):
   return render(request, "youtube/page_edit_group.html")
 
 def create_word_filter(request):

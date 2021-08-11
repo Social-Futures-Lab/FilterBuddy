@@ -229,7 +229,6 @@
     // Add the channel name
     $('nav-channel-name').innerText = userInfo.name;
 
-
     // Build the tab interface
     this._tabs.addTab('filter-editor', $('filter-editor'));
     this._tabs.addTab('filter-overview', $('filter-overview'));
@@ -263,8 +262,8 @@
     this._tablePreview = new InteractiveTable($('table-preview'), [
       'actions',
       'comment',
-      'author',      
-      'video',      
+      'author',
+      'video',
       'time'
     ], (function (src, col) {
       if (col === 'actions') {
@@ -272,7 +271,7 @@
       } else if (col === 'comment') {
         return src['text'];
       } else if (col === 'author') {
-        return src['author'];        
+        return src['author'];
       } else if (col === 'video') {
         return _('a', {
           'href': 'https://www.youtube.com/watch?v=' + src['video_id']
@@ -322,10 +321,10 @@
           'className': initClassName,
           'data-toggle': 'button',
           'aria-pressed': 'true',
-          'autocomplete': 'off',          
+          'autocomplete': 'off',
         }, _('div', {'className': 'handle'}));
         checkboxButton.addEventListener('click', (function (e){
-          e.preventDefault();                      
+          e.preventDefault();
           src.setCaseSensitive().then((function (new_case_sensitive) {
             if (new_case_sensitive === true){
               checkboxButton.className = 'btn btn-toggle active';
@@ -336,7 +335,7 @@
           }).bind(this)).catch(function (e) {
             alert('Update case sensitive checkboxButton for rule failed with: ' + e)
           });
-        }).bind(this));                               
+        }).bind(this));
         return checkboxButton;
 
       } else if (col === 'spell_variants') {
@@ -352,10 +351,10 @@
           'className': initClassName,
           'data-toggle': 'button',
           'aria-pressed': 'true',
-          'autocomplete': 'off',          
+          'autocomplete': 'off',
         }, _('div', {'className': 'handle'}));
         checkboxSpellButton.addEventListener('click', (function (e){
-          e.preventDefault();                      
+          e.preventDefault();
           src.setSpellVariants().then((function (new_spell_variants) {
             if (new_spell_variants === true){
               checkboxSpellButton.className = 'btn btn-toggle active';
@@ -366,10 +365,10 @@
           }).bind(this)).catch(function (e) {
             alert('Update spell variants checkboxButton for rule failed with: ' + e)
           });
-        }).bind(this));                               
-        return checkboxSpellButton;        
+        }).bind(this));
+        return checkboxSpellButton;
 
-      } else if (col === 'caught_comments') {      
+      } else if (col === 'caught_comments') {
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
       } else {
@@ -415,7 +414,7 @@
       else {
         $('label-preview-mode').innerText = '';
         this._tablePreview.setRows([]);
-      } 
+      }
     }).bind(this));
 
     this._P.bind($('btn-add-rule'), 'click', 'gui.rule.add');
@@ -537,7 +536,7 @@
           'list-group-item list-group-item-action';
         var group = this._model.getGroup(item);
         if (group !== null) {
-          // Viewing some group      
+          // Viewing some group
 
           $('filter-name').innerText = group.getName();
           $('name-wrapper').className = !group.isFinalized() ?
@@ -578,7 +577,7 @@
     this._P.listen('dataTables.load.overview', (function () {
       var dataTable = new InteractiveDataTable(this._model);
       return dataTable.drawAllCommentsTableData();
-    }).bind(this));    
+    }).bind(this));
 
 
     this._P.listen('charts.draw.filter', (function (filter) {
