@@ -40,7 +40,7 @@ class YouTubeForm(forms.Form):
 def indicate_active(current, reference_page, reference_arg = None):
   return 'active' if current['page'] == reference_page and (
     (current['collection'] is None and reference_arg is None) or
-    (current['collection'] == reference_arg) else ''
+    (current['collection'] == reference_arg)) else ''
 
 class HomePageView(FormView):
   template_name = 'youtube/home.html'
