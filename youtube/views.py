@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 
-from django import forms, template
+from django import forms
 from django.views.generic.edit import FormView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -29,18 +29,8 @@ from .models import Channel, RuleCollection, Rule, Video, Comment
 from .utils import *
 from .util_rules import getChannel as getChannelFromRequest
 
-register = template.Library()
-
 class YouTubeForm(forms.Form):
   pass
-
-
-# Register the filters
-@register.simple_tag(name='sidebar-active')
-def indicate_active(current, reference_page, reference_arg = None):
-  return 'active' if current['page'] == reference_page and (
-    (current['collection'] is None and reference_arg is None) or
-    (current['collection'] == reference_arg)) else ''
 
 class HomePageView(FormView):
   template_name = 'youtube/home.html'
