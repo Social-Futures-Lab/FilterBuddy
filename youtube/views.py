@@ -27,7 +27,7 @@ import copy
 
 from .models import Channel, RuleCollection, Rule, Video, Comment
 from .utils import *
-from .views_api import getChannel as getChannelFromRequest
+from .util_rules import getChannel as getChannelFromRequest
 
 class YouTubeForm(forms.Form):
   pass
@@ -345,7 +345,9 @@ def home(request):
   return render(request, "youtube/create_word_filter.html")
 
 def overview(request):
-  return render(request, "youtube/page_overview.html")
+  myChannel = getChannelFromRequest(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+  return render(request, "youtube/page_overview.html", {'collections': collections})
 
 def edit_word_filter(request, filter_id):
   return render(request, "youtube/page_edit_group.html")

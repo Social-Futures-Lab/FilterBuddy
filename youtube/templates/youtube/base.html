@@ -80,7 +80,25 @@
       <div class="col-md-9">
         <div id="filter-overview" class="card">
 
+          <div>
+            <ul>
+              {% for collection in collections %}
+              <li>
+                <a href="/collections/{{collection.id}}/edit">
+                  {{ collection.name }}
+                </a>
+              </li>
+              {% endfor %}
+              <li>
+                <a href="collection/new">
+                  +Add
+                </a>
+              </li>
+            </ul>
+
           {% block content %}{% endblock content %}
+
+          </div>
 
         </div>
       </div>
