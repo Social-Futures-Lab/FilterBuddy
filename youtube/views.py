@@ -12,7 +12,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 
-from django import forms
+from django import forms, template
 from django.views.generic.edit import FormView
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
@@ -29,9 +29,18 @@ from .models import Channel, RuleCollection, Rule, Video, Comment
 from .utils import *
 from .util_rules import getChannel as getChannelFromRequest
 
+register = template.Library()
+
 class YouTubeForm(forms.Form):
   pass
 
+
+# Register the filters
+@register.simple_tag(name='sidebar-indicate-active')
+def indicate_active(current, reference_page, reference_arg = None):
+  return 'active' if current['page'] == reference_page and (
+    (current['collection'] is None and reference_arg is None) or
+    (current['collection'] == reference_arg) else ''
 
 class HomePageView(FormView):
   template_name = 'youtube/home.html'
@@ -347,16 +356,58 @@ def home(request):
 def overview(request):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
-  return render(request, "youtube/page_overview.html", {'collections': collections})
+  return render(request,
+    "youtube/page_overview.html",
+    {
+      'collections': collections,
+      'current': {
+        'page': 'overview',
+        'collection': None
+      }
+    })
 
 def edit_word_filter(request, filter_id):
-  return render(request, "youtube/page_edit_group.html")
+  myChannel = getChannelFromRequest(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+  currentCollection = RuleCollection.objects.filter(
+    owner = myChannel, id = filter_id)
+  return render(request,
+    "youtube/page_edit_group.html",
+    {
+      'collections': collections,
+      'current': {
+        'page': 'edit',
+        'collection': currentCollection
+      }
+    })
 
 def overview_word_filter(request, filter_id):
-  return render(request, "youtube/page_edit_group.html")
+  myChannel = getChannelFromRequest(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+  currentCollection = RuleCollection.objects.filter(
+    owner = myChannel, id = filter_id)
+  return render(request,
+    "youtube/page_edit_group.html",
+    {
+      'collections': collections,
+      'current': {
+        'page': 'edit',
+        'collection': currentCollection
+      }
+    })
 
 def create_word_filter(request):
-  return render(request, "youtube/page_add.html")
+  myChannel = getChannelFromRequest(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+  return render(request,
+    "youtube/page_add_group.html",
+    {
+      'collections': collections,
+      'current': {
+        'page': 'add',
+        'collection': None
+      }
+    })
 
 def get_matching_comments(request, phrase):
   if 'credentials' not in request.session:
