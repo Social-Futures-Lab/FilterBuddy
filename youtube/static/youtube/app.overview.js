@@ -59,9 +59,6 @@
     // Add the channel name
     $('nav-channel-name').innerText = userInfo.name;
 
-    this._P.emit('dataTables.load.overview');
-    this._P.emit('charts.draw.overview');
-
     this._P.listen('dataTables.load.overview', (function () {
       var dataTable = new InteractiveDataTable(this._model);
       return dataTable.drawAllCommentsTableData();
@@ -72,6 +69,9 @@
         this._api);
       return chart.drawOverview();
     }).bind(this));
+
+    this._P.emit('dataTables.load.overview');
+    this._P.emit('charts.draw.overview');
   };
 
   App.prototype.bind = function () {
