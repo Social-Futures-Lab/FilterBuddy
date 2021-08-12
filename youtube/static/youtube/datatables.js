@@ -76,7 +76,10 @@
           'data': 'caught_by_collection',
           'searchable': false,
         },
-      ]
+      ],
+      "columnDefs": [
+          { "orderable": false, "targets": [3, 4] }
+      ],
     });    
   }
 
@@ -114,7 +117,10 @@
             return '<a href="https://www.youtube.com/watch?v=' + data[0] + '">' + data[1] + ' </a>';
           }
         },
-      ]
+      ],
+      "columnDefs": [
+          { "orderable": false, "targets": [3] }
+      ],      
     });  	
    
   };
