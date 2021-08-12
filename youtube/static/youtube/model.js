@@ -19,13 +19,13 @@
     this._phrase = (typeof def === 'undefined') ?
       '' : def['phrase'];
     this._case_sensitive = (typeof def === 'undefined') ?
-      '' : def['case_sensitive'];      
+      '' : def['case_sensitive'];
     this._spell_variants = (typeof def === 'undefined') ?
-      '' : def['spell_variants'];          
+      '' : def['spell_variants'];
     this._phrase_regex = (typeof def === 'undefined') ?
-      '' : def['phrase_regex'];                  
+      '' : def['phrase_regex'];
     this._num_matched_comments = (typeof def === 'undefined') ?
-      0 : def['num_matched_comments'];                        
+      0 : def['num_matched_comments'];
   }
 
   WordFilter.prototype.isFinalized = function () {
@@ -83,12 +83,12 @@
           this._case_sensitive = serialized.case_sensitive;
           return this._case_sensitive;
         }).bind(this));
-    }    
+    }
   }
 
   WordFilter.prototype.getSpellVariants = function () {
     return this._spell_variants;
-  }  
+  }
 
   WordFilter.prototype.setSpellVariants = function () {
     if (!this.isFinalized()) {
@@ -103,16 +103,16 @@
           this._spell_variants = serialized.spell_variants;
           return this._spell_variants;
         }).bind(this));
-    }    
-  }  
+    }
+  }
 
   WordFilter.prototype.getPhraseRegex = function () {
     return this._phrase_regex;
-  }  
+  }
 
   WordFilter.prototype.getNumMatchedComments = function () {
     return this._num_matched_comments;
-  }   
+  }
 
   WordFilter.prototype.getId = function () {
     return this._id;
@@ -292,6 +292,9 @@
       this._setGroups(data.filters.map((function (def) {
         return new WordFilterGroup(this, this._api, def);
       }).bind(this)));
+      if (this._currentNew === null) {
+        this._reshiftNewGroup();
+      }
     }).bind(this));
   }
 
