@@ -39,14 +39,14 @@
             </select>
             {% for preset in presets %}
               {% if forloop.first %}
-              <div id="preview-template:{{ preset.id }}" class="card py-2">
+              <div id="preview-template:{{ preset.id }}" class="card mt-2">
                 <div class="card-body">
                   <h5 class="card-title">{{ preset.name }}</h5>
                   <p class="card-text">{{ preset.description }}</p>
                 </div>
               </div>
               {% else %}
-              <div id="preview-template:{{ preset.id }}" class="card py-2" style="display: none;">
+              <div id="preview-template:{{ preset.id }}" class="card mt-2" style="display: none;">
                 <div class="card-body">
                   <h5 class="card-title">{{ preset.name }}</h5>
                   <p class="card-text">{{ preset.description }}</p>
