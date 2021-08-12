@@ -105,49 +105,6 @@
     return name in this._tabs;
   };
 
-  function RadioManager() {
-    this._tabManager = new TabManager();
-    this._radios = [];
-  };
-
-  RadioManager.prototype._scanAndShow = function () {
-    this._tabManager.hideAll();
-    this._radios.forEach((function (radio) {
-      var tabName = radio.name + '::' + radio.value;
-      if (!this._tabManager.hasTab(tabName)) {
-        return;
-      }
-      if (radio.checked) {
-        this._tabManager.show(tabName);
-      } else {
-        this._tabManager.hide(tabName);
-      }
-    }).bind(this));
-  };
-
-  RadioManager.prototype.addRadio = function (radio, section) {
-    radio.addEventListener('click', this._scanAndShow.bind(this));
-    if (typeof section !== 'undefined' && section !== null) {
-      this._tabManager.addTab(radio.name + '::' + radio.value, section);
-    }
-    this._radios.push(radio);
-  };
-
-  RadioManager.prototype.value = function () {
-    return this._radios.filter(function (radio) {
-      return radio.checked;
-    }).map(function (radio) {
-      return radio.value;
-    });
-  };
-
-  function ListManager(root, onSelect) {
-    this._list = [];
-    this._root = root;
-    this._selected = null;
-    this._onSelect = onSelect;
-  }
-
   ListManager.prototype.load = function (list) {
     this._root.innerHTML = '';
     this._list = list.map((function (item) {
@@ -203,8 +160,6 @@
     this._api = new WordFilterApi();
     this._model = new WordFilterModel(this._api);
     this._P = new Pettan();
-    this._tabs = new TabManager();
-    this._radioManager = new RadioManager();
     this._filterEditorTabs = new TabManager();
 
     this._sidebar = null;
@@ -215,32 +170,21 @@
   }
 
   App.prototype._onLoad = function () {
-    this._api.getUserInfo().execute().then((function (userInfo) {
-      this._bind(userInfo);
-    }).bind(this)).catch(function (e) {
+    this._api.getUserInfo().execute().catch(function (e) {
       // Probably not logged in
       if (window.location.search.indexOf('debug') < 0) {
-        window.location = '/authorize';
+        // Dont do anything
       }
-    });
+    }).then((function (userInfo) {
+      this._bind(userInfo);
+    }).bind(this));
   };
 
   App.prototype._bind = function (userInfo) {
     // Add the channel name
     $('nav-channel-name').innerText = userInfo.name;
 
-    // Build the tab interface
-    this._tabs.addTab('filter-editor', $('filter-editor'));
-    this._tabs.addTab('filter-overview', $('filter-overview'));
-
-    this._filterEditorTabs.addTab('preview', $('wrap-preview'));
     this._filterEditorTabs.addTab('edit', $('wrap-edit-existing'));
-    this._filterEditorTabs.addTab('new', $('wrap-create-from-scratch'));
-
-    // Add the radio toggles
-    this._radioManager.addRadio($('wiz-mode-empty'));
-    this._radioManager.addRadio($('wiz-mode-preset'), $('sec-template'));
-    this._radioManager.addRadio($('wiz-mode-clone'), $('sec-existing'));
 
     // Setup the sidebar
     this._sidebar = new ListManager($('filter-list'), (function (item) {
@@ -450,29 +394,6 @@
       }
     }).bind(this));
 
-
-    this._P.bind($('btn-create-rule-group'), 'click', 'gui.filter.create');
-    this._P.listen('gui.filter.create', (function (e) {
-      // Can only be clicked in the case where it is new
-      var mode = this._radioManager.value()[0];
-      if (mode === 'existing') {
-        mode = $('dropdown-existing-groups').value;
-      } else if (mode === 'template') {
-        mode = $('dropdown-template').value;
-      }
-      return this._model.finalizeNew(mode).then((function (id) {
-        this._model._reshiftNewGroup();
-        return this._P.emit('sidebar.update').then((function () {
-          this._sidebar.select(function (item) {
-            return item.getId() === id;
-          });
-        }).bind(this));
-      }).bind(this)).catch(function (e) {
-        alert(e);
-        throw e;
-      });
-    }).bind(this));
-
     this._P.bind($('btn-delete'), 'click', 'gui.filter.delete');
     this._P.listen('gui.filter.delete', (function (e) {
       var selected = this._sidebar.selected();
@@ -520,13 +441,6 @@
           added += 1;
         }
       });
-      if (added === 0) {
-        $('wiz-mode-clone').setAttribute('disabled', 'disabled');
-        dropdown.setAttribute('disabled', 'disabled');
-      } else {
-        $('wiz-mode-clone').removeAttribute('disabled');
-        dropdown.removeAttribute('disabled');
-      }
     }).bind(this));
 
     this._P.listen('sidebar.select', (function (item) {
