@@ -141,6 +141,7 @@
     this._model = new WordFilterModel(this._api);
     this._P = new Pettan();
     this._radioManager = new RadioManager();
+    this._presetsTabManager = new TabManager();
   }
 
   App.prototype._onLoad = function () {
@@ -162,6 +163,23 @@
     this._radioManager.addRadio($('wiz-mode-empty'));
     this._radioManager.addRadio($('wiz-mode-preset'), $('sec-template'));
     this._radioManager.addRadio($('wiz-mode-clone'), $('sec-existing'));
+
+    // Add the tabs
+    var presetDropdown = $('dropdown-template');
+    for (var i = 0; i < presetDropdown.children.length; i++) {
+      var item = presetDropdown.children[i];
+      var val = item.getAttribute('value');
+      try {
+        if (val !== null) {
+          this._presetsTabManager.addTab(val, $('preview-' + val));
+        }
+      } catch (e) { console.err(e); }
+    }
+    presetDropdown.addEventListener('change', (function (e) {
+      var val = e.target.value;
+      this._presetsTabManager.showOnly([val]);
+    }));
+
 
     // Bind some GUI elements
     // = Binding for filter name setup
