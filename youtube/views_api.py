@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 
-from .util_rules import getMatchedComments, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
+from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
 
@@ -152,7 +152,7 @@ def overviewChart(request):
     matched_comments_ids = set()
     all_matched_comments = []
     for rule in rules:
-      for c in getMatchedComments(unifiedRule(rule), myChannel):
+      for c in getMatchedCommentsForCharts(unifiedRule(rule), myChannel):
         if (c['id'] not in matched_comments_ids):
           all_matched_comments.append(c)
           matched_comments_ids.add(c['id'])
@@ -197,7 +197,7 @@ def filterChart(request, filter_id):
       'fill': False,
       'lineTension': 0,
     }
-    rule_matched_comments = getMatchedComments(unifiedRule(rule), myChannel)
+    rule_matched_comments = getMatchedCommentsForCharts(unifiedRule(rule), myChannel)
     ruleDict['data'] = ruleDateCounter(rule_matched_comments)
     myData.append(ruleDict)
     ruleCounter += 1

@@ -1,7 +1,7 @@
 import re
 from .models import Channel, RuleCollection, Rule, Video, Comment
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil import parser
 
 t_col = "#235dba"
@@ -10,6 +10,9 @@ g_col = "#005916"
 r_col = "#ff9900"
 black = "#000000"
 pink = "#f442f1"
+
+NUM_DAYS_IN_CHARTS = 30
+CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
 
 def getColors(n):
   colors = [t_col, c_col, g_col, r_col, black, 'c', 'm', pink]
@@ -55,6 +58,16 @@ def getMatchedComments(rule, myChannel):
       matched_comments.append(matched_comment)
   return matched_comments
 
+def getMatchedCommentsForCharts(rule, myChannel):
+  phrase = rule['phrase']
+  myComments = Comment.objects.filter(video__channel = myChannel, pub_date__gte = CHARTS_START_DATE)
+  matched_comments = []
+  for myComment in myComments:
+    if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
+      matched_comment = serializeCommentWithPhrase(myComment, phrase)
+      matched_comments.append(matched_comment)
+  return matched_comments  
+
 def convertDate(myDate):
   newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')    
   return newDate
@@ -67,7 +80,9 @@ def ruleDateCounter(rule_matched_comments):
     myData[pub_date] += 1
 
   data = []
-  for pub_date in sorted(myData.keys()):
+  # for pub_date in sorted(myData.keys()):
+  for pub_date in (CHARTS_START_DATE + timedelta(n) for n in range(NUM_DAYS_IN_CHARTS + 1)):
+    pub_date = pub_date.strftime('%Y-%m-%d')    
     data.append(
         {
           'x': pub_date,
