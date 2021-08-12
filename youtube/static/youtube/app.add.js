@@ -167,13 +167,8 @@
     // = Binding for filter name setup
     this._P.bind($('filter-name'), 'input', 'gui.filter-name.change');
     this._P.listen('gui.filter-name.change', (function (e) {
-      var currentFilter = this._sidebar.selected();
-      if (currentFilter === null) {
-        throw new Error('Name changed but nothing selected!');
-      }
-      return currentFilter.setName(e.target.innerText).then((function () {
-        this._P.emit('sidebar.update.labels');
-      }).bind(this))
+      var currentFilter = this._model.getGroup();
+      return currentFilter.setName(e.target.innerText);
     }).bind(this));
 
     this._P.bind($('btn-create-rule-group'), 'click', 'gui.filter.create');
