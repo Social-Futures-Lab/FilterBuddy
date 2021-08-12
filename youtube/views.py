@@ -58,6 +58,9 @@ def getChannel(credentials):
     channel_id=myChannel['id'])
   return djangoChannel
 
+def about_us(request):
+  return render(request, 'youtube/about_us.html')
+
 def mytest(request):
   return render(request, 'youtube/mytest.html', {})
 
