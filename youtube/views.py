@@ -359,30 +359,34 @@ def overview(request):
 def edit_word_filter(request, filter_id):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
-  currentCollection = RuleCollection.objects.filter(
+  current_collection = RuleCollection.objects.filter(
     owner = myChannel, id = filter_id)
+  if len(current_collection) < 1:
+    raise Exception('Trying to load nonexistant or foreign collection.')
   return render(request,
-    "youtube/page_edit_group.html",
+    "youtube/page_collection_edit.html",
     {
       'collections': collections,
       'current': {
         'page': 'edit',
-        'collection': currentCollection
+        'collection': current_collection[0]
       }
     })
 
 def overview_word_filter(request, filter_id):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
-  currentCollection = RuleCollection.objects.filter(
+  current_collection = RuleCollection.objects.filter(
     owner = myChannel, id = filter_id)
+  if len(current_collection) < 1:
+    raise Exception('Trying to load nonexistant or foreign collection.')
   return render(request,
-    "youtube/page_edit_group.html",
+    "youtube/page_collection_overview.html",
     {
       'collections': collections,
       'current': {
         'page': 'edit',
-        'collection': currentCollection
+        'collection': current_collection
       }
     })
 

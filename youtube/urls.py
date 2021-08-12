@@ -18,9 +18,9 @@ urlpatterns = [
   path('', views.home, name='home'),
 
   path('overview', views.overview),
+  path('collection/new', views.create_word_filter),
   path('collection/<int:filter_id>/overview', views.edit_word_filter),
   path('collection/<int:filter_id>/edit', views.overview_word_filter),
-  path('collection/new', views.create_word_filter),
 
   path('test', views.test_api_request, name='test'),
   path('authorize', views.authorize, name='authorize'),
