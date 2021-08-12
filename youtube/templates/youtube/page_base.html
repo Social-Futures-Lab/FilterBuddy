@@ -65,7 +65,7 @@
       <div class="col-md-3">
         <div class="row">
           <div class="list-group col">
-            <a id="sidebar-overview" class="list-group-item list-group-item-action {% sidebar-active current 'overview' %}" href="#">
+            <a id="sidebar-overview" class="list-group-item list-group-item-action {% sidebar-active current 'overview' %}" href="/overview">
               Overview
             </a>
           </div>
@@ -73,11 +73,11 @@
         <div class="row py-3">
           <div class="list-group col">
             {% for collection in collections %}
-              <a class="list-group-item list-group-item-action {% sidebar-active current 'edit' collection %}" href="/collections/{{collection.id}}/edit">
+              <a class="list-group-item list-group-item-action {% sidebar-active current 'edit' collection %}" href="/collection/{{collection.id}}/edit">
                 {{ collection.name }}
               </a>
             {% endfor %}
-            <a class="list-group-item list-group-item-action {% sidebar-active current 'add' %}" href="collection/new">
+            <a class="list-group-item list-group-item-action {% sidebar-active current 'add' %}" href="/collection/new">
               + Add
             </a>
           </div>
