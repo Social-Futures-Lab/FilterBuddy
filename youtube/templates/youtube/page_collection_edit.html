@@ -47,9 +47,7 @@
             <th scope="col" width="30%">Phrase</th>
             <th scope="col" width="20%">Case Sensitive</th>
             <th scope="col" width="20%">Spell Variants
-              <span data-toggle="tooltip" title="Turn this on to capture all words with characters repeated, e.g., configuring 'shit' will also catch 'shiiit' and 'shitttt'. " style="color:blue;">
-              <sup>?</sup>
-              </span>
+<a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Turn this on to capture all words with characters repeated, e.g., configuring 'shit' will also catch 'shiiit' and 'shitttt'."><sup>?</sup></a>
             </th>
             <th scope="col" width="20%">Caught Comments</th>
           </tr>
@@ -93,4 +91,13 @@
       <p>As you type the preview above will show comments that would be filtered by the new rule. </p>
     </div>
   </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script type="text/javascript">
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})          
+    </script>  
 {% endblock content %}
