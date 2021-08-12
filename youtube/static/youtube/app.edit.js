@@ -370,6 +370,16 @@
       var match = regex.exec(window.location.pathname);
       var groupId = match[1];
       this._currentGroup = this._model.getGroup(parseInt(groupId));
+
+      // Mimic selection
+      $('rule-explore').value = '';
+
+      return Promise.all([
+        this._P.emit('dataTables.load.filter', this._currentGroup),
+        this._P.emit('charts.draw.filter', this._currentGroup),
+        this._P.emit('rules.preview', this._currentGroup),
+        this._P.emit('comments.preview', this._currentGroup)
+      ]);
     }).bind(this));
   };
 
