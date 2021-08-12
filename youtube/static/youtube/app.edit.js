@@ -368,8 +368,8 @@
       // Find the current group id
       var regex = new RegExp('\\/collection\\/(.+?)\\/', 'g');
       var match = regex.exec(window.location.pathname);
-      var groupId = match[1];
-      this._currentGroup = this._model.getGroup(parseInt(groupId));
+      var groupId = parseInt(match[1], 10);
+      this._currentGroup = this._model.getGroup(groupId + '');
 
       // Mimic selection
       $('rule-explore').value = '';
