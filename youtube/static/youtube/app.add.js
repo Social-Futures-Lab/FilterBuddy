@@ -178,7 +178,7 @@
     presetDropdown.addEventListener('change', (function (e) {
       var val = e.target.value;
       this._presetsTabManager.showOnly([val]);
-    }));
+    }).bind(this));
 
 
     // Bind some GUI elements
