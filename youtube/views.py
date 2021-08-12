@@ -394,7 +394,7 @@ def create_word_filter(request):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
   return render(request,
-    "youtube/page_add_group.html",
+    "youtube/page_collection_add.html",
     {
       'collections': collections,
       'current': {

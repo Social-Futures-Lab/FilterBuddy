@@ -187,7 +187,7 @@
       }
       return this._model.finalizeNew(mode).then((function (id) {
         this._model._reshiftNewGroup();
-        window.location.assign('/collections/' + id + '/edit')
+        window.location.assign('/collection/' + id + '/edit')
       }).bind(this)).catch(function (e) {
         alert(e);
         throw e;

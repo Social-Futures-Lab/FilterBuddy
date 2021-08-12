@@ -12,7 +12,7 @@
     <div id="filter-name" class="inline-editable" contenteditable="true">Unnamed Filter</div>
     <i class="bi bi-pencil-square"></i>
   </h3>
-  <div id="wrap-create-from-scratch" class="py-2" style="display: none;">
+  <div id="wrap-create-from-scratch" class="py-2">
     <p>Select how you want to create the filter list:</p>
     <div class="px-2">
       <div class="form-check">
@@ -44,6 +44,9 @@
         <div id="sec-existing" class="py-1" style="display: none;">
           <div class="mb-3">
             <select id="dropdown-existing-groups" name="existingGroupName" class="form-select">
+              {% for collection in collections %}
+                <option value="existing:{{ collection.id }}">{{ collection.name }}</option>
+              {% endfor %}
             </select>
           </div>
         </div>
