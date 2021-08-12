@@ -331,7 +331,7 @@
       if (selected !== null) {
         if (confirm('Are you sure you want to delete this filter')) {
           return selected.delete().then((function () {
-            return this._P.emit('sidebar.update');
+            window.location.assign('/overview')
           }).bind(this)).catch(function (e) {
             alert(e);
             throw e;
