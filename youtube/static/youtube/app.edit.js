@@ -367,7 +367,7 @@
       this._groups = this._model.getGroups();
       // Find the current group id
       var regex = new RegExp('\\/collection\\/(.+?)\\/', 'g');
-      var match = regex.exec(window.location.path);
+      var match = regex.exec(window.location.pathname);
       var groupId = match[1];
       this._currentGroup = this._model.getGroup(groupId);
     }).bind(this));
