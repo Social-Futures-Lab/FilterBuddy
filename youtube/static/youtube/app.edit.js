@@ -105,53 +105,6 @@
     return name in this._tabs;
   };
 
-  ListManager.prototype.load = function (list) {
-    this._root.innerHTML = '';
-    this._list = list.map((function (item) {
-      var dom = _('a', {
-        'className': 'list-group-item list-group-item-action',
-        'href': '#'
-      }, item.toString());
-      dom.addEventListener('mousedown', ((function (item) {
-        return function (e) {
-          e.preventDefault();
-          this.select(function (newItem) {
-            return newItem === item;
-          });
-        };
-      })(item)).bind(this));
-      this._root.appendChild(dom);
-      return {
-        'dom': dom,
-        'item': item
-      };
-    }).bind(this));
-  };
-
-  ListManager.prototype.select = function (filter) {
-    var selected = this._list.filter(function (record) {
-      record.dom.className = 'list-group-item list-group-item-action';
-      return filter(record.item);
-    });
-    this._selected = selected.length > 0 ? selected[0] : null;
-    if (this._selected !== null) {
-      this._selected.dom.className = 'list-group-item list-group-item-action active';
-    }
-    if (typeof this._onSelect === 'function') {
-      this._onSelect(this._selected !== null ? this._selected.item : null);
-    }
-  };
-
-  ListManager.prototype.refresh = function () {
-    this._list.forEach(function (item) {
-      item.dom.innerText = item.item.toString();
-    });
-  };
-
-  ListManager.prototype.selected = function () {
-    return this._selected !== null ? this._selected.item : null;
-  };
-
   function $(e) {
     return document.getElementById(e);
   }
@@ -160,10 +113,9 @@
     this._api = new WordFilterApi();
     this._model = new WordFilterModel(this._api);
     this._P = new Pettan();
-    this._filterEditorTabs = new TabManager();
 
-    this._sidebar = null;
-    this._sidebarOverview = null;
+    this._groups = [];
+    this._currentGroup = null;
 
     this._tablePreview = null;
     this._tableRules = null;
@@ -183,24 +135,6 @@
   App.prototype._bind = function (userInfo) {
     // Add the channel name
     $('nav-channel-name').innerText = userInfo.name;
-
-    this._filterEditorTabs.addTab('edit', $('wrap-edit-existing'));
-
-    // Setup the sidebar
-    this._sidebar = new ListManager($('filter-list'), (function (item) {
-      if (item === null) {
-        this._P.emit('sidebar.select', null);
-      } else {
-        this._P.emit('sidebar.select', item.getId());
-      }
-    }).bind(this));
-    this._sidebar.load(this._model.getGroups());
-    this._sidebarOverview = $('sidebar-overview');
-    this._P.bind(this._sidebarOverview, 'click', 'sidebar.select.overview');
-    this._P.listen('sidebar.select.overview', (function (e) {
-      e.preventDefault();
-      this._sidebar.select(function () { return false; });
-    }).bind(this));
 
     // Setup the tables
     this._tablePreview = new InteractiveTable($('table-preview'), [
@@ -324,10 +258,7 @@
     // = Binding for filter name setup
     this._P.bind($('filter-name'), 'input', 'gui.filter-name.change');
     this._P.listen('gui.filter-name.change', (function (e) {
-      var currentFilter = this._sidebar.selected();
-      if (currentFilter === null) {
-        throw new Error('Name changed but nothing selected!');
-      }
+      var currentFilter = this._currentGroup;
       return currentFilter.setName(e.target.innerText).then((function () {
         this._P.emit('sidebar.update.labels');
       }).bind(this))
@@ -337,7 +268,7 @@
     this._P.bind($('rule-explore'), 'keyup', 'gui.rule.preview.change');
     this._P.bind($('rule-explore'), 'change', 'gui.rule.preview.change');
     this._P.listen('gui.rule.preview.change', (function (e) {
-      var currentFilter = this._sidebar.selected();
+      var currentFilter = this._currentGroup;
       if (currentFilter === null) {
         throw new Error('Illegal state. Cannot preview rule with no filter.');
       }
@@ -366,7 +297,7 @@
       // The add rule button was clicked
       e.preventDefault();
 
-      var currentFilter = this._sidebar.selected();
+      var currentFilter = this._currentGroup;
       if (currentFilter === null) {
         throw new Error('Illegal action. Cannot add rule to no filter.')
       }
@@ -388,7 +319,7 @@
     this._P.listen('rules.preview', (function (item) {
       var currentFilter = (typeof item !== 'undefined') ?
         item :
-        this._sidebar.selected();
+        this._currentGroup;
       if (currentFilter !== null) {
         this._tableRules.setRows(currentFilter.getRules());
       }
@@ -396,7 +327,7 @@
 
     this._P.bind($('btn-delete'), 'click', 'gui.filter.delete');
     this._P.listen('gui.filter.delete', (function (e) {
-      var selected = this._sidebar.selected();
+      var selected = this._currentGroup;
       if (selected !== null) {
         if (confirm('Are you sure you want to delete this filter')) {
           return selected.delete().then((function () {
@@ -410,79 +341,6 @@
     }).bind(this));
 
     // Register listeners
-    this._P.listen('sidebar.update.labels', (function () {
-      this._sidebar.refresh();
-      // Also update the new item dropdowns
-      var dropdown = $('dropdown-existing-groups');
-      for (var i = 0; i < dropdown.children.length; i++) {
-        var option = dropdown.children[i];
-        if (option.value && option.value.startsWith('existing:')) {
-          option.innerText = this._model.getGroup(
-            option.value.substring(9)).toString();
-        }
-      }
-    }).bind(this));
-    this._P.listen('sidebar.update', (function () {
-      // Find what was selected
-      var selectedId = this._sidebar.selected();
-      this._sidebar.load(this._model.getGroups());
-      this._sidebar.select(function (item) {
-        return item.getId() === selectedId;
-      });
-      // Also update the new item dropdowns
-      var dropdown = $('dropdown-existing-groups');
-      dropdown.innerHTML = '';
-      var added = 0;
-      this._model.getGroups().forEach(function (group) {
-        if (group.isFinalized()) {
-          dropdown.appendChild(_('option', {
-            'value': 'existing:' + group.getId()
-          }, group.toString()));
-          added += 1;
-        }
-      });
-    }).bind(this));
-
-    this._P.listen('sidebar.select', (function (item) {
-      if (item !== null) {
-        this._tabs.showOnly(['filter-editor']);
-        this._sidebarOverview.className =
-          'list-group-item list-group-item-action';
-        var group = this._model.getGroup(item);
-        if (group !== null) {
-          // Viewing some group
-
-          $('filter-name').innerText = group.getName();
-          $('name-wrapper').className = !group.isFinalized() ?
-            'name-wrapper default' : 'name-wrapper';
-          if (!group.isFinalized()) {
-            // Viewing the add group group
-            this._filterEditorTabs.showOnly(['new']);
-            $('btn-delete').style.display = 'none';
-          } else {
-            // Viewing existing group
-            $('rule-explore').value = ''; // should trigger a preview
-            this._filterEditorTabs.showOnly(['preview', 'edit']);
-            $('btn-delete').style.display = '';
-
-            return Promise.all([
-              this._P.emit('dataTables.load.filter', group),
-              this._P.emit('charts.draw.filter', group),
-              this._P.emit('rules.preview', group),
-              this._P.emit('comments.preview', group)
-            ]);
-          }
-        }
-      } else {
-        // Overview tab
-        this._tabs.showOnly(['filter-overview']);
-        this._sidebarOverview.className =
-          'list-group-item list-group-item-action active';
-        this._P.emit('dataTables.load.overview');
-        return this._P.emit('charts.draw.overview');
-      }
-    }).bind(this));
-
     this._P.listen('dataTables.load.filter', (function (filter) {
       var dataTable = new InteractiveDataTable(this._model);
       return dataTable.drawCommentTableData(filter.getId());
@@ -506,7 +364,12 @@
     }).bind(this));
 
     this._model.load().then((function () {
-      this._P.emit('sidebar.update');
+      this._groups = this._model.getGroups();
+      // Find the current group id
+      var regex = new RegExp('\\/collection\\/(.+?)\\/', 'g');
+      var match = regex.exec(window.location.path);
+      var groupId = match[1];
+      this._currentGroup = this._model.getGroup(groupId);
     }).bind(this));
   };
 
