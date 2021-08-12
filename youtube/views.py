@@ -400,7 +400,19 @@ def create_word_filter(request):
       'current': {
         'page': 'add',
         'collection': None
-      }
+      },
+      'presets': [
+        {
+          'id': 10,
+          'name': 'Preset 1',
+          'description': 'Please fill this in (1)'
+        },
+        {
+          'id': 22,
+          'name': 'Preset 2',
+          'description': 'Please fill this in (2)'
+        }
+      ]
     })
 
 def get_matching_comments(request, phrase):
