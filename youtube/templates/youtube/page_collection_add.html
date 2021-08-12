@@ -28,28 +28,40 @@
         <div id="sec-template" class="py-1" style="display: none;">
           <div class="mb-3">
             <label for="templateName" class="form-label">Base this list on the following template:</label>
-            <select id="dropdown-template" name="templateName" class="form-select">
-              {% for preset in presets %}
+            <select id="dropdown-template" name="templateName" class="form-select w-50">
+              {% for template in rule_templates %}
                 {% if forloop.first %}
-                  <option value="template:{{ preset.id }}" selected>{{ preset.name }}</option>
+                  <option value="template:{{ template.id }}" selected>{{ template.name }}</option>
                 {% else %}
-                  <option value="template:{{ preset.id }}">{{ preset.name }}</option>
+                  <option value="template:{{ template.id }}">{{ template.name }}</option>
                 {% endif %}
               {% endfor %}
             </select>
-            {% for preset in presets %}
+            {% for template in rule_templates %}
               {% if forloop.first %}
-              <div id="preview-template:{{ preset.id }}" class="card mt-2">
+              <div id="preview-template:{{ template.id }}" class="card mt-2 w-50">
                 <div class="card-body">
-                  <h5 class="card-title">{{ preset.name }}</h5>
-                  <p class="card-text">{{ preset.description }}</p>
+                  <h5 class="card-title">{{ template.name }}</h5>
+                  <p class="card-text">{{ template.description }}</p>
+                  <p class="card-text"> Phrases in this template include
+                  {% for rule in template.rule_set.all|slice:"0:5" %}
+                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  </p>
+                  <p class="card-text"><i>Used by {{ template.num_users }} users</i></p>
                 </div>
               </div>
               {% else %}
-              <div id="preview-template:{{ preset.id }}" class="card mt-2" style="display: none;">
+              <div id="preview-template:{{ template.id }}" class="card mt-2 w-50" style="display: none;">
                 <div class="card-body">
-                  <h5 class="card-title">{{ preset.name }}</h5>
-                  <p class="card-text">{{ preset.description }}</p>
+                  <h5 class="card-title">{{ template.name }}</h5>
+                  <p class="card-text">{{ template.description }}</p>
+                  <p class="card-text"> Phrases in this template include
+                  {% for rule in template.rule_set.all|slice:"0:5" %}
+                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  </p>                  
+                  <p class="card-text"><i>Used by {{ template.num_users }} users</i></p>
                 </div>
               </div>
               {% endif %}

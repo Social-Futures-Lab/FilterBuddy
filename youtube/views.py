@@ -25,7 +25,7 @@ import urllib.request, json
 import re
 import copy
 
-from .models import Channel, RuleCollection, Rule, Video, Comment
+from .models import Channel, RuleCollection, RuleColTemplate, Rule, Video, Comment
 from .utils import *
 from .util_rules import getChannel as getChannelFromRequest
 
@@ -393,6 +393,7 @@ def overview_word_filter(request, filter_id):
 def create_word_filter(request):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
+  ruleTemplates =  RuleColTemplate.objects.all()
   return render(request,
     "youtube/page_collection_add.html",
     {
@@ -401,18 +402,7 @@ def create_word_filter(request):
         'page': 'add',
         'collection': None
       },
-      'presets': [
-        {
-          'id': 10,
-          'name': 'Preset 1',
-          'description': 'Please fill this in (1)'
-        },
-        {
-          'id': 22,
-          'name': 'Preset 2',
-          'description': 'Please fill this in (2)'
-        }
-      ]
+      'rule_templates': ruleTemplates,
     })
 
 def get_matching_comments(request, phrase):
