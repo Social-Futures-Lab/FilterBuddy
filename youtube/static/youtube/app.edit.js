@@ -369,7 +369,7 @@
       var regex = new RegExp('\\/collection\\/(.+?)\\/', 'g');
       var match = regex.exec(window.location.pathname);
       var groupId = match[1];
-      this._currentGroup = this._model.getGroup(groupId);
+      this._currentGroup = this._model.getGroup(parseInt(groupId));
     }).bind(this));
   };
 
