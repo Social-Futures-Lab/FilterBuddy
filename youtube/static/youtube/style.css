@@ -419,3 +419,15 @@ body {
 .highlight {
   background-color: yellow;
 }
+
+hr.solid {
+  border-top: 3px solid #bbb;
+}
+.section {
+  margin-left: 0;
+  padding: 2em 2em 2em 2em;
+  border-width: 1px; 
+  border-color: lightgrey; 
+  border-style:solid;
+  border-radius: 4px;
+}

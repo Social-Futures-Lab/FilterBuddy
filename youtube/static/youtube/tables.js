@@ -45,6 +45,9 @@
         'dom': _('tr'),
         'src': src
       };
+      if (src.catching_collection === null){
+        console.log("make this background color yellow");
+      }
       this._cols.forEach((function (colName) {
         var newChildren = this._rowBuilder(src, colName);
         if (newChildren !== null) {
