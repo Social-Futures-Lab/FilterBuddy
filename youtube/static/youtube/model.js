@@ -40,11 +40,11 @@
       return this._api.updateFilter(
         this._parent.getId(),
         'rules:add',
-        this.serialize()).execute().then((function (id) {
-          this._id = id.id;
-          this._case_sensitive = false;
-          this._spell_variants = true;
-          this._num_matched_comments = 0;
+        this.serialize()).execute().then((function (rule) {
+          this._id = rule.id;
+          this._case_sensitive = rule.case_sensitive;
+          this._spell_variants = rule.spell_variants;
+          this._num_matched_comments = rule.num_matched_comments;
         }).bind(this));
     }
   };
