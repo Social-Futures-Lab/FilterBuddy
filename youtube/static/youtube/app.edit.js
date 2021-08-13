@@ -166,7 +166,8 @@
       'phrase',
       'case_sensitive',
       'spell_variants',
-      'caught_comments'
+      'caught_comments',
+      'rule_action',
     ], (function (src, col) {
       if (col === 'actions') {
         var delButton = _('a', {
@@ -249,6 +250,9 @@
       } else if (col === 'caught_comments') {
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
+      } else if (col === 'rule_action') {    
+        var actionDropdownButton = "Delete Comments";
+        return actionDropdownButton;
       } else {
         return null;
       }

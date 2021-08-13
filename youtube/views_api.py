@@ -159,6 +159,7 @@ def overviewChart(request):
     collectionDict = {
           'label': collection.name,
           'borderColor': myColors[colorCounter],
+          'backgroundColor': myColors[colorCounter],
           'data': ruleDateCounter(all_matched_comments),
           'fill': False,
           'lineTension': 0,
@@ -194,6 +195,7 @@ def filterChart(request, filter_id):
     ruleDict = {
       'label': rule.phrase,
       'borderColor': myColors[ruleCounter],
+      'backgroundColor': myColors[ruleCounter],
       'fill': False,
       'lineTension': 0,
     }
