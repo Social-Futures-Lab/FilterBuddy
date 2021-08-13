@@ -253,7 +253,8 @@ def previewFilter(request, filter_id):
     for rule in rules:
       matched_comments += getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
     response = {
-      'comments': matched_comments
+      'comments': matched_comments,
+      # 'num_new_matches': 23,
     }
     return HttpResponse(json.dumps(response), content_type='application/json')
   return HttpResponse('Filter not found'.encode('utf-8'), status = 404)

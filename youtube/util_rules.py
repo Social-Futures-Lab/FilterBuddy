@@ -50,11 +50,13 @@ def serializeComment(myComment):
 
 def getMatchedComments(rule, myChannel):
   phrase = rule['phrase']
+  myCollections = RuleCollection.objects.filter(owner = myChannel)
   myComments = Comment.objects.filter(video__channel=myChannel)
   matched_comments = []
   for myComment in myComments:
     if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
       matched_comment = serializeCommentWithPhrase(myComment, phrase)
+      matched_comment['catching_collection'] = getCatchingCollection(myComment, myCollections)    
       matched_comments.append(matched_comment)
   return matched_comments
 

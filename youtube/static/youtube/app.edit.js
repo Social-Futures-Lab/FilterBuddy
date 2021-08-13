@@ -142,7 +142,8 @@
       'comment',
       'author',
       'video',
-      'time'
+      'time',
+      'caught_by',
     ], (function (src, col) {
       if (col === 'actions') {
         return null;
@@ -156,6 +157,8 @@
         }, src['video_title']);
       } else if (col === 'time') {
         return src['pub_date'];
+      } else if (col === 'caught_by') {
+        return src['catching_collection'];        
       } else {
         return null;
       }
@@ -251,7 +254,18 @@
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
       } else if (col === 'rule_action') {    
-        var actionDropdownButton = "Delete Comments";
+        // var actionDropdownButton = _('button', {
+        //   'type': 'button',
+        //   'className': "btn btn-secondary dropdown-toggle",
+        //   'id': "dropdownMenuButton1",
+        //   'data-bs-toggle': 'dropdown',
+        //   'aria-expanded': 'false',
+        // }, _('span', {
+        //   'id': 'selected', 
+        //   'innerText': 'Dropdown button',
+        //   })
+        // );
+        var actionDropdownButton = "Delete";
         return actionDropdownButton;
       } else {
         return null;
@@ -283,7 +297,7 @@
     }).bind(this));
 
     this._P.listen('comments.preview', (function (filter) {
-      if (filter.previewRule().getPhrase().length > 0) {
+      if (filter.previewRule().getPhrase().length > 0) {        
         return filter.previewRule().preview().then((function (comments) {
           $('label-preview-mode').innerText = 'The table below shows the comments that are matched by the word "' +
             filter.previewRule().toString() + '"';
