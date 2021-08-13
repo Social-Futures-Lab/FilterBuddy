@@ -254,6 +254,14 @@
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
       } else if (col === 'rule_action') {    
+        var actionDropdownButton = '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> <span id="selected">Dropdown button</span></button>' +
+        '<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">' +
+        '<li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>' +
+        '<li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>' +
+        '<li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>' + 
+        '</ul>';
+
+
         // var actionDropdownButton = _('button', {
         //   'type': 'button',
         //   'className': "btn btn-secondary dropdown-toggle",

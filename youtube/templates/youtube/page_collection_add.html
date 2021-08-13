@@ -22,6 +22,7 @@
           Create an empty filter list
         </label>
       </div>
+
       <div class="form-check">
         <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-preset" value="template">
         <label class="form-check-label" for="wiz-mode-preset">
@@ -71,18 +72,52 @@
           </div>
         </div>
       </div>
+
       <div class="form-check">
         <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-clone" value="existing">
         <label class="form-check-label" for="wiz-mode-clone">
-          Clone another existing filter list
+          Clone another user's shared filter list
         </label>
         <div id="sec-existing" class="py-1" style="display: none;">
           <div class="mb-3">
-            <select id="dropdown-existing-groups" name="existingGroupName" class="form-select">
+            <select id="dropdown-existing-groups" name="existingGroupName" class="form-select  w-50">
               {% for collection in collections %}
+                {% if forloop.first %}
+                <option value="existing:{{ collection.id }}" selected>{{ collection.name }}</option>
+                {% else %}
                 <option value="existing:{{ collection.id }}">{{ collection.name }}</option>
+                {% endif %}
               {% endfor %}
             </select>
+            {% for collection in collections %}
+              {% if forloop.first %}
+              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-50">
+                <div class="card-body">
+                  <h5 class="card-title">{{ collection.name }}</h5>
+                  <p class="card-text">{{ collection.description }}</p>
+                  <p class="card-text"> Phrases in this template include
+                  {% for rule in collection.rule_set.all|slice:"0:5" %}
+                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  </p>              
+                </div>
+              </div>
+              {% else %}
+              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-50" style="display: none;">
+                <div class="card-body">
+                  <h5 class="card-title">{{ collection.name }}</h5>
+                  <p class="card-text">{{ collection.description }}</p>
+                  <p class="card-text"> Phrases in this template include
+                  {% for rule in collection.rule_set.all|slice:"0:5" %}
+                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                  {% endfor %}
+                  </p>                  
+                  
+                </div>
+              </div>
+              {% endif %}
+            {% endfor %}
+
           </div>
         </div>
       </div>

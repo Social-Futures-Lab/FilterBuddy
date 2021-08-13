@@ -142,6 +142,7 @@
     this._P = new Pettan();
     this._radioManager = new RadioManager();
     this._presetsTabManager = new TabManager();
+    this._existingTabManager = new TabManager();
   }
 
   App.prototype._onLoad = function () {
@@ -179,6 +180,21 @@
       var val = e.target.value;
       this._presetsTabManager.showOnly([val]);
     }).bind(this));
+
+    var existingDropdown = $('dropdown-existing-groups');
+    for (var i = 0; i < existingDropdown.children.length; i++) {
+      var item = existingDropdown.children[i];
+      var val = item.getAttribute('value');      
+      try {
+        if (val !== null) {
+          this._existingTabManager.addTab(val, $('preview-' + val));
+        }
+      } catch (e) { console.err(e); }
+    }
+    existingDropdown.addEventListener('change', (function (e) {
+      var val = e.target.value;
+      this._existingTabManager.showOnly([val]);
+    }).bind(this));    
 
 
     // Bind some GUI elements
