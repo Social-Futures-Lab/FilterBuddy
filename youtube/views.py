@@ -397,10 +397,12 @@ def create_word_filter(request):
   myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
   ruleTemplates =  RuleColTemplate.objects.all()
+  shared_collections = RuleCollection.objects.filter(is_shared = True)
   return render(request,
     "youtube/page_collection_add.html",
     {
       'collections': collections,
+      'shared_collections': shared_collections,
       'current': {
         'page': 'add',
         'collection': None

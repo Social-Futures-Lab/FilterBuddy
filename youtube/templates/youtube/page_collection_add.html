@@ -81,7 +81,7 @@
         <div id="sec-existing" class="py-1" style="display: none;">
           <div class="mb-3">
             <select id="dropdown-existing-groups" name="existingGroupName" class="form-select  w-50">
-              {% for collection in collections %}
+              {% for collection in shared_collections %}
                 {% if forloop.first %}
                 <option value="existing:{{ collection.id }}" selected>{{ collection.name }}</option>
                 {% else %}
@@ -89,7 +89,7 @@
                 {% endif %}
               {% endfor %}
             </select>
-            {% for collection in collections %}
+            {% for collection in shared_collections %}
               {% if forloop.first %}
               <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-50">
                 <div class="card-body">
@@ -99,7 +99,8 @@
                   {% for rule in collection.rule_set.all|slice:"0:5" %}
                     {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
-                  </p>              
+                  </p>        
+                  <p class="card-text"><i>Implemented by channel: {{ collection.owner.title }} </i></p>      
                 </div>
               </div>
               {% else %}
@@ -112,6 +113,7 @@
                     {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
                   {% endfor %}
                   </p>                  
+                  <p class="card-text"><i>Implemented by channel: {{ collection.owner.title }} </i></p>      
                   
                 </div>
               </div>

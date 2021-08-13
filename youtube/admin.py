@@ -11,7 +11,7 @@ class RuleInline(admin.TabularInline):
     model = Rule    
 
 class RuleCollectionAdmin(admin.ModelAdmin):
-  list_display = ('name', 'owner', 'id', 'rules')
+  list_display = ('name', 'owner', 'id', 'rules', 'is_shared')
   inlines = [RuleInline, ]
 
   def rules(self, obj):
