@@ -228,8 +228,14 @@ def previewRule(request):
   payload = json.loads(request.body.decode('utf-8'))
   # context is the filter group id
   context, rule = payload['id'], payload['rule']
+  matched_comments = getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
+  num_new_matches = 0
+  for comment in matched_comments:
+    if (comment['catching_collection'] is None):
+      num_new_matches += 1
   response = {
-    'comments': getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
+    'comments': matched_comments,
+    'num_new_matches': num_new_matches,
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
 
@@ -254,7 +260,6 @@ def previewFilter(request, filter_id):
       matched_comments += getMatchedCommentsAndPrettify(unifiedRule(rule), myChannel)
     response = {
       'comments': matched_comments,
-      # 'num_new_matches': 23,
     }
     return HttpResponse(json.dumps(response), content_type='application/json')
   return HttpResponse('Filter not found'.encode('utf-8'), status = 404)
