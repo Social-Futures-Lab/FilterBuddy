@@ -9,13 +9,17 @@ c_col = "#a50808"
 g_col = "#005916"
 r_col = "#ff9900"
 black = "#000000"
+dg_color = "#097f8c"
 pink = "#f442f1"
+ly_color = "#ffce00"
+sb_color = "#00aaff"
+lp_color = "#cec6f7"
 
 NUM_DAYS_IN_CHARTS = 30
 CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
 
 def getColors(n):
-  colors = [t_col, c_col, g_col, r_col, black, 'c', 'm', pink]
+  colors = [t_col, c_col, g_col, r_col, black, dg_color, pink, ly_color, sb_color, lp_color]
   while (len(colors) < n):
     colors = colors + shuffle(colors)  
   colors = colors[:n]
