@@ -31,7 +31,7 @@
         <div id="sec-template" class="py-1" style="display: none;">
           <div class="mb-3">
             <label for="templateName" class="form-label">Base this list on the following template:</label>
-            <select id="dropdown-template" name="templateName" class="form-select w-50">
+            <select id="dropdown-template" name="templateName" class="form-select w-75">
               {% for template in rule_templates %}
                 {% if forloop.first %}
                   <option value="template:{{ template.id }}" selected>{{ template.name }}</option>
@@ -42,29 +42,29 @@
             </select>
             {% for template in rule_templates %}
               {% if forloop.first %}
-              <div id="preview-template:{{ template.id }}" class="card mt-2 w-50">
+              <div id="preview-template:{{ template.id }}" class="card mt-2 w-75">
                 <div class="card-body">
                   <h5 class="card-title">{{ template.name }}</h5>
-                  <p class="card-text">{{ template.description }}</p>
+                  <p class="card-text">{{ template.description|linebreaks|urlize }}</p>
                   <p class="card-text"> Phrases in this template include
                   {% for rule in template.rule_set.all|slice:"0:5" %}
-                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                    {{ rule.phrase }}{% if forloop.last %}.{% else %}, {% endif %}
                   {% endfor %}
                   </p>
-                  <p class="card-text"><i>Used by {{ template.num_users }} users</i></p>
+                  <p class="card-text"><i>Includes {{ template.rule_set.count }} rules; Used by {{ template.num_users }} users</i></p>
                 </div>
               </div>
               {% else %}
-              <div id="preview-template:{{ template.id }}" class="card mt-2 w-50" style="display: none;">
+              <div id="preview-template:{{ template.id }}" class="card mt-2 w-75" style="display: none;">
                 <div class="card-body">
                   <h5 class="card-title">{{ template.name }}</h5>
-                  <p class="card-text">{{ template.description }}</p>
+                  <p class="card-text">{{ template.description|linebreaks|urlize }}</p>
                   <p class="card-text"> Phrases in this template include
                   {% for rule in template.rule_set.all|slice:"0:5" %}
-                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                    {{ rule.phrase }}{% if forloop.last %}.{% else %}, {% endif %}
                   {% endfor %}
                   </p>                  
-                  <p class="card-text"><i>Used by {{ template.num_users }} users</i></p>
+                  <p class="card-text"><i>Includes {{ template.rule_set.count }} rules; Used by {{ template.num_users }} users</i></p>
                 </div>
               </div>
               {% endif %}
@@ -80,7 +80,7 @@
         </label>
         <div id="sec-existing" class="py-1" style="display: none;">
           <div class="mb-3">
-            <select id="dropdown-existing-groups" name="existingGroupName" class="form-select  w-50">
+            <select id="dropdown-existing-groups" name="existingGroupName" class="form-select  w-75">
               {% for collection in shared_collections %}
                 {% if forloop.first %}
                 <option value="existing:{{ collection.id }}" selected>{{ collection.name }}</option>
@@ -91,29 +91,29 @@
             </select>
             {% for collection in shared_collections %}
               {% if forloop.first %}
-              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-50">
+              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-75">
                 <div class="card-body">
                   <h5 class="card-title">{{ collection.name }}</h5>
-                  <p class="card-text">{{ collection.description }}</p>
+                  <p class="card-text">{{ collection.description|linebreaks|urlize }}</p>
                   <p class="card-text"> Phrases in this template include
                   {% for rule in collection.rule_set.all|slice:"0:5" %}
-                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                    {{ rule.phrase }}{% if forloop.last %}.{% else %}, {% endif %}
                   {% endfor %}
                   </p>        
-                  <p class="card-text"><i>Implemented by channel: {{ collection.owner.title }} </i></p>      
+                  <p class="card-text"><i>Includes {{ collection.rule_set.count }} rules; Implemented by channel: {{ collection.owner.title }} </i></p>      
                 </div>
               </div>
               {% else %}
-              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-50" style="display: none;">
+              <div id="preview-existing:{{ collection.id }}" class="card mt-2 w-75" style="display: none;">
                 <div class="card-body">
                   <h5 class="card-title">{{ collection.name }}</h5>
-                  <p class="card-text">{{ collection.description }}</p>
+                  <p class="card-text">{{ collection.description|linebreaks|urlize }}</p>
                   <p class="card-text"> Phrases in this template include
                   {% for rule in collection.rule_set.all|slice:"0:5" %}
-                    {{ rule.phrase }}{% if not forloop.last %}, {% endif %}
+                    {{ rule.phrase }}{% if forloop.last %}.{% else %}, {% endif %}
                   {% endfor %}
                   </p>                  
-                  <p class="card-text"><i>Implemented by channel: {{ collection.owner.title }} </i></p>      
+                  <p class="card-text"><i>Includes {{ collection.rule_set.count }} rules; Implemented by channel: {{ collection.owner.title }} </i></p>      
                   
                 </div>
               </div>
