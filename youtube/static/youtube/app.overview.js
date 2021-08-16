@@ -50,7 +50,7 @@
     }).bind(this)).catch(function (e) {
       // Probably not logged in
       if (window.location.search.indexOf('debug') < 0) {
-        window.location = '/authorized';
+        window.location = '/authorize';
       }
     });
   };
