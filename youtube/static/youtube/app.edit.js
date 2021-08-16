@@ -307,7 +307,7 @@
     this._P.listen('comments.preview', (function (filter) {
       if (filter.previewRule().getPhrase().length > 0) {        
         return filter.previewRule().preview().then((function (comments) {
-          $('label-preview-mode').innerHTML = 'The table below shows the comments that are matched by the word "' +
+          $('label-preview-mode').innerHTML = 'The table below shows the comments that are matched by the phrase "' +
             filter.previewRule().toString() + '"' + '. <span style="background-color:yellow;">Adding this rule will catch <b>' + comments['num_new_matches'].toString() + "</b> new comments. </span>";
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
