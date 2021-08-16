@@ -12,9 +12,12 @@ from datetime import datetime
 import urllib.request, json
 import random
 import re
+from heapq import nlargest
 
 from rest_framework import viewsets
 from .serializers import RuleCollectionSerializer, CommentSerializer, AllCommentsSerializer
+
+NUM_CHART_ENTRIES = 8
 
 def indexRuleCollection(request):
     return render(request, 'youtube/ruleCollections.html')
@@ -161,12 +164,14 @@ def overviewChart(request):
           'borderColor': myColors[colorCounter],
           'backgroundColor': myColors[colorCounter],
           'data': ruleDateCounter(all_matched_comments),
+          'num_matched_comments': len(all_matched_comments),
           'fill': False,
           'lineTension': 0,
         }
     myData.append(collectionDict)
     colorCounter += 1
 
+  myData = nlargest(NUM_CHART_ENTRIES, myData, key=lambda item: item["num_matched_comments"])
 
   chartConfig = {}
   chartConfig['type'] = 'line'
@@ -200,9 +205,12 @@ def filterChart(request, filter_id):
       'lineTension': 0,
     }
     rule_matched_comments = getMatchedCommentsForCharts(unifiedRule(rule), myChannel)
+    ruleDict['num_matched_comments'] = len(rule_matched_comments)
     ruleDict['data'] = ruleDateCounter(rule_matched_comments)
     myData.append(ruleDict)
     ruleCounter += 1
+
+  myData = nlargest(NUM_CHART_ENTRIES, myData, key=lambda item: item["num_matched_comments"])
 
 
   chartConfig = {}
