@@ -127,19 +127,6 @@ def api(request):
     }
   return HttpResponse(json.dumps(api_response), content_type='application/json')
 
-@csrf_exempt
-def getUserInfo(request):
-  try:
-    channel = getChannel(request)
-    return HttpResponse(json.dumps({
-      'name': channel.title,
-      'desc': channel.description,
-      'channel_id': channel.channel_id
-    }), content_type='application/json')
-  except:
-    return HttpResponse('Not logged in', status=401)
-    # Redirect to login
-
 # -------------- CHART RELATED STUFF BELOW -------------
 
 @csrf_exempt

@@ -475,6 +475,7 @@ def get_rule_collection_templates(request):
 
 @csrf_exempt
 def sync(request):
+  print ('came in sync')
   myChannel = getChannelFromRequest(request)
   myChannelId = myChannel.channel_id
   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
@@ -496,6 +497,20 @@ def sync(request):
     get_comments_from_video(youtube, video_id)
 
   return HttpResponse('Done.'.encode('utf-8'))
+
+@csrf_exempt
+def getUserInfo(request):
+  try:
+    channel = getChannelFromRequest(request)
+    sync(request)
+    return HttpResponse(json.dumps({
+      'name': channel.title,
+      'desc': channel.description,
+      'channel_id': channel.channel_id
+    }), content_type='application/json')
+  except:
+    return HttpResponse('Not logged in', status=401)
+    # Redirect to login  
 
 if __name__ == '__main__':
   # When running locally, disable OAuthlib's HTTPs verification.

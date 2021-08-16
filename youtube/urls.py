@@ -15,7 +15,8 @@ router.register(r'allCommentTables', views_api.AllCommentsViewSet)
 
 app_name = 'youtube'
 urlpatterns = [
-  path('', views.home, name='home'),
+  # path('', views.home, name='home'),
+  path('', views.overview, name='home'),
   path('about_us', views.about_us, name='about_us'),  
 
   path('overview', views.overview),
@@ -38,7 +39,7 @@ urlpatterns = [
 
   path('api', views_api.api, name='api'),
   path('api/debug', views_api.debug),
-  path('api/authenticate', views_api.getUserInfo),
+  path('api/authenticate', views.getUserInfo),
 
 
   # Filter related modifiers
