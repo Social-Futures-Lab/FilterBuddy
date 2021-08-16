@@ -498,19 +498,6 @@ def sync(request):
 
   return HttpResponse('Done.'.encode('utf-8'))
 
-@csrf_exempt
-def getUserInfo(request):
-  try:
-    channel = getChannelFromRequest(request)
-    sync(request)
-    return HttpResponse(json.dumps({
-      'name': channel.title,
-      'desc': channel.description,
-      'channel_id': channel.channel_id
-    }), content_type='application/json')
-  except:
-    return HttpResponse('Not logged in', status=401)
-    # Redirect to login  
 
 if __name__ == '__main__':
   # When running locally, disable OAuthlib's HTTPs verification.
