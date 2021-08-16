@@ -39,7 +39,7 @@ urlpatterns = [
 
   path('api', views_api.api, name='api'),
   path('api/debug', views_api.debug),
-  path('api/authenticate', views.getUserInfo),
+  path('api/authenticate', views_api.getUserInfo),
 
 
   # Filter related modifiers
