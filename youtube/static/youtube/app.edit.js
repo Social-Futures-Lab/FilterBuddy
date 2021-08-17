@@ -181,6 +181,7 @@
           e.preventDefault();
           src.delete().then((function () {
             this._tableRules.removeRows(function (r) { return r === src; });
+            this._P.emit('charts.draw.filter', this._currentGroup);
           }).bind(this)).catch(function (e) {
             alert('Delete filter rule failed with: ' + e)
           });
@@ -254,26 +255,43 @@
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
       } else if (col === 'rule_action') {    
-        var actionDropdownButton = '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> <span id="selected">Dropdown button</span></button>' +
-        '<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">' +
-        '<li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>' +
-        '<li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>' +
-        '<li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>' + 
-        '</ul>';
+        // var actionDropdownButton = '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> <span id="selected">Dropdown button</span></button>' +
+        // '<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">' +
+        // '<li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>' +
+        // '<li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>' +
+        // '<li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>' + 
+        // '</ul>';
 
+        var mainButton = _('button', {
+            'className': 'btn btn-secondary dropdown-toggle',
+            'type': 'button',
+            'data-bs-toggle': 'dropdown',
+          }, 'Do Nothing');
+        var listItems = [
+          _('a', {'className': 'dropdown-item', 'href': '#'}, 'Do Nothing'),
+          _('a', {'className': 'dropdown-item', 'href': '#'}, 'Delete Comment'),
+          _('a', {'className': 'dropdown-item', 'href': '#'}, 'Send to Review Folder'),
+          _('a', {'className': 'dropdown-item', 'href': '#'}, 'Report to YouTube'),
+          _('a', {'className': 'dropdown-item', 'href': '#'}, 'Block Commenter'),
+        ]
+        var actionDropdownButton = _('div', {
+          'className': 'dropdown'
+        }, [
+          mainButton,
+          _('ul', {
+            'className': 'dropdown-menu'
+          }, listItems.map(function (item) { return _('li', {}, item); }))
+        ]);
 
-        // var actionDropdownButton = _('button', {
-        //   'type': 'button',
-        //   'className': "btn btn-secondary dropdown-toggle",
-        //   'id': "dropdownMenuButton1",
-        //   'data-bs-toggle': 'dropdown',
-        //   'aria-expanded': 'false',
-        // }, _('span', {
-        //   'id': 'selected', 
-        //   'innerText': 'Dropdown button',
-        //   })
-        // );
-        var actionDropdownButton = "Delete";
+        // Magic
+        listItems.forEach(function (item) {
+          item.addEventListener('click', function (e) {
+            e.preventDefault(); // href=javascript:;void
+            mainButton.innerText = e.target.innerText; // $('').text(...)
+          });
+        });
+
+        // var actionDropdownButton = "Delete";
         return actionDropdownButton;
       } else {
         return null;

@@ -344,8 +344,13 @@ def credentials_to_dict(credentials):
       'scopes': credentials.scopes}
 
 def home(request):
-  return HttpResponse('<a href="/api/sync"> Sync your comments </a>'.encode('utf-8'))
-  # return render(request, "youtube/create_word_filter.html")
+  try:
+    myChannel = getChannelFromRequest(request)
+  except Exception as e:
+    # User is not logged in, redirect to login
+    return HttpResponseRedirect('/authorize')
+  # user is logged in, redirect to sync
+  return HttpResponseRedirect('/sync')
 
 def overview(request):
   myChannel = getChannelFromRequest(request)
@@ -497,7 +502,7 @@ def sync(request):
   for video_id in myVideoIds:
     get_comments_from_video(youtube, video_id)
 
-  return HttpResponse('Your comments are synced! <br><a href="/overview">Get an Overview of your Word Filters</a>'.encode('utf-8'))
+  return HttpResponseRedirect('/overview')
 
 
 if __name__ == '__main__':
