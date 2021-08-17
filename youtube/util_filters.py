@@ -23,7 +23,7 @@ def serializeRules(collection):
 
 def serializeCollection(collection):
   rules = serializeRules(collection)
-  # rules = []
+  rules = sorted(rules, key=lambda k: k['num_matched_comments'], reverse=True) 
   collectionObject = {
     'id': collection.id,
     'name': collection.name,
