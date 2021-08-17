@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 import re
+import inflect
+p = inflect.engine()
 
 # Create your models here.
 
@@ -12,6 +14,8 @@ def variantReg(phrase):
   myString = ""
   for elem in myList:
     myString += elem
+  myStringPlural = p.plural(myString)
+  myString = myString + "|" + myStringPlural
   return myString  
 
 class Channel(models.Model):
