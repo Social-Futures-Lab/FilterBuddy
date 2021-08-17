@@ -3,6 +3,7 @@ from .models import Channel, RuleCollection, Rule, Video, Comment
 from collections import defaultdict
 from datetime import datetime, timedelta
 from dateutil import parser
+from random import sample
 
 t_col = "#235dba"
 c_col = "#a50808"
@@ -21,7 +22,7 @@ CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
 def getColors(n):
   colors = [t_col, c_col, g_col, r_col, black, dg_color, pink, ly_color, sb_color, lp_color]
   while (len(colors) < n):
-    colors = colors + shuffle(colors)  
+    colors = colors + sample(colors, len(colors))  
   colors = colors[:n]
   return colors
 
