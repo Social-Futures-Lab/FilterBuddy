@@ -149,7 +149,6 @@ def overviewChart(request):
   collections = RuleCollection.objects.filter(owner = myChannel)
   myColors = getColors(len(collections))
 
-  colorCounter = 0
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
     matched_comments_ids = set()
@@ -160,18 +159,22 @@ def overviewChart(request):
           all_matched_comments.append(c)
           matched_comments_ids.add(c['id'])
     collectionDict = {
-          'label': collection.name,
-          'borderColor': myColors[colorCounter],
-          'backgroundColor': myColors[colorCounter],
-          'data': ruleDateCounter(all_matched_comments),
-          'num_matched_comments': len(all_matched_comments),
-          'fill': False,
-          'lineTension': 0,
-        }
+      'label': collection.name,
+      'data': ruleDateCounter(all_matched_comments),
+      'num_matched_comments': len(all_matched_comments),
+      'fill': False,
+      'lineTension': 0,
+    }
     myData.append(collectionDict)
-    colorCounter += 1
 
   myData = nlargest(NUM_CHART_ENTRIES, myData, key=lambda item: item["num_matched_comments"])
+
+  colorCounter = 0
+  for collectionDict in myData:
+    collectionDict['borderColor'] = myColors[colorCounter]
+    collectionDict['backgroundColor'] = myColors[colorCounter]
+    colorCounter += 1
+
 
   chartConfig = {}
   chartConfig['type'] = 'line'
@@ -194,23 +197,24 @@ def filterChart(request, filter_id):
   rules = Rule.objects.filter(rule_collection = collection)
   myColors = getColors(len(rules))
 
-  ruleCounter = 0
   myData = []
   for rule in rules:
+    rule_matched_comments = getMatchedCommentsForCharts(unifiedRule(rule), myChannel)
     ruleDict = {
       'label': rule.phrase,
-      'borderColor': myColors[ruleCounter],
-      'backgroundColor': myColors[ruleCounter],
       'fill': False,
       'lineTension': 0,
-    }
-    rule_matched_comments = getMatchedCommentsForCharts(unifiedRule(rule), myChannel)
-    ruleDict['num_matched_comments'] = len(rule_matched_comments)
-    ruleDict['data'] = ruleDateCounter(rule_matched_comments)
+      'num_matched_comments': len(rule_matched_comments),
+      'data': ruleDateCounter(rule_matched_comments)
+    }    
     myData.append(ruleDict)
-    ruleCounter += 1
 
   myData = nlargest(NUM_CHART_ENTRIES, myData, key=lambda item: item["num_matched_comments"])
+  ruleCounter = 0
+  for ruleDict in myData:
+    ruleDict['borderColor'] = myColors[ruleCounter]
+    ruleDict['backgroundColor'] = myColors[ruleCounter]
+    ruleCounter += 1
 
 
   chartConfig = {}
