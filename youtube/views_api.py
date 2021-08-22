@@ -3,18 +3,20 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.staticfiles.storage import staticfiles_storage
+from django.utils import timezone
 
 from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
 
-from datetime import datetime
+from datetime import datetime, timedelta
 import urllib.request, json
 import random
 import re
 from heapq import nlargest
 import pandas as pd
+import os
+import string
 
 from rest_framework import viewsets
 from .serializers import RuleCollectionSerializer, CommentSerializer, AllCommentsSerializer
@@ -248,7 +250,7 @@ def previewRule(request):
     if (comment['catching_collection'] is None):
       num_new_matches += 1
   response = {
-    'comments': matched_comments,
+    'comments': matched_comments[:15],
     'num_new_matches': num_new_matches,
   }
   return HttpResponse(json.dumps(response), content_type='application/json')
@@ -433,7 +435,86 @@ def deleteFilter(request):
   else:
     return HttpResponse('Collection does not exist'.encode('utf-8'), status = 404)
 
+def random_date():
+  """Generate a random datetime between `start` and `end`"""
+  end = datetime(2021, 8, 19, 1, 0, 0)
+  start = end - timedelta(days=90)
+  return start + timedelta(
+    # Get a random amount of seconds between `start` and `end`
+    seconds=random.randint(0, int((end - start).total_seconds())),
+  )    
+
+def random_string():
+  return ''.join(random.choices(string.ascii_uppercase + string.digits, k=15))
+
+def randomizeComment(comment_text):
+  replacements = ['ass whore', 'faggot', 'ass man', 'bulldyke', 'buttfuck', 'carpet muncher', 'cocksucker', 'dyke', 'fag', 'fingerfucker']
+  replacements += ['fudgepacker', 'gayass', 'muffindiver', 'pussyeater', 'sodomite', 'lezbo']
+  replacements += ['annihilate', 'bang', 'choke', 'batter', 'brutalise', 'butcher', 'clobber', 'decimate', 'flagellate', 'punch', 'strangle', 'trample', 'whip']
+  replacements += ['pound', 'gangbang', 'incest', 'molest']
+  replacements += ['whore', 'bitch', 'cunt', 'slut', 'twat']
+  replacements += ['butt', 'blowjob', 'deepthroat', 'femdom', 'octopussy', 'schlong']
+
+  anchor = None
+  if ('the' in comment_text):
+    anchor = 'the'
+  elif ('that' in comment_text):    
+    anchor = 'that'
+  elif ('with' in comment_text):
+    anchor = 'with'  
+  elif ('from' in comment_text):
+    anchor = 'from'  
+  else:
+    return comment_text
+  if (random.randrange(100) < 30):
+    replacement = random.sample(replacements, 1)[0]
+    new_str = comment_text.replace(anchor, replacement)
+    return new_str
+  else:
+    return comment_text
+
+def createTestVideos(myChannel):
+  titles = [
+    'Trump slams Biden over Afghanistan & Inflation',
+    'Disgruntled Trump Actively Undermines Vaccination Push',
+    'Goodbye Donald Trump',
+    'Donald Trump vows to ban Muslims Entering US',
+    'Red Pill: A search for dating advice turns into radicalization',
+  ]
+
+  videos = []
+
+  for title in titles:
+    updated_values = {      
+      'pub_date': random_date(),
+      'video_id': random_string(),
+      'channel': myChannel,
+    }
+    video, created = Video.objects.update_or_create(title = title, defaults=updated_values)
+    videos.append(video)
+  return videos
+
 def createTestEntries(request):
-  url = staticfiles_storage.url('youtube/sample_entries.csv')
-  df = pd.read_csv(url)
+  myChannel = getChannel(request)
+  csv_path = os.path.join(os.path.dirname(__file__), 'sample_entries.csv')
+  df = pd.read_csv(csv_path)
+  videos = createTestVideos(myChannel)
+  for index, row in df.iterrows():
+    if (index < 800):
+      video = random.sample(videos[:4], 1)[0]
+    else:
+      video = videos[4]
+    updated_values = {      
+      'pub_date': random_date(),
+      'video': video,
+      'parent_id': '',
+      'text': randomizeComment(row['text']),
+    }    
+    comment, created = Comment.objects.update_or_create(
+      author = row['author'],
+      likeCount = int(row['likeCount']),
+      comment_id = row['comment_id'],
+      defaults=updated_values
+      )
+  # return HttpResponse(json.dumps({}), content_type='application/json')
   return HttpResponseRedirect('/overview')
