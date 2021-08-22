@@ -66,6 +66,7 @@ urlpatterns = [
 
   # Test
   path('mytest', views.mytest, name='mytest'),
+  path('create_test_entries', views_api.createTestEntries, name='createTestEntries'),
 
 ]
 
