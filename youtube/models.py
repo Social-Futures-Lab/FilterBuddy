@@ -86,6 +86,9 @@ class Video(models.Model):
   def url_id_and_title(self):
     return 'stuff'
 
+  def __str__(self):
+    return u'%s' % (self.title)
+
 class Comment(models.Model):
   text = models.CharField(max_length=5000)
   pub_date = models.DateTimeField('date published')
