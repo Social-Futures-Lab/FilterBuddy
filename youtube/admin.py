@@ -32,6 +32,7 @@ class VideoAdmin(admin.ModelAdmin):
 
 class CommentAdmin(admin.ModelAdmin):
   list_display = ('text', 'video', 'pub_date', 'author', 'likeCount', 'comment_id', 'parent_id')
+  search_fields = ['text', 'author']
 
 admin.site.register(Channel, ChannelAdmin)
 admin.site.register(Rule, RuleAdmin)
