@@ -3,6 +3,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
@@ -13,6 +14,7 @@ import urllib.request, json
 import random
 import re
 from heapq import nlargest
+import pandas as pd
 
 from rest_framework import viewsets
 from .serializers import RuleCollectionSerializer, CommentSerializer, AllCommentsSerializer
@@ -430,3 +432,8 @@ def deleteFilter(request):
     return HttpResponse(json.dumps({}), content_type='application/json')
   else:
     return HttpResponse('Collection does not exist'.encode('utf-8'), status = 404)
+
+def createTestEntries(request):
+  url = staticfiles_storage.url('youtube/sample_entries.csv')
+  df = pd.read_csv(url)
+  return HttpResponseRedirect('/overview')

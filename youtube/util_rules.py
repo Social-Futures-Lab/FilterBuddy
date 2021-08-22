@@ -87,7 +87,6 @@ def ruleDateCounter(rule_matched_comments):
     myData[pub_date] += 1
 
   data = []
-  # for pub_date in sorted(myData.keys()):
   for pub_date in (CHARTS_START_DATE + timedelta(n) for n in range(NUM_DAYS_IN_CHARTS + 1)):
     pub_date = pub_date.strftime('%Y-%m-%d')    
     data.append(
