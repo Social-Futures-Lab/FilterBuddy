@@ -325,7 +325,7 @@
     this._P.listen('comments.preview', (function (filter) {
       if (filter.previewRule().getPhrase().length > 0) {        
         return filter.previewRule().preview().then((function (comments) {
-          $('label-preview-mode').innerHTML = 'The table below shows the comments that are matched by the phrase "' +
+          $('label-preview-mode').innerHTML = 'The table below shows a sample of comments that are matched by the phrase "' +
             filter.previewRule().toString() + '"' + '. <span style="background-color:yellow;">Adding this rule will catch <b>' + comments['num_new_matches'].toString() + "</b> new comments. </span>";
           this._tablePreview.setRows(comments['comments']);
         }).bind(this));
@@ -349,6 +349,7 @@
       if (currentFilter.previewRule().getPhrase().length === 0) {
         return; // Nothings
       }
+
 
       return currentFilter.finalizePreviewRule().then((function () {
         // Trigger both an update in the rules list and an update for the chart
