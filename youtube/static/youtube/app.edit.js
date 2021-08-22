@@ -158,7 +158,7 @@
       } else if (col === 'time') {
         return src['pub_date'];
       } else if (col === 'caught_by') {
-        return src['catching_collection'];        
+        return src['catching_collection'];
       } else {
         return null;
       }
@@ -254,14 +254,7 @@
       } else if (col === 'caught_comments') {
         const matched_comments = src.getNumMatchedComments();
         return matched_comments.toString();
-      } else if (col === 'rule_action') {    
-        // var actionDropdownButton = '<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"> <span id="selected">Dropdown button</span></button>' +
-        // '<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">' +
-        // '<li><a class="dropdown-item" href="javascript:void(0);">Action</a></li>' +
-        // '<li><a class="dropdown-item" href="javascript:void(0);">Another action</a></li>' +
-        // '<li><a class="dropdown-item" href="javascript:void(0);">Something else here</a></li>' + 
-        // '</ul>';
-
+      } else if (col === 'rule_action') {
         var mainButton = _('button', {
             'className': 'btn btn-secondary dropdown-toggle',
             'type': 'button',
@@ -323,7 +316,7 @@
     }).bind(this));
 
     this._P.listen('comments.preview', (function (filter) {
-      if (filter.previewRule().getPhrase().length > 0) {        
+      if (filter.previewRule().getPhrase().length > 0) {
         return filter.previewRule().preview().then((function (comments) {
           $('label-preview-mode').innerHTML = 'The table below shows a sample of comments that are matched by the phrase "' +
             filter.previewRule().toString() + '"' + '. <span style="background-color:yellow;">Adding this rule will catch <b>' + comments['num_new_matches'].toString() + "</b> new comments. </span>";
