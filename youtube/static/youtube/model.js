@@ -194,7 +194,7 @@
       rule.serialize()).execute().then((function () {
         // Remove the rule locally
         this._rules = this._rules.filter(function (r) {
-          return r !== rule || r.getId() !== rule.getId();
+          return r !== rule && r.getId() !== rule.getId();
         });
       }).bind(this));
   };
