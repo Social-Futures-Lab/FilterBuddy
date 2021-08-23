@@ -8,7 +8,8 @@ DEVELOPER_KEY_FILE = realpath(join(dirname(__file__), "developer_key.txt"))
 
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account and requires requests to use an SSL connection.
-SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
+# SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
+SCOPES = ['https://www.googleapis.com/auth/youtube.readonly']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
 DEVELOPER_KEY = open(DEVELOPER_KEY_FILE).read()
