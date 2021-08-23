@@ -29,6 +29,8 @@ from .models import Channel, RuleCollection, RuleColTemplate, Rule, Video, Comme
 from .utils import *
 from .util_rules import getChannel as getChannelFromRequest
 
+os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
+
 class YouTubeForm(forms.Form):
   pass
 
