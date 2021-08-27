@@ -90,7 +90,7 @@ class Video(models.Model):
     return u'%s' % (self.title)
 
 class Comment(models.Model):
-  text = models.CharField(max_length=5000)
+  text = models.TextField()
   pub_date = models.DateTimeField('date published')
   author = models.CharField(max_length=200)
   likeCount = models.IntegerField()
