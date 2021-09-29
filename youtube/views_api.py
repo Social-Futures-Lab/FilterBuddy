@@ -65,15 +65,15 @@ class AllCommentsViewSet(viewsets.ModelViewSet):
       myChannelComments = queryset.filter(video__channel = myChannel)
       return myChannelComments
 
-def makeDebugChannel(channel_id = ''):
-  try:
-    return Channel.objects.get(channel_id = channel_id)
-  except:
-    return Channel.objects.create(
-      title='Debug channel',
-      channel_id=channel_id,
-      description='This is a temporary debugging channel',
-      pub_date=datetime.now())
+# def makeDebugChannel(channel_id = ''):
+#   try:
+#     return Channel.objects.get(channel_id = channel_id)
+#   except:
+#     return Channel.objects.create(
+#       title='Debug channel',
+#       channel_id=channel_id,
+#       description='This is a temporary debugging channel',
+#       pub_date=datetime.now())
 
 def isLoggedIn(request):
   return True #request.user.is_authenticated
@@ -102,20 +102,20 @@ def unifiedRule(rule):
   else:
     raise Error('Unknown type for rule')
 
-@csrf_exempt
-def debug(request):
-  channel_id = ''
-  try:
-    request_data = json.loads(request.body.decode('utf-8'))
-    channel_id = request_data['channel']
-  except:
-    pass
-  channel = makeDebugChannel(channel_id = channel_id)
-  if not 'credentials' in request.session:
-    request.session['credentials'] = {}
-  if not 'myChannelId' in request.session['credentials']:
-    request.session['credentials']['myChannelId'] = channel.channel_id
-  return HttpResponse('Done.'.encode('utf-8'))
+# @csrf_exempt
+# def debug(request):
+#   channel_id = ''
+#   try:
+#     request_data = json.loads(request.body.decode('utf-8'))
+#     channel_id = request_data['channel']
+#   except:
+#     pass
+#   channel = makeDebugChannel(channel_id = channel_id)
+#   if not 'credentials' in request.session:
+#     request.session['credentials'] = {}
+#   if not 'myChannelId' in request.session['credentials']:
+#     request.session['credentials']['myChannelId'] = channel.channel_id
+#   return HttpResponse('Done.'.encode('utf-8'))
 
 @csrf_exempt
 def api(request):

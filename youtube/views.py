@@ -31,16 +31,16 @@ from .util_rules import getChannel as getChannelFromRequest
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
-class YouTubeForm(forms.Form):
-  pass
+# class YouTubeForm(forms.Form):
+#   pass
 
-class HomePageView(FormView):
-  template_name = 'youtube/home.html'
-  form_class = YouTubeForm
+# class HomePageView(FormView):
+#   template_name = 'youtube/home.html'
+#   form_class = YouTubeForm
 
 # Create your views here.
-def index(request):
-  return render(request, "youtube/home.html")
+# def index(request):
+#   return render(request, "youtube/home.html")
 
 def getChannel(credentials):
   youtube = googleapiclient.discovery.build(
@@ -63,39 +63,38 @@ def getChannel(credentials):
 def about_us(request):
   return render(request, 'youtube/about_us.html')
 
-def mytest(request):
-  return render(request, 'youtube/mytest.html', {})
+# def mytest(request):
+#   return render(request, 'youtube/mytest.html', {})
 
+# def test_api_request(request):
+#   if 'credentials' not in request.session:
+#     return authorize(request)
 
-def test_api_request(request):
-  if 'credentials' not in request.session:
-    return authorize(request)
+#   # Load credentials from the session.
+#   sc = request.session['credentials']
+#   credentials = google.oauth2.credentials.Credentials(
+#     token = sc.get('token'),
+#     refresh_token = sc.get('refresh_token'),
+#     token_uri = sc.get('token_uri'),
+#     client_id = sc.get('client_id'),
+#     client_secret = sc.get('client_secret'),
+#     scopes = sc.get('scopes')
+#   )
 
-  # Load credentials from the session.
-  sc = request.session['credentials']
-  credentials = google.oauth2.credentials.Credentials(
-    token = sc.get('token'),
-    refresh_token = sc.get('refresh_token'),
-    token_uri = sc.get('token_uri'),
-    client_id = sc.get('client_id'),
-    client_secret = sc.get('client_secret'),
-    scopes = sc.get('scopes')
-  )
+#   channel = getChannel(credentials)
 
-  channel = getChannel(credentials)
-
-  # Save credentials back to session in case access token was refreshed.
-  # ACTION ITEM: In a production app, you likely want to save these
-  #        credentials in a persistent database instead.
-  request.session['credentials'] = credentials_to_dict(credentials)
-  request.session['credentials']['myChannelId'] = channel.channel_id
-  channelDict = {
-    'title': channel.title,
-    'description': channel.description,
-    'publishedAt': channel.pub_date,
-    'id': channel.channel_id}
-  return render(request, 'youtube/profile.html', {'channel': channelDict,})
-  # return JsonResponse(channel)
+#   # Save credentials back to session in case access token was refreshed.
+#   # ACTION ITEM: In a production app, you likely want to save these
+#   #        credentials in a persistent database instead.
+#   request.session['credentials'] = credentials_to_dict(credentials)
+#   request.session['credentials']['myChannelId'] = channel.channel_id
+#   channelDict = {
+#     'title': channel.title,
+#     'description': channel.description,
+#     'publishedAt': channel.pub_date,
+#     'id': channel.channel_id}
+#   return render(request, 'youtube/profile.html', {'channel': channelDict,})
+#   # return JsonResponse(channel)
 
 
 def authorize(request):
@@ -189,96 +188,96 @@ def clear_credentials(request):
   # return render(request, "youtube/home.html", {'page_message': page_message})
   return HttpResponseRedirect(reverse('youtube:authorize'))
 
-@csrf_exempt
-def get_videos(request):
-  if 'credentials' not in request.session:
-    return authorize(request)
+# @csrf_exempt
+# def get_videos(request):
+#   if 'credentials' not in request.session:
+#     return authorize(request)
 
-  # Load credentials from the session.
-  sc = request.session['credentials']
-  if 'myChannelId' not in sc:
-    credentials = google.oauth2.credentials.Credentials(
-      token = sc.get('token'),
-      refresh_token = sc.get('refresh_token'),
-      token_uri = sc.get('token_uri'),
-      client_id = sc.get('client_id'),
-      client_secret = sc.get('client_secret'),
-      scopes = sc.get('scopes')
-    )
-    myChannel = getChannel(credentials)
-    sc['myChannelId'] = myChannel.channel_id
-  else:
-    myChannelId = sc['myChannelId']
-    myChannel = Channel.objects.get(channel_id = myChannelId)
-  myChannelId = myChannel.channel_id
+#   # Load credentials from the session.
+#   sc = request.session['credentials']
+#   if 'myChannelId' not in sc:
+#     credentials = google.oauth2.credentials.Credentials(
+#       token = sc.get('token'),
+#       refresh_token = sc.get('refresh_token'),
+#       token_uri = sc.get('token_uri'),
+#       client_id = sc.get('client_id'),
+#       client_secret = sc.get('client_secret'),
+#       scopes = sc.get('scopes')
+#     )
+#     myChannel = getChannel(credentials)
+#     sc['myChannelId'] = myChannel.channel_id
+#   else:
+#     myChannelId = sc['myChannelId']
+#     myChannel = Channel.objects.get(channel_id = myChannelId)
+#   myChannelId = myChannel.channel_id
 
-  videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
+#   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
 
-  videos = []
-  with urllib.request.urlopen(videoFetchUrl) as url:
-    data = json.loads(url.read().decode())
-    for item in data['items']:
-      publishedAt = item['snippet']['publishedAt']
-      title = item['snippet']['title']
-      videoId = item['id']['videoId']
-      pub_date = dateutil.parser.parse(publishedAt)
-      videos.append({
-        'videoId': videoId,
-        'title': title,
-        'publishTime': publishedAt
-      })
-      video, created = Video.objects.get_or_create(title = title, pub_date = pub_date, video_id = videoId, channel = myChannel)
-  response = {
-    'video': videos
-  }
-  return HttpResponse(json.dumps(response), content_type='application/json')
-  #return render(request, 'youtube/videos.html', {'videos': videos})
+#   videos = []
+#   with urllib.request.urlopen(videoFetchUrl) as url:
+#     data = json.loads(url.read().decode())
+#     for item in data['items']:
+#       publishedAt = item['snippet']['publishedAt']
+#       title = item['snippet']['title']
+#       videoId = item['id']['videoId']
+#       pub_date = dateutil.parser.parse(publishedAt)
+#       videos.append({
+#         'videoId': videoId,
+#         'title': title,
+#         'publishTime': publishedAt
+#       })
+#       video, created = Video.objects.get_or_create(title = title, pub_date = pub_date, video_id = videoId, channel = myChannel)
+#   response = {
+#     'video': videos
+#   }
+#   return HttpResponse(json.dumps(response), content_type='application/json')
+#   #return render(request, 'youtube/videos.html', {'videos': videos})
 
 
-def get_comments(request):
-  if 'credentials' not in request.session:
-    return authorize(request)
+# def get_comments(request):
+#   if 'credentials' not in request.session:
+#     return authorize(request)
 
-  # Load credentials from the session.
-  sc = request.session['credentials']
-  if 'myChannelId' not in sc:
-    credentials = google.oauth2.credentials.Credentials(
-      token = sc.get('token'),
-      refresh_token = sc.get('refresh_token'),
-      token_uri = sc.get('token_uri'),
-      client_id = sc.get('client_id'),
-      client_secret = sc.get('client_secret'),
-      scopes = sc.get('scopes')
-    )
-    myChannel = getChannel(credentials)
-    sc['myChannelId'] = myChannel.channel_id
-  else:
-    myChannelId = sc['myChannelId']
-    myChannel = Channel.objects.get(channel_id = myChannelId)
-  myChannelId = myChannel.channel_id
+#   # Load credentials from the session.
+#   sc = request.session['credentials']
+#   if 'myChannelId' not in sc:
+#     credentials = google.oauth2.credentials.Credentials(
+#       token = sc.get('token'),
+#       refresh_token = sc.get('refresh_token'),
+#       token_uri = sc.get('token_uri'),
+#       client_id = sc.get('client_id'),
+#       client_secret = sc.get('client_secret'),
+#       scopes = sc.get('scopes')
+#     )
+#     myChannel = getChannel(credentials)
+#     sc['myChannelId'] = myChannel.channel_id
+#   else:
+#     myChannelId = sc['myChannelId']
+#     myChannel = Channel.objects.get(channel_id = myChannelId)
+#   myChannelId = myChannel.channel_id
 
-  videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
-  myVideoIds = []
-  with urllib.request.urlopen(videoFetchUrl) as url:
-    data = json.loads(url.read().decode())
-    for item in data['items']:
-      if 'videoId' in item['id'].keys():
-        myVideoIds.append(item['id']['videoId'])
+#   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
+#   myVideoIds = []
+#   with urllib.request.urlopen(videoFetchUrl) as url:
+#     data = json.loads(url.read().decode())
+#     for item in data['items']:
+#       if 'videoId' in item['id'].keys():
+#         myVideoIds.append(item['id']['videoId'])
 
-  youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
+#   youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
 
-  myComments = []
-  for video_id in myVideoIds:
-    comments = get_comments_from_video(youtube, video_id)
-    myComments += comments
-  myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
-  return render(request, 'youtube/comments.html', {'comments': myComments})
+#   myComments = []
+#   for video_id in myVideoIds:
+#     comments = get_comments_from_video(youtube, video_id)
+#     myComments += comments
+#   myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
+#   return render(request, 'youtube/comments.html', {'comments': myComments})
 
-def get_video_comments(request, video_id):
-  youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
-  comments = get_comments_from_video(youtube, video_id)
-  video_url = "https://www.youtube.com/watch?v=%s" % (video_id,)
-  return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id, 'video_url': video_url})
+# def get_video_comments(request, video_id):
+#   youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
+#   comments = get_comments_from_video(youtube, video_id)
+#   video_url = "https://www.youtube.com/watch?v=%s" % (video_id,)
+#   return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id, 'video_url': video_url})
 
 def saveCommentObject(youtube, item, video):
   text = item['snippet']['topLevelComment']['snippet']['textDisplay']
@@ -445,20 +444,20 @@ def get_matching_comments(request, phrase):
   return HttpResponse(json.dumps(response), content_type='application/json')
 
 
-def search_reg_exp(reg_exp, comments, highlight_words=False):
-  def highlight(match):
-    return "<strong>" + match.group() + "</strong>"
-  matching_comments = []
-  for comment in comments:
-    if highlight_words:
-      res_and_num_changes = re.subn(reg_exp, highlight, comment.text)
-      if res_and_num_changes[1] > 0:
-        matched_comment = copy.copy(comment)
-        matched_comment.text = res_and_num_changes[0]
-        matching_comments.append(matched_comment)
-    elif re.search(reg_exp, comment.text) != None:
-      matching_comments.append(comment)
-  return matching_comments
+# def search_reg_exp(reg_exp, comments, highlight_words=False):
+#   def highlight(match):
+#     return "<strong>" + match.group() + "</strong>"
+#   matching_comments = []
+#   for comment in comments:
+#     if highlight_words:
+#       res_and_num_changes = re.subn(reg_exp, highlight, comment.text)
+#       if res_and_num_changes[1] > 0:
+#         matched_comment = copy.copy(comment)
+#         matched_comment.text = res_and_num_changes[0]
+#         matching_comments.append(matched_comment)
+#     elif re.search(reg_exp, comment.text) != None:
+#       matching_comments.append(comment)
+#   return matching_comments
 
 @csrf_exempt
 def get_rule_collection_templates(request):
