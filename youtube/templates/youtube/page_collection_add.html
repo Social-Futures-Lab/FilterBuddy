@@ -26,11 +26,11 @@
       <div class="form-check">
         <input class="form-check-input" type="radio" name="wizMode" id="wiz-mode-preset" value="template">
         <label class="form-check-label" for="wiz-mode-preset">
-          Create a category based on a platform template
+          Clone a built-in category 
         </label>
         <div id="sec-template" class="py-1" style="display: none;">
           <div class="mb-3">
-            <label for="templateName" class="form-label">Base this category on the following template:</label>
+            <label for="templateName" class="form-label">Import and build on the following category:</label>
             <select id="dropdown-template" name="templateName" class="form-select w-75">
               {% for template in rule_templates %}
                 {% if forloop.first %}
@@ -46,7 +46,7 @@
                 <div class="card-body">
                   <h5 class="card-title">{{ template.name }}</h5>
                   <p class="card-text">{{ template.description|linebreaks|urlize }}</p>
-                  <p class="card-text"> Phrases in this template include
+                  <p class="card-text"> Phrases in this category include
                   {% for rule in template.rule_set.all|slice:"0:5" %}
                     {{ rule.phrase }}{% if forloop.last %}.{% else %}, {% endif %}
                   {% endfor %}
