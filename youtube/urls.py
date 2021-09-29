@@ -4,7 +4,7 @@ from django.urls import path
 from django.conf.urls import url, include
 from rest_framework import routers
 
-from .views import HomePageView
+# from .views import HomePageView
 from . import views
 from . import views_api
 
@@ -23,21 +23,21 @@ urlpatterns = [
   path('collection/<int:filter_id>/overview', views.overview_word_filter),
   path('collection/<int:filter_id>/edit', views.edit_word_filter),
 
-  path('test', views.test_api_request, name='test'),
+  # path('test', views.test_api_request, name='test'),
   path('authorize', views.authorize, name='authorize'),
   path('oauth2callback', views.oauth2callback, name='oauth2callback'),
   path('revoke', views.revoke, name='revoke'),
   path('clear', views.clear_credentials, name='clear'),
-  path('get_comments', views.get_comments, name='get_comments'),
-  path('get_videos', views.get_videos, name='get_videos'),
-  path('get_video_comments/<str:video_id>', views.get_video_comments, name='get_video_comments'),
-  path('backend', views.index, name='backend'),
+  # path('get_comments', views.get_comments, name='get_comments'),
+  # path('get_videos', views.get_videos, name='get_videos'),
+  # path('get_video_comments/<str:video_id>', views.get_video_comments, name='get_video_comments'),
+  # path('backend', views.index, name='backend'),
   path('get_rule_collection_templates', views.get_rule_collection_templates, name='get_rule_collection_templates'),
   path('get_matching_comments/<str:phrase>', views.get_matching_comments, name='get_matching_comments'),
   path('sync', views.sync),
 
   path('api', views_api.api, name='api'),
-  path('api/debug', views_api.debug),
+  # path('api/debug', views_api.debug),
   path('api/authenticate', views_api.getUserInfo),
 
 
@@ -65,7 +65,7 @@ urlpatterns = [
   path('capi/commentTable/<int:filter_id>', views_api.indexCommentCollection, name='commentTables'),
 
   # Test
-  path('mytest', views.mytest, name='mytest'),
+  # path('mytest', views.mytest, name='mytest'),
   path('create_test_entries', views_api.createTestEntries, name='createTestEntries'),
 
 ]
