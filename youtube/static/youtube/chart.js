@@ -121,7 +121,7 @@
 
   InteractiveChart.prototype.drawOverview = function () {
     return this._drawFilterChartWithData('overview');
-  };  
+  };
 
   InteractiveChart.prototype.drawFilterRule = function (id, ruleId) {
     return this._drawWithData('filter/' + id + '/rule/' + ruleId);
