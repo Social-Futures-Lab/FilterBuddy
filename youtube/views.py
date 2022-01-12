@@ -63,6 +63,9 @@ def getChannel(credentials):
 def about_us(request):
   return render(request, 'youtube/about_us.html')
 
+def about_us_new(request):
+  return render(request, 'youtube/about_us_new.html')
+
 # def mytest(request):
 #   return render(request, 'youtube/mytest.html', {})
 
