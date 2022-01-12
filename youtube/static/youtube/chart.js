@@ -9,7 +9,7 @@
     factory(root, root.dfc);
   }
 })(this, function (exports, _) {
-
+  // api object = instance of calling thing (fetch from backend)
   function InteractiveChart(dom, api) {
     this._dom = dom; // where to draw the chart
     this._api = api;
@@ -62,7 +62,7 @@
     }, [canvas]));
   };
 
-
+  // _ means private method
   InteractiveChart.prototype._drawFilterChartData = function (chartConfig) {
     this._dom.innerHTML = ''; // clear the container
     var canvas = _('canvas', {}); // make the canvas
