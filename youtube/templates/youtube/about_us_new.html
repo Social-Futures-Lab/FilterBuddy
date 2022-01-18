@@ -1,34 +1,45 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    {% load static %}
-    <style>
-      div {
-        max-width: 1100px;
-      }
-    </style>
-    <title>Filter Buddy</title>
-    <style type="text/css"></style>
-  </head>
-  <body>
-    <div class="logo">
+{% extends "youtube/page_base.html" %}
+
+{% load static %}
+
+  {% block content %}
+    <div id="logo">
       <img
         src="{% static 'youtube/filter-buddy-temp.png' %}"
-        alt=""
+        alt="filter buddy in dark blue text"
         width="500"
         height="500"
       />
       <h1>Filter Buddy</h1>
     </div>
-    <div class="mission-statement">
+    <div id="mission-statement">
       <h2>Mission Statement</h2>
     </div>
-    <div class="features">
+    <div id="features">
       <h2>How Does It Work?</h2>
     </div>
-    <div class="contact-us">
+    <div id="contact-us">
       <h2>Contact Us</h2>
+      <div id="creators">
+        <h3>Creators</h3>
+        <div class="profile">
+          <img
+            src="{% static 'youtube/pfp_doggo.jpeg' %}"
+            alt="photo of a pitbull dog wearing green glasses with the year 2022"
+          />
+          <p>Doggo Jameson</p>
+        </div>
+      </div>
+      <div id="developers">
+        <h3>Developers</h3>
+        <div class="profile">
+          <img
+            src="{% static 'youtube/pfp_doggo.jpeg' %}"
+            alt="photo of a pitbull dog wearing green glasses with the year 2022"
+          />
+          <p>Doggo Jameson2</p>
+        </div>
+      </div>
     </div>
-  </body>
+  {% endblock content %}
 </html>
