@@ -1,45 +1,42 @@
-{% extends "youtube/page_base.html" %}
-
-{% load static %}
-
-  {% block content %}
-    <div id="logo">
+{% extends "youtube/page_base.html" %} {% load static %} {% block scripts %}
+<script type="text/javascript" src="{% static 'youtube/app.add.js' %}"></script>
+{% endblock scripts %} {% block content %}
+<div id="logo">
+  <img
+    src="{% static 'youtube/filter-buddy-temp.png' %}"
+    alt="filter buddy in dark blue text"
+    width="500"
+    height="500"
+  />
+  <h1>Filter Buddy</h1>
+</div>
+<div id="mission-statement">
+  <h2>Mission Statement</h2>
+</div>
+<div id="features">
+  <h2>How Does It Work?</h2>
+</div>
+<div id="contact-us">
+  <h2>Contact Us</h2>
+  <div id="creators">
+    <h3>Creators</h3>
+    <div class="profile">
       <img
-        src="{% static 'youtube/filter-buddy-temp.png' %}"
-        alt="filter buddy in dark blue text"
-        width="500"
-        height="500"
+        src="{% static 'youtube/pfp_doggo.jpeg' %}"
+        alt="photo of a pitbull dog wearing green glasses with the year 2022"
       />
-      <h1>Filter Buddy</h1>
+      <p>Doggo Jameson</p>
     </div>
-    <div id="mission-statement">
-      <h2>Mission Statement</h2>
+  </div>
+  <div id="developers">
+    <h3>Developers</h3>
+    <div class="profile">
+      <img
+        src="{% static 'youtube/pfp_doggo.jpeg' %}"
+        alt="photo of a pitbull dog wearing green glasses with the year 2022"
+      />
+      <p>Doggo Jameson2</p>
     </div>
-    <div id="features">
-      <h2>How Does It Work?</h2>
-    </div>
-    <div id="contact-us">
-      <h2>Contact Us</h2>
-      <div id="creators">
-        <h3>Creators</h3>
-        <div class="profile">
-          <img
-            src="{% static 'youtube/pfp_doggo.jpeg' %}"
-            alt="photo of a pitbull dog wearing green glasses with the year 2022"
-          />
-          <p>Doggo Jameson</p>
-        </div>
-      </div>
-      <div id="developers">
-        <h3>Developers</h3>
-        <div class="profile">
-          <img
-            src="{% static 'youtube/pfp_doggo.jpeg' %}"
-            alt="photo of a pitbull dog wearing green glasses with the year 2022"
-          />
-          <p>Doggo Jameson2</p>
-        </div>
-      </div>
-    </div>
-  {% endblock content %}
-</html>
+  </div>
+</div>
+{% endblock content %}
