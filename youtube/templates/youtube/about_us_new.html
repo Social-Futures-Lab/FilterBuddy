@@ -21,55 +21,57 @@
     <link rel="stylesheet" href="{% static 'youtube/style.css' %}" />
   </head>
     <div>
-      <div class="bg-primary text-white p-5 text-center">
+      <div class="bg-info text-white p-5 text-center">
+        <h1>Filter Buddy</h1>
+        <br>
         <img
           src="{% static 'youtube/filter-buddy-temp.png' %}"
+          class="rounded mx-auto d-block"
           alt="filter buddy in dark blue text"
-          width="500"
-          height="500"
         />
-        <h1>Filter Buddy</h1>
       </div>
-      <div class="container">
-        <div class="row">
-          <h2>Mission Statement</h2>
-          <h4>This is our Mission Statement</h4>
-          <div class="col">
-            <a class="btn btn-outline-info" href="#" role="button">Read Paper</a>
-            <a class="btn btn-outline-info" href="#" role="button">Try It Out</a>
-          </div>
-        </div>
-        <div class="row">
-          <h2>How Does It Work?</h2>
-          <div class="col">
-            <div class="embed-responsive embed-responsive-16by9">
-              <iframe class="embed-responsive-item" src="..."></iframe>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <h2>Contact Us</h2>
+      <div class="jumbotron  vertical-center">
+        <div class="container">
           <div class="row">
-            <div class="col-4">
-              <h2>Creators</h2>
+            <h2>Mission Statement</h2>
+            <h4>This is our Mission Statement</h4>
+            <div class="col">
+              <a class="btn btn-outline-info" href="#" role="button">Read Paper</a>
+              <a class="btn btn-outline-info" href="#" role="button">Try It Out</a>
             </div>
-            <div class="col-8">
-              <div class="profile">
-                <img src="{% static 'youtube/pfp_doggo.jpeg' %}"
-                alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
-                <p>Doggo Jameson2</p>
+          </div>
+          <div class="row">
+            <h2>How Does It Work?</h2>
+            <div class="col">
+              <div class="embed-responsive embed-responsive-16by9">
+                <iframe class="embed-responsive-item" src="..."></iframe>
               </div>
             </div>
           </div>
           <div class="row">
-            <div class="col-4">
-              <h2>Developers</h2>
+            <h2>Team</h2>
+            <div class="row">
+              <div class="col-4">
+                <h2>Creators</h2>
+              </div>
+              <div class="col-8">
+                <div class="profile">
+                  <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
+                  alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
+                  <p>Doggo Jameson2</p>
+                </div>
+              </div>
             </div>
-            <div class="col-8">
-              <div class="profile">
-                <img src="{% static 'youtube/pfp_doggo.jpeg' %}"
-                alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
-                <p>Doggo Jameson2</p>
+            <div class="row">
+              <div class="col-4">
+                <h2>Developers</h2>
+              </div>
+              <div class="col-8">
+                <div class="profile">
+                  <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
+                  alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
+                  <p>Doggo Jameson2</p>
+                </div>
               </div>
             </div>
           </div>
