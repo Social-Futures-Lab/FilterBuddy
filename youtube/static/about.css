@@ -1,6 +1,5 @@
-.profile img {
-  width: 250px;
-  height: auto;
+.img-thumbnail {
+  border-radius: 20rem;
 }
 
 div {
