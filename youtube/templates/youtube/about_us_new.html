@@ -5,14 +5,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Word Filters Splash Page</title>
+    <link rel="stylesheet" href="about.css">
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
       rel="stylesheet"
       crossorigin="anonymous"
-    />
-    <link
-      rel="stylesheet"
-      href="//cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.min.css"
     />
     <link
       rel="stylesheet"
@@ -21,23 +18,26 @@
     <link rel="stylesheet" href="{% static 'youtube/style.css' %}" />
   </head>
     <div>
-      <div class="bg-info text-white p-5 text-center">
-        <h1>Filter Buddy</h1>
-        <br>
-        <img
-          src="{% static 'youtube/filter-buddy-temp.png' %}"
-          class="rounded mx-auto d-block"
-          alt="filter buddy logo"
-        />
-      </div>
-      <div class="jumbotron  vertical-center">
-        <div class="container">
+      <section class="py-5 text-center container">
+        <div class="row py-lg-f">
+          <div class="col-lg-6 col md-8 mx auto">
+            <h1 class="fw-light">Filter Buddy</h1>
+            <img
+              src="{% static 'youtube/pfp_doggo.jpeg' %}"
+              class="rounded mx-auto d-block"
+              alt="filter buddy logo"
+            />
+            <a href="#" class="btn btn-secondary my-2">Try It Out</a>
+          </div>
+        </div>
+      </section>
+      <div class="album py-5 bg-light">
+        <div class="container text-center">
           <div class="row">
             <h2>Mission Statement</h2>
             <h4>This is our Mission Statement</h4>
             <div class="col">
-              <a class="btn btn-outline-info" href="#" role="button">Read Paper</a>
-              <a class="btn btn-outline-info" href="#" role="button">Try It Out</a>
+              <a href="#" class="btn btn-secondary my-2">Read Paper</a>
             </div>
           </div>
           <div class="row">
@@ -60,6 +60,16 @@
                   alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
                   <p>Name</p>
                 </div>
+                <div class="profile">
+                  <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
+                  alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
+                  <p>Name</p>
+                </div>
+                <div class="profile">
+                  <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
+                  alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
+                  <p>Name</p>
+                </div>
               </div>
             </div>
             <div class="row">
@@ -67,6 +77,11 @@
                 <h4>Developers</h4>
               </div>
               <div class="col-8">
+                <div class="profile">
+                  <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
+                  alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
+                  <p>Name</p>
+                </div>
                 <div class="profile">
                   <img src="{% static 'youtube/pfp_doggo.jpeg' %}" class="rounded-circle"
                   alt="photo of a pitbull dog wearing green glasses with the year 2022"/>
