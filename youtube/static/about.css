@@ -1,4 +1,14 @@
 .rounded-circle {
+  -webkit-transform: scale(0.75); /* Saf3.1+, Chrome */
+  -moz-transform: scale(0.75); /* FF3.5+ */
+  -ms-transform: scale(0.75); /* IE9 */
+  -o-transform: scale(0.75); /* Opera 10.5+ */
+  transform: scale(0.75);
+  /* IE6–IE9 */
+  filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
+}
+
+.mx-auto {
   -webkit-transform: scale(0.5); /* Saf3.1+, Chrome */
   -moz-transform: scale(0.5); /* FF3.5+ */
   -ms-transform: scale(0.5); /* IE9 */
@@ -6,6 +16,10 @@
   transform: scale(0.5);
   /* IE6–IE9 */
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 .youtube {
