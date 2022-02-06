@@ -29,7 +29,7 @@
   border: 0;
 }
 
-iframe {
+.player {
   min-height: 500px;
   width: auto;
 }
