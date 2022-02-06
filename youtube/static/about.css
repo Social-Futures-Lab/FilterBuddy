@@ -29,7 +29,7 @@
   border: 0;
 }
 
-.ytp-cued-thumbnail-overlay-image {
+iframe {
   min-height: 500px;
   width: auto;
 }
