@@ -28,7 +28,7 @@
 }
 
 .btn-lg {
-  /* font-size: 2rem; */
-  min-height: 60px;
+  padding: 0.5rem 1rem;
   font-size: 2rem;
+  border-radius: 0.3rem;
 }
