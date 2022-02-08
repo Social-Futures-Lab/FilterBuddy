@@ -27,6 +27,6 @@
   margin: 15rem;
 }
 
-.btn-xl {
-  width: 150%;
+.btn-lg {
+  font-size: 2rem;
 }
