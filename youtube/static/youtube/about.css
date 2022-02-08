@@ -13,6 +13,8 @@
   -ms-transform: scale(0.5);
   -o-transform: scale(0.5);
   transform: scale(0.5);
+  display: inline-block;
+  width: 12rem;
 }
 
 .embed-responsive-item {
