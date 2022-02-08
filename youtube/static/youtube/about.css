@@ -22,18 +22,13 @@
   width: 50%;
 }
 
-.youtube {
+.embed-responsive-item {
   top: 0;
   bottom: 0;
   left: 0;
   border: 0;
   width: 100%;
   height: auto;
-}
-
-.player {
-  min-height: 500px;
-  width: auto;
 }
 
 div {
