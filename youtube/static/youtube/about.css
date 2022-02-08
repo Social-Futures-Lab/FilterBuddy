@@ -5,6 +5,8 @@
   -o-transform: scale(0.85);
   transform: scale(0.85);
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
+  margin: 5rem;
+  padding: 0 rem;
 }
 
 .profile img {
@@ -19,9 +21,15 @@
   border: 0;
   width: 100%;
   height: 100%;
-  margin-bottom: 5rem;
+  margin: 25rem;
 }
 
-h1 {
-  font-size: larger;
+.display-3 .display-4 {
+  margin: 15rem;
+}
+
+.btn-xl {
+  padding: 10px 20px;
+  font-size: 20px;
+  border-radius: 10px;
 }
