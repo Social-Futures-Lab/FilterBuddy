@@ -1,4 +1,4 @@
-.rounded-circle {
+#id {
   -webkit-transform: scale(0.85); /* Saf3.1+, Chrome */
   -moz-transform: scale(0.85); /* FF3.5+ */
   -ms-transform: scale(0.85); /* IE9 */
@@ -28,7 +28,7 @@
   left: 0;
   border: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
 }
 
 h1 {
