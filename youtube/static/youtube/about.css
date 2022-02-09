@@ -27,9 +27,7 @@ iframe {
 }
 
 .btn-lg {
-  padding: 0.5rem 1rem;
   min-height: 75px;
-  width: auto;
-  font-size: 30px;
-  border-radius: 0.3rem;
+  width: 150%;
+  font-size: 100%;
 }
