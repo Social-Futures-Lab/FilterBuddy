@@ -26,12 +26,7 @@ iframe {
   margin-bottom: 50px;
 }
 
-.btn-lg {
-  top: 0;
-  bottom: 0;
-  left: 0;
-  border: 0;
+/* .btn-lg {
   min-height: 75px;
-  width: auto;
-  font-size: 50px;
-}
+  min-width: 150px;
+} */
