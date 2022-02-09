@@ -19,7 +19,6 @@
   border: 0;
   width: 100%;
   height: 100%;
-  margin-bottom: 50px;
 }
 
 iframe {
@@ -27,14 +26,10 @@ iframe {
   margin-bottom: 50px;
 }
 
-/* .display-3 .display-4 {
-  margin: 15rem;
-} */
-
 .btn-lg {
   padding: 0.5rem 1rem;
   min-height: 75px;
   width: auto;
-  font-size: 2rem;
+  font-size: 30px;
   border-radius: 0.3rem;
 }
