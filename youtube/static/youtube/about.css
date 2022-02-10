@@ -1,6 +1,6 @@
 #logo {
-  /* padding-top: 0rem;
-  padding-bottom: 0rem; */
+  padding-top: 0rem;
+  padding-bottom: 0rem;
   -webkit-transform: scale(0.8);
   -moz-transform: scale(0.8);
   -ms-transform: scale(0.8);
@@ -9,9 +9,9 @@
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
 }
 
-section {
+/* section {
   margin-bottom: 4rem;
-}
+} */
 
 .profile img {
   display: inline-block;
