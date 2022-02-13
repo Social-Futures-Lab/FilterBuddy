@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 import re
+
+from sympy import SparseNDimArray
 import inflect
 p = inflect.engine()
 
@@ -100,3 +102,12 @@ class Comment(models.Model):
 
   def matched_phrases(self):
     return []  
+
+class MatchedComments(models.Model):
+  rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
+  comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+  span = models.CharField(max_length = 500)
+  applied_date = models.DateTimeField('date when rule was applied')
+
+  def __str__(self):
+    return u'%s %s' % (self.rule, self.comment)
