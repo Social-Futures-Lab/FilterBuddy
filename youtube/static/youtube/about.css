@@ -1,8 +1,19 @@
 /* html {
   font-size: 16px;
 } */
+#logo h1 {
+  font-size: 90px;
+}
 
-#logo {
+#logo p {
+  font-size: 30px;
+}
+
+#overview-desc {
+  font-size: 24px;
+}
+
+#logo-img {
   -webkit-transform: scale(0.8);
   -moz-transform: scale(0.8);
   -ms-transform: scale(0.8);
@@ -11,20 +22,17 @@
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
 }
 
-.fs-2 {
-  padding-bottom: 25px;
-}
-
 /* section {
   margin-bottom: 4rem;
 } */
 
 .profile img {
   display: inline-block;
+  border: 5px solid #555;
   width: 12rem;
 }
 
-.embed-responsive-item {
+/* .embed-responsive-item {
   top: 0;
   bottom: 0;
   left: 0;
@@ -36,7 +44,7 @@
 iframe {
   margin-top: 35px;
   margin-bottom: 50px;
-}
+} */
 
 /* .btn-lg {
   min-height: 75px;
