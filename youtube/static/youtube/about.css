@@ -15,6 +15,10 @@
   font-size: 30px;
 }
 
+.display-4 {
+  padding-bottom: 20px;
+}
+
 #logo-img {
   -webkit-transform: scale(0.8);
   -moz-transform: scale(0.8);
