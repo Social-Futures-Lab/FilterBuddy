@@ -1,6 +1,7 @@
-/* html {
-  font-size: 16px;
-} */
+* {
+  font-family: "Raleway", sans-serif;
+}
+
 #logo h1 {
   font-size: 90px;
 }
@@ -9,7 +10,7 @@
   font-size: 30px;
 }
 
-#overview-desc {
+.overview-desc {
   font-size: 24px;
 }
 
@@ -28,7 +29,6 @@
 
 .profile img {
   display: inline-block;
-  border: 5px solid #555;
   width: 12rem;
 }
 
