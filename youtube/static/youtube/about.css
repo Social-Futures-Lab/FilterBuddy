@@ -6,10 +6,22 @@
   font-size: 90px;
 }
 
-#logo p,
-.thanks p {
-  font-size: 40px;
+#logo p {
   padding-bottom: 10px;
+}
+
+#logo p,
+#thanks p {
+  font-size: 40px;
+}
+
+#thanks img {
+  -webkit-transform: scale(0.65);
+  -moz-transform: scale(0.65);
+  -ms-transform: scale(0.65);
+  -o-transform: scale(0.65);
+  transform: scale(0.65);
+  filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
 }
 
 .overview-desc {
