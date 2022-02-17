@@ -6,7 +6,8 @@
   font-size: 90px;
 }
 
-#logo p {
+#logo p,
+.thanks p {
   font-size: 40px;
   padding-bottom: 10px;
 }
