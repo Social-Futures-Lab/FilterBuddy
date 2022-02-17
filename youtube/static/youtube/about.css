@@ -16,6 +16,7 @@
 }
 
 #adl {
+  display: block;
   min-height: 150px;
   width: auto;
 }
