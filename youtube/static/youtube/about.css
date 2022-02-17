@@ -7,15 +7,15 @@
 }
 
 #logo p {
+  font-size: 40px;
   padding-bottom: 10px;
 }
 
-#logo p,
 #thanks > p {
   font-size: 40px;
 }
 
-#thanks img {
+#adl {
   -webkit-transform: scale(0.65);
   -moz-transform: scale(0.65);
   -ms-transform: scale(0.65);
