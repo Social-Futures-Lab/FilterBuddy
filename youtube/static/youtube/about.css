@@ -11,7 +11,7 @@
 }
 
 #logo p,
-#thanks p {
+#thanks > p {
   font-size: 40px;
 }
 
