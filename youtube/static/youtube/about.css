@@ -7,12 +7,12 @@
 }
 
 #logo p {
-  font-size: 40px;
+  font-size: 30px;
   padding-bottom: 10px;
 }
 
 #thanks > p {
-  font-size: 40px;
+  font-size: 30px;
 }
 
 #adl {
@@ -46,7 +46,7 @@
 
 .profile img {
   display: inline-block;
-  width: 17rem;
+  width: 12rem;
 }
 
 /* .embed-responsive-item {
