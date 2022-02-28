@@ -52,7 +52,7 @@
           </div>
           <div class="row py-5 px-7" style="background-color: #cce5ff">
             <h2 class="display-4">How Does It Work?</h2>
-            <div class="embed-responsive embed-responsive-21by9 youtube" style="min-height: 600px;">
+            <div class="col embed-responsive embed-responsive-21by9 youtube" style="min-height: 600px;">
               <iframe class="embed-responsive-item" style="min-height: 600px; width: 75%;" src="https://www.youtube.com/embed/tgbNymZ7vqY?playlist=tgbNymZ7vqY&loop=1"></iframe>
             </div>
           </div>
@@ -123,13 +123,16 @@
           </div>
           <div id="thanks" class="row py-5 px-7" style="background-color: #cce5ff">
             <h2 class="display-4">Thanks</h2>
-            <p>Filter Buddy has received support from:</p>
-            <img id="adl" class="rounded mx-auto d-block py-5" src="{% static 'youtube/adl_logo.png' %}"
-                alt=""/>
-            <p>Filter Buddy was conceived at the <a href="https://social.cs.washington.edu/">
-            Social Futures Lab</a></p>
-            <p>Check out the code for this project <a href="https://social.cs.washington.edu/">
-            here</a></p>
+            <div class="col">
+              <p>Filter Buddy has received support from:</p>
+              <img id="adl" class="rounded mx-auto d-block py-5" src="{% static 'youtube/adl_logo.png' %}"
+                  alt=""/>
+              <p>Filter Buddy was conceived at the <a href="https://social.cs.washington.edu/">
+              Social Futures Lab</a></p>
+              <p>Check out the code for this project <a href="https://social.cs.washington.edu/">
+              here</a>
+              </p>
+            </div>
           </div>
         </div>
       </div>
