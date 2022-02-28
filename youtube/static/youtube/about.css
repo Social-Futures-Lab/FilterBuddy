@@ -19,6 +19,8 @@
   /* display: block;
   margin-left: auto;
   margin-right: auto; */
+  max-height: 400px;
+  width: auto;
   -webkit-transform: scale(0.4);
   -moz-transform: scale(0.4);
   -ms-transform: scale(0.4);
@@ -40,11 +42,11 @@
 #logo-img {
   max-height: 300px;
   width: auto;
-  -webkit-transform: scale(0.5);
-  -moz-transform: scale(0.5);
-  -ms-transform: scale(0.5);
-  -o-transform: scale(0.5);
-  transform: scale(0.5);
+  -webkit-transform: scale(0.7);
+  -moz-transform: scale(0.7);
+  -ms-transform: scale(0.7);
+  -o-transform: scale(0.7);
+  transform: scale(0.7);
   filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
 }
 
