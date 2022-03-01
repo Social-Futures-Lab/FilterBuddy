@@ -53,7 +53,7 @@ class Rule(models.Model):
   rule_collection = models.ForeignKey(RuleCollection, on_delete=models.CASCADE)
   case_sensitive = models.BooleanField(default=False)
   spell_variants = models.BooleanField(default=True)
-  # specify what are the possibilities (5 possibilities, enum django)
+  # # specify what are the possibilities (5 possibilities, enum django)
   # rule_variant = models.CharField(
   #   max_length = 2,
   #   choices = RuleVariant.choices,
