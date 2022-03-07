@@ -16,7 +16,7 @@ def variantReg(phrase):
     myString += elem
   myStringPlural = p.plural(myString)
   myString = myString + "|" + myStringPlural
-  return myString  
+  return myString
 
 class Channel(models.Model):
   title = models.CharField(max_length=500)
@@ -52,9 +52,9 @@ class Rule(models.Model):
 
   def get_phrase(self):
     if (self.spell_variants):
-      return variantReg(self.phrase)    
+      return variantReg(self.phrase)
     else:
-      return self.phrase      
+      return self.phrase
 
   def get_matched_comments(self):
     channel = self.rule_collection.owner
@@ -62,7 +62,7 @@ class Rule(models.Model):
 
     matched_comment_ids = []
     for comment in allComments:
-      lookups = []      
+      lookups = []
       rule_phrase = self.get_phrase()
       if (self.case_sensitive):
         lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text)
@@ -70,8 +70,8 @@ class Rule(models.Model):
         lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
       lookups.append(lookup)
       if any(lookups):
-        matched_comment_ids.append(comment.id)  
-    return matched_comment_ids  
+        matched_comment_ids.append(comment.id)
+    return matched_comment_ids
 
   def num_matched_comments(self):
     matched_comment_ids = self.get_matched_comments()
@@ -99,4 +99,14 @@ class Comment(models.Model):
   parent_id = models.CharField(max_length=100, blank=True)
 
   def matched_phrases(self):
-    return []  
+    return []
+
+class MatchedComments(models.Model):
+  rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
+  comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+  # The span is the string indices in the comment that contains the matched phrase
+  span = models.TextField()
+  applied_date = models.DateTimeField('date when rule was applied')
+
+  def __str__(self):
+    return u'%s %s' % (self.rule, self.comment)
