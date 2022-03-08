@@ -31,17 +31,6 @@ from .util_rules import getChannel as getChannelFromRequest
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
-# class YouTubeForm(forms.Form):
-#   pass
-
-# class HomePageView(FormView):
-#   template_name = 'youtube/home.html'
-#   form_class = YouTubeForm
-
-# Create your views here.
-# def index(request):
-#   return render(request, "youtube/home.html")
-
 def getChannel(credentials):
   youtube = googleapiclient.discovery.build(
     API_SERVICE_NAME, API_VERSION, credentials=credentials)
@@ -69,40 +58,6 @@ def about_us(request):
   # user is logged in, redirect to sync
   return HttpResponseRedirect('/sync')
 
-# def mytest(request):
-#   return render(request, 'youtube/mytest.html', {})
-
-# def test_api_request(request):
-#   if 'credentials' not in request.session:
-#     return authorize(request)
-
-#   # Load credentials from the session.
-#   sc = request.session['credentials']
-#   credentials = google.oauth2.credentials.Credentials(
-#     token = sc.get('token'),
-#     refresh_token = sc.get('refresh_token'),
-#     token_uri = sc.get('token_uri'),
-#     client_id = sc.get('client_id'),
-#     client_secret = sc.get('client_secret'),
-#     scopes = sc.get('scopes')
-#   )
-
-#   channel = getChannel(credentials)
-
-#   # Save credentials back to session in case access token was refreshed.
-#   # ACTION ITEM: In a production app, you likely want to save these
-#   #        credentials in a persistent database instead.
-#   request.session['credentials'] = credentials_to_dict(credentials)
-#   request.session['credentials']['myChannelId'] = channel.channel_id
-#   channelDict = {
-#     'title': channel.title,
-#     'description': channel.description,
-#     'publishedAt': channel.pub_date,
-#     'id': channel.channel_id}
-#   return render(request, 'youtube/profile.html', {'channel': channelDict,})
-#   # return JsonResponse(channel)
-
-
 def authorize(request):
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     CLIENT_SECRETS_FILE, scopes=SCOPES)
@@ -111,9 +66,8 @@ def authorize(request):
   # value doesn't match an authorized URI, you will get a 'redirect_uri_mismatch'
   # error.
 
-  # flow.redirect_uri = reverse('youtube:oauth2callback')
-  flow.redirect_uri = "https://wordfilters.railgun.in/oauth2callback"
-
+  flow.redirect_uri = "https://filterbuddy.org/oauth2callback"
+  
   authorization_url, state = flow.authorization_url(
     # Enable offline access so that you can refresh an access token without
     # re-prompting the user for permission. Recommended for web server apps.
@@ -133,9 +87,9 @@ def oauth2callback(request):
 
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  # flow.redirect_uri = reverse('youtube:oauth2callback')
-  flow.redirect_uri = 'https://wordfilters.railgun.in/oauth2callback'
-
+  
+  flow.redirect_uri = "https://filterbuddy.org/oauth2callback"
+  
   # Use the authorization server's response to fetch the OAuth 2.0 tokens.
   authorization_response = request.build_absolute_uri().replace('http', 'https')
   flow.fetch_token(authorization_response=authorization_response)
