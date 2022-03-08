@@ -40,12 +40,25 @@ class RuleCollection(models.Model):
 class RuleColTemplate(RuleCollection):
   num_users = models.IntegerField()
 
+# class RuleVariant(models.TextChoices):
+#   NOTHING = 'DN', _('Do Nothing')
+#   DELETE = 'DC', _('Delete Comment')
+#   REVIEW = 'RV', _('Send to Review Folder')
+#   REPORT = 'RP', _('Report to YouTube')
+#   BLOCK = 'BC', _('Block Commenter')
+
 class Rule(models.Model):
   phrase = models.CharField(max_length=500)
   exception_phrase = models.CharField(max_length=500, blank=True, null=True)
   rule_collection = models.ForeignKey(RuleCollection, on_delete=models.CASCADE)
   case_sensitive = models.BooleanField(default=False)
   spell_variants = models.BooleanField(default=True)
+  # # specify what are the possibilities (5 possibilities, enum django)
+  # rule_variant = models.CharField(
+  #   max_length = 2,
+  #   choices = RuleVariant.choices,
+  #   default =  RuleVariant.NOTHING,
+  # )
 
   def __str__(self):
     return u'%s %s' % (self.phrase, self.rule_collection)
