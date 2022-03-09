@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
 import re
 import inflect
 p = inflect.engine()
@@ -100,3 +101,22 @@ class Comment(models.Model):
 
   def matched_phrases(self):
     return []
+
+class MatchedComments(models.Model):
+  rule = models.ForeignKey(Rule, on_delete=models.CASCADE)
+  comment = models.ForeignKey(Comment, on_delete=models.CASCADE)
+  # The span is the string indices in the comment that contains the matched phrase
+  # The format for span is (startingIndex, endingIndex)
+  span = models.TextField()
+  # Date when rule was applied
+  applied_date = models.DateTimeField()
+
+  class Meta:
+    # Ensures the pairing of rule and comment is unique (prevents duplicates)
+    unique_together = [['rule', 'comment']]
+
+  def __str__(self):
+    return u'%s %s %s' % (self.rule, self.comment, self.span)
+
+  def span_obj(self):
+    return json.loads(self.span)
