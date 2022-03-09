@@ -54,7 +54,7 @@ def about_us(request):
     myChannel = getChannelFromRequest(request)
   except Exception as e:
     # User is not logged in, redirect to login
-    return render(request, 'youtube/about_us_new.html')
+    return render(request, 'youtube/splash_page.html')
   # user is logged in, redirect to sync
   return HttpResponseRedirect('/sync')
 
@@ -67,7 +67,7 @@ def authorize(request):
   # error.
 
   flow.redirect_uri = "https://filterbuddy.org/oauth2callback"
-  
+
   authorization_url, state = flow.authorization_url(
     # Enable offline access so that you can refresh an access token without
     # re-prompting the user for permission. Recommended for web server apps.
@@ -87,9 +87,9 @@ def oauth2callback(request):
 
   flow = google_auth_oauthlib.flow.Flow.from_client_secrets_file(
     CLIENT_SECRETS_FILE, scopes=SCOPES, state=state)
-  
+
   flow.redirect_uri = "https://filterbuddy.org/oauth2callback"
-  
+
   # Use the authorization server's response to fetch the OAuth 2.0 tokens.
   authorization_response = request.build_absolute_uri().replace('http', 'https')
   flow.fetch_token(authorization_response=authorization_response)
