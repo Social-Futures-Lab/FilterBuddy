@@ -1,0 +1,51 @@
+* {
+  font-family: "Raleway", sans-serif;
+}
+
+#logo h1 {
+  font-size: 90px;
+}
+
+#logo p {
+  font-size: 30px;
+  padding-bottom: 10px;
+}
+
+#thanks p {
+  font-size: 30px;
+}
+
+#adl {
+  max-height: 300px;
+  width: auto;
+  -webkit-transform: scale(0.9);
+  -moz-transform: scale(0.9);
+  -ms-transform: scale(0.9);
+  -o-transform: scale(0.9);
+  transform: scale(0.9);
+  filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
+}
+
+.overview-desc {
+  font-size: 30px;
+}
+
+.display-4 {
+  padding-bottom: 20px;
+}
+
+#logo-img {
+  max-height: 300px;
+  width: auto;
+  -webkit-transform: scale(0.7);
+  -moz-transform: scale(0.7);
+  -ms-transform: scale(0.7);
+  -o-transform: scale(0.7);
+  transform: scale(0.7);
+  filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.9999619230641713, M12=-0.008726535498373935, M21=0.008726535498373935, M22=0.9999619230641713,SizingMethod='auto expand');
+}
+
+.profile img {
+  display: inline-block;
+  width: 12rem;
+}
