@@ -196,7 +196,7 @@
           "case_sensitive",
           "spell_variants",
           "caught_comments",
-          // 'rule_action',
+          'rule_action',
         ],
         function (src, col) {
           if (col === "actions") {
