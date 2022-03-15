@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.utils.timezone import utc
 
 from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
@@ -437,8 +438,9 @@ def deleteFilter(request):
 
 def random_date():
   """Generate a random datetime between `start` and `end`"""
-  end = datetime(2021, 8, 19, 1, 0, 0)
-  start = end - timedelta(days=90)
+#   end = datetime(2021, 8, 19, 1, 0, 0)
+  end = datetime.utcnow().replace(tzinfo=utc)
+  start = end - timedelta(days=30)
   return start + timedelta(
     # Get a random amount of seconds between `start` and `end`
     seconds=random.randint(0, int((end - start).total_seconds())),
