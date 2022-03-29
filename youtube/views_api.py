@@ -7,7 +7,7 @@ from django.utils import timezone
 from .utils import getChannelFromRequest
 from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
-from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
+from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate, MatchedComments
 
 from datetime import datetime, timedelta
 import urllib.request, json
@@ -31,7 +31,7 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
       queryset = self.queryset
-      myChannel = getChanne(self.request)
+      myChannel = getChannel(self.request)
       query_set = queryset.filter(owner = myChannel)
       return query_set
 
@@ -134,6 +134,8 @@ def getUserInfo(request):
     # Redirect to login
 
 # -------------- CHART RELATED STUFF BELOW -------------
+NUM_DAYS_IN_CHARTS = 30
+CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
 
 @csrf_exempt
 def overviewChart(request):
@@ -144,13 +146,17 @@ def overviewChart(request):
 
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
-    matched_comments_ids = set()
+    # gets all comments with a rule from the list of rules
+    # Todo: do I also filter by applied date? (date that rule was applied)
+    comments = MatchedComments.objects.filter(rule__in = rules, applied_date__gte = CHARTS_START_DATE)
     all_matched_comments = []
-    for rule in rules:
-      for c in getMatchedCommentsForCharts(unifiedRule(rule), myChannel):
-        if (c['id'] not in matched_comments_ids):
-          all_matched_comments.append(c)
-          matched_comments_ids.add(c['id'])
+    for c in comments:
+      match = {
+        'id': c.comment_id,
+        'applied_date': c.applied_date.isoformat(),
+      }
+      all_matched_comments.append(match)
+
     collectionDict = {
       'label': collection.name,
       'data': ruleDateCounter(all_matched_comments),
@@ -374,6 +380,38 @@ def updateRule(request):
     }), content_type='application/json')
   else:
     return HttpResponse('Unsupported action'.encode('utf-8'), status = 400)
+
+@csrf_exempt
+def updateMatchTable(request):
+  myChannel = getChannel(request)
+  collections = RuleCollection.objects.filter(owner = myChannel)
+
+  # iterate through all of the collections
+  for collection in collections:
+    rules = Rule.objects.filter(rule_collection = collection)
+    all_matched_comments = []
+    # iterate through all of the rules in a collection
+    for curr_rule in rules:
+      phrase = curr_rule['phrase']
+      # iterate through all comments
+      myComments = Comment.objects.filter(video__channel=myChannel)
+      matched_comments = []
+      for myComment in myComments:
+        # find matching comments for rule and add to list
+        k = re.search(r'\b({})\b'.format(phrase), myComment.text)
+        if (k):
+          commentObj = {
+            "comment" : myComment,
+            "span" : k.span()
+          }
+          matched_comments.append(commentObj)
+
+      # add matched comments for the rule to the table
+      for matched_comment in all_matched_comments:
+        data = MatchedComments(rule = curr_rule, comment = matched_comment.comment, span = json.dumps(matched_comment.span), applied_date = datetime.today())
+        data.save()
+
+  return HttpResponse('Added data to table'.encode('utf-8'), status = 200)
 
 @csrf_exempt
 def updateFilter(request):

@@ -65,6 +65,45 @@ def getMatchedComments(rule, myChannel):
       matched_comments.append(matched_comment)
   return matched_comments
 
+#def getMatchedCommentsForOverviewChart(filter_rule, myChannel):
+  # Security options
+    # 1. Check if rule is a part of myChannel and fail if not
+    # 2. Join with a smaller table (Rule or Channel) - joins are more but tables are smaller
+
+  # TODO: will this work? Seems to be converting Rule to a dictionary in unified rule... can I add field
+  # for channel id in rule? (RuleCollection owner)
+  # Just use a query
+
+  # get all rules for channel
+#  containsRule = False
+#  collections = RuleCollection.objects.filter(owner = myChannel)
+#  for collection in collections:
+#    rules = Rule.objects.filter(rule_collection = collection)
+#    # check to see if current rule is in channel
+#    if (rules.contains(filter_rule) == True):
+#      containsRule = True
+#  if (containsRule == False):
+#    return
+
+
+  # for storing matched comment objects
+#  matched_comments = []
+  # get matched comments for the rule
+#  comments = MatchedComments.objects.filter(rule_id = filter_rule.id, applied_date__gte = CHARTS_START_DATE)
+  # comments = MatchedComments.objects.filter(rule__id = filter_rule.id, comment__video__channel = myChannel, comment__pub_date__gte = CHARTS_START_DATE).select_related("Comment")
+  # comments = MatchedComments.objects.filter(rule = filter_rule.id, applied_date__gte = CHARTS_START_DATE)
+  # rule__id or rule__pk
+#  for c in comments:
+    # store the comment
+    # TODO: change pub_date to applied date (ruleDateCounter method below) (?)
+#    match = {
+#      'id': c.comment_id,
+#      'pub_date': c.applied_date.isoformat(),
+#    }
+#    matched_comments.append(match)
+  # return list
+#  return matched_comments
+
 def getMatchedCommentsForCharts(rule, myChannel):
   phrase = rule['phrase']
   myComments = Comment.objects.filter(video__channel = myChannel, pub_date__gte = CHARTS_START_DATE)
@@ -82,19 +121,19 @@ def convertDate(myDate):
 def ruleDateCounter(rule_matched_comments):
   myData = defaultdict(int)
   for comment in rule_matched_comments:
-    pub_date = comment['pub_date']
-    pub_date = convertDate(pub_date)
-    myData[pub_date] += 1
+    applied_date = comment['applied_date']
+    applied_date = convertDate(applied_date)
+    myData[applied_date] += 1
 
   data = []
-  for pub_date in (CHARTS_START_DATE + timedelta(n) for n in range(NUM_DAYS_IN_CHARTS + 1)):
-    pub_date = pub_date.strftime('%Y-%m-%d')
-    data.append(
-        {
-          'x': pub_date,
-          'y': myData[pub_date]
-        }
-      )
+  for applied_date in (CHARTS_START_DATE + timedelta(n) for n in range(NUM_DAYS_IN_CHARTS + 1)):
+        applied_date = applied_date.strftime('%Y-%m-%d')
+        data.append(
+          {
+            'x': applied_date,
+            'y': myData[applied_date]
+          }
+        )
   return data
 
 def get_matched_comment_ids(myChannelComments, rules):

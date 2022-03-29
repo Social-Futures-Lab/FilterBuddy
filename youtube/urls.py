@@ -54,6 +54,8 @@ urlpatterns = [
   path('api/getComment/<int:comment_id>', views_api.getComment),
   path('api/updateRule', views_api.updateRule), # Preview rule is used to preview BEFORE a rule ID has been assigned
 
+  path('api/updateMatchTable', views_api.updateMatchTable()),
+
   # Django rest frameworks datatables
   path('capi/', include(router.urls)),
   path('capi/collection', views_api.indexRuleCollection, name='collections'),
