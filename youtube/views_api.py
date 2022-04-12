@@ -134,9 +134,6 @@ def getUserInfo(request):
     # Redirect to login
 
 # -------------- CHART RELATED STUFF BELOW -------------
-NUM_DAYS_IN_CHARTS = 30
-CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
-
 @csrf_exempt
 def overviewChart(request):
   myData = []
@@ -147,8 +144,7 @@ def overviewChart(request):
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
     # gets all comments with a rule from the list of rules
-    # Todo: do I also filter by applied date? (date that rule was applied)
-    comments = MatchedComments.objects.filter(rule__in = rules, applied_date__gte = CHARTS_START_DATE)
+    comments = MatchedComments.objects.filter(rule__in = rules)
     all_matched_comments = []
     for c in comments:
       match = {
@@ -389,27 +385,18 @@ def updateMatchTable(request):
   # iterate through all of the collections
   for collection in collections:
     rules = Rule.objects.filter(rule_collection = collection)
-    all_matched_comments = []
     # iterate through all of the rules in a collection
     for curr_rule in rules:
       phrase = curr_rule['phrase']
       # iterate through all comments
       myComments = Comment.objects.filter(video__channel=myChannel)
-      matched_comments = []
       for myComment in myComments:
         # find matching comments for rule and add to list
         k = re.search(r'\b({})\b'.format(phrase), myComment.text)
         if (k):
-          commentObj = {
-            "comment" : myComment,
-            "span" : k.span()
-          }
-          matched_comments.append(commentObj)
-
-      # add matched comments for the rule to the table
-      for matched_comment in all_matched_comments:
-        data = MatchedComments(rule = curr_rule, comment = matched_comment.comment, span = json.dumps(matched_comment.span), applied_date = datetime.today())
-        data.save()
+          # add matched comments to the table
+          data = MatchedComments.objects.update_or_create(rule = curr_rule, comment = myComment,
+                                                          span = json.dumps(k.span()), applied_date = datetime.today())
 
   return HttpResponse('Added data to table'.encode('utf-8'), status = 200)
 
