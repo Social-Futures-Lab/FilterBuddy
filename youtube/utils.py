@@ -1,6 +1,7 @@
 # This variable specifies the name of a file that contains the OAuth 2.0
 # information for this application, including its client_id and client_secret.
 from pathlib import Path
+import googleapiclient
 from .models import Channel, RuleCollection, RuleColTemplate, Rule, Video, Comment
 import sys
 
