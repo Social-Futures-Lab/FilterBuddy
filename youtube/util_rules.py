@@ -22,7 +22,7 @@ CHARTS_START_DATE = datetime.now() - timedelta(NUM_DAYS_IN_CHARTS)
 def getColors(n):
   colors = [t_col, c_col, g_col, r_col, black, dg_color, pink, ly_color, sb_color, lp_color]
   while (len(colors) < n):
-    colors = colors + sample(colors, len(colors))  
+    colors = colors + sample(colors, len(colors))
   colors = colors[:n]
   return colors
 
@@ -36,7 +36,7 @@ def serializeCommentWithPhrase(myComment, phrase):
     'pub_date': myComment.pub_date.isoformat(),
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
-    'span': k.span(),    
+    'span': k.span(),
   }
   return commentObject
 
@@ -47,7 +47,7 @@ def serializeComment(myComment):
     'text': myComment.text,
     'author': myComment.author,
     'likeCount': myComment.likeCount,
-    'pub_date': myComment.pub_date.isoformat(),    
+    'pub_date': myComment.pub_date.isoformat(),
     'video_id': myComment.video.video_id,
     'video_title': myComment.video.title,
   }
@@ -61,7 +61,7 @@ def getMatchedComments(rule, myChannel):
   for myComment in myComments:
     if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
       matched_comment = serializeCommentWithPhrase(myComment, phrase)
-      matched_comment['catching_collection'] = getCatchingCollection(myComment, myCollections)    
+      matched_comment['catching_collection'] = getCatchingCollection(myComment, myCollections)
       matched_comments.append(matched_comment)
   return matched_comments
 
@@ -73,10 +73,10 @@ def getMatchedCommentsForCharts(rule, myChannel):
     if (re.search(r'\b({})\b'.format(phrase), myComment.text)):
       matched_comment = serializeCommentWithPhrase(myComment, phrase)
       matched_comments.append(matched_comment)
-  return matched_comments  
+  return matched_comments
 
 def convertDate(myDate):
-  newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')    
+  newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')
   return newDate
 
 def ruleDateCounter(rule_matched_comments):
@@ -88,7 +88,7 @@ def ruleDateCounter(rule_matched_comments):
 
   data = []
   for pub_date in (CHARTS_START_DATE + timedelta(n) for n in range(NUM_DAYS_IN_CHARTS + 1)):
-    pub_date = pub_date.strftime('%Y-%m-%d')    
+    pub_date = pub_date.strftime('%Y-%m-%d')
     data.append(
         {
           'x': pub_date,
@@ -97,16 +97,7 @@ def ruleDateCounter(rule_matched_comments):
       )
   return data
 
-def getChannel(request):
-  if 'credentials' in request.session and 'myChannelId' in request.session['credentials']:
-    myChannelId = request.session['credentials']['myChannelId']
-    myChannel = Channel.objects.get(channel_id = myChannelId)
-    return myChannel
-  else:
-    #return makeDebugChannel()
-    raise Exception('Could not get login credentials')  
-
-def get_matched_comment_ids(myChannelComments, rules):    
+def get_matched_comment_ids(myChannelComments, rules):
   matched_comment_ids = []
   for comment in myChannelComments:
     lookups = []
@@ -118,8 +109,8 @@ def get_matched_comment_ids(myChannelComments, rules):
         lookup = re.search(r'\b({})\b'.format(rule_phrase), comment.text, re.IGNORECASE)
       lookups.append(lookup)
     if any(lookups):
-      matched_comment_ids.append(comment.id)  
-  return matched_comment_ids    
+      matched_comment_ids.append(comment.id)
+  return matched_comment_ids
 
 def getCatchingCollection(comment, myCollections):
   for collection in myCollections:
@@ -134,7 +125,7 @@ def getCatchingCollection(comment, myCollections):
       lookups.append(lookup)
     if any(lookups):
       return collection.name
-  return None    
+  return None
 
   return comment.pub_date.isoformat()
 
@@ -150,7 +141,7 @@ def pretty_date(time=False):
     pretty string like 'an hour ago', 'Yesterday', '3 months ago',
     'just now', etc
     """
-    
+
     now = datetime.now()
     time = parser.parse(time).replace(tzinfo=None)
     if type(time) is int:
@@ -184,11 +175,11 @@ def pretty_date(time=False):
     if day_diff < 7:
         return str(day_diff) + " days ago"
     if day_diff < 14:
-        return  "a week ago"        
+        return  "a week ago"
     if day_diff < 31:
         return str(int(day_diff / 7)) + " weeks ago"
     if day_diff < 60:
-        return "a month ago"        
+        return "a month ago"
     if day_diff < 365:
         return str(int(day_diff / 30)) + " months ago"
     return str(int(day_diff / 365)) + " years ago"

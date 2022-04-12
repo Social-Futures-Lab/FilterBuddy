@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 import os
 import requests
 import sys
@@ -20,34 +19,15 @@ from django.urls import reverse
 from django.conf import settings
 
 import dateutil.parser
-import datetime
+from datetime import datetime
 import urllib.request, json
 import re
 import copy
 
 from .models import Channel, RuleCollection, RuleColTemplate, Rule, Video, Comment
 from .utils import *
-from .util_rules import getChannel as getChannelFromRequest
 
 os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
-
-def getChannel(credentials):
-  youtube = googleapiclient.discovery.build(
-    API_SERVICE_NAME, API_VERSION, credentials=credentials)
-
-  channels = youtube.channels().list(mine=True, part='snippet').execute()
-  if not 'items' in channels:
-    return None
-  for channel in channels['items']:
-    channel['snippet']['publishedAt'] = dateutil.parser.parse(channel['snippet']['publishedAt'])
-  myChannel = channels['items'][0]
-
-  djangoChannel, created = Channel.objects.get_or_create(
-    title=myChannel['snippet']['title'],
-    description=myChannel['snippet']['description'],
-    pub_date=myChannel['snippet']['publishedAt'],
-    channel_id=myChannel['id'])
-  return djangoChannel
 
 def about_us(request):
   try:
@@ -115,6 +95,29 @@ def oauth2callback(request):
     'id': channel.channel_id}
   return HttpResponseRedirect(reverse('youtube:home'))
 
+def fakelogin(request):
+  """fakelogin
+  Creates fake credentials
+  """
+  # Create a channel if it does not exist
+  channel, created = Channel.objects.get_or_create(
+    channel_id = -1, defaults = {
+      'title': 'Debugging Channel',
+      'description': 'This is a local account used for debugging purposes only',
+      'pub_date': datetime.now()
+    })
+  credentials = {
+    'token': 'FAKE_TOKEN',
+    'refresh_token': "FAKE_REFRESH_TOKEN",
+    'token_uri': 'https://127.0.0.1',
+    'client_id': 'FAKE_CLIENT_ID',
+    'client_secret': 'FAKE_CLIENT_SECRET',
+    'scopes': [],
+    'myChannelId': channel.channel_id
+  }
+  request.session['credentials'] = credentials
+  return HttpResponseRedirect(reverse('youtube:home'))
+
 def revoke(request):
   if 'credentials' not in request.session:
     return HttpResponse('You need to <a href="/authorize">authorize</a> before ' +
@@ -147,97 +150,6 @@ def clear_credentials(request):
   page_message = 'Credentials have been cleared.'
   # return render(request, "youtube/home.html", {'page_message': page_message})
   return HttpResponseRedirect(reverse('youtube:authorize'))
-
-# @csrf_exempt
-# def get_videos(request):
-#   if 'credentials' not in request.session:
-#     return authorize(request)
-
-#   # Load credentials from the session.
-#   sc = request.session['credentials']
-#   if 'myChannelId' not in sc:
-#     credentials = google.oauth2.credentials.Credentials(
-#       token = sc.get('token'),
-#       refresh_token = sc.get('refresh_token'),
-#       token_uri = sc.get('token_uri'),
-#       client_id = sc.get('client_id'),
-#       client_secret = sc.get('client_secret'),
-#       scopes = sc.get('scopes')
-#     )
-#     myChannel = getChannel(credentials)
-#     sc['myChannelId'] = myChannel.channel_id
-#   else:
-#     myChannelId = sc['myChannelId']
-#     myChannel = Channel.objects.get(channel_id = myChannelId)
-#   myChannelId = myChannel.channel_id
-
-#   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
-
-#   videos = []
-#   with urllib.request.urlopen(videoFetchUrl) as url:
-#     data = json.loads(url.read().decode())
-#     for item in data['items']:
-#       publishedAt = item['snippet']['publishedAt']
-#       title = item['snippet']['title']
-#       videoId = item['id']['videoId']
-#       pub_date = dateutil.parser.parse(publishedAt)
-#       videos.append({
-#         'videoId': videoId,
-#         'title': title,
-#         'publishTime': publishedAt
-#       })
-#       video, created = Video.objects.get_or_create(title = title, pub_date = pub_date, video_id = videoId, channel = myChannel)
-#   response = {
-#     'video': videos
-#   }
-#   return HttpResponse(json.dumps(response), content_type='application/json')
-#   #return render(request, 'youtube/videos.html', {'videos': videos})
-
-
-# def get_comments(request):
-#   if 'credentials' not in request.session:
-#     return authorize(request)
-
-#   # Load credentials from the session.
-#   sc = request.session['credentials']
-#   if 'myChannelId' not in sc:
-#     credentials = google.oauth2.credentials.Credentials(
-#       token = sc.get('token'),
-#       refresh_token = sc.get('refresh_token'),
-#       token_uri = sc.get('token_uri'),
-#       client_id = sc.get('client_id'),
-#       client_secret = sc.get('client_secret'),
-#       scopes = sc.get('scopes')
-#     )
-#     myChannel = getChannel(credentials)
-#     sc['myChannelId'] = myChannel.channel_id
-#   else:
-#     myChannelId = sc['myChannelId']
-#     myChannel = Channel.objects.get(channel_id = myChannelId)
-#   myChannelId = myChannel.channel_id
-
-#   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)
-#   myVideoIds = []
-#   with urllib.request.urlopen(videoFetchUrl) as url:
-#     data = json.loads(url.read().decode())
-#     for item in data['items']:
-#       if 'videoId' in item['id'].keys():
-#         myVideoIds.append(item['id']['videoId'])
-
-#   youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
-
-#   myComments = []
-#   for video_id in myVideoIds:
-#     comments = get_comments_from_video(youtube, video_id)
-#     myComments += comments
-#   myComments = sorted(myComments, key=lambda k: k.pub_date, reverse=True)
-#   return render(request, 'youtube/comments.html', {'comments': myComments})
-
-# def get_video_comments(request, video_id):
-#   youtube = googleapiclient.discovery.build(API_SERVICE_NAME, API_VERSION, developerKey = DEVELOPER_KEY)
-#   comments = get_comments_from_video(youtube, video_id)
-#   video_url = "https://www.youtube.com/watch?v=%s" % (video_id,)
-#   return render(request, 'youtube/comments.html', {'comments': comments, 'video_id': video_id, 'video_url': video_url})
 
 def saveCommentObject(youtube, item, video):
   text = item['snippet']['topLevelComment']['snippet']['textDisplay']
@@ -309,9 +221,16 @@ def home(request):
     myChannel = getChannelFromRequest(request)
   except Exception as e:
     # User is not logged in, redirect to login
-    return HttpResponseRedirect('/authorize')
+    if settings.LOCAL_DEBUG:
+      return HttpResponseRedirect('/fakelogin')
+    else:
+      return HttpResponseRedirect('/authorize')
   # user is logged in, redirect to sync
-  return HttpResponseRedirect('/sync')
+  if settings.LOCAL_DEBUG:
+    # Skip sync
+    return HttpResponseRedirect('/overview')
+  else:
+    return HttpResponseRedirect('/sync')
 
 def overview(request):
   myChannel = getChannelFromRequest(request)
@@ -442,7 +361,9 @@ def get_rule_collection_templates(request):
 
 @csrf_exempt
 def sync(request):
-  print ('came in sync')
+  if settings.LOCAL_DEBUG:
+    return HttpResponseRedirect('/create_test_entries')
+
   myChannel = getChannelFromRequest(request)
   myChannelId = myChannel.channel_id
   videoFetchUrl = "https://www.googleapis.com/youtube/v3/search?order=date&part=snippet&type=video&channelId=%s&maxResults=1000&key=%s" % (myChannelId, DEVELOPER_KEY,)

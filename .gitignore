@@ -165,3 +165,6 @@ youtube/templates/.*
 
 .DS_Store
 # End of https://www.toptal.com/developers/gitignore/api/django
+
+# Magic file
+magic.local

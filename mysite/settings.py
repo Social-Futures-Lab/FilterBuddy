@@ -15,7 +15,10 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+if Path(BASE_DIR, 'magic.local').is_file():
+  LOCAL_DEBUG = True
+else:
+  LOCAL_DEBUG = False
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
@@ -25,7 +28,7 @@ SECRET_KEY = 'xy7h#2d+f7qv-d%)1(p=1+ecuq-nkh6&1l71+bce145#)nk!cn'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','wordfilters.railgun.in']
+ALLOWED_HOSTS = ['127.0.0.1','wordfilters.railgun.in', 'filterbuddy.org']
 
 
 # Application definition
@@ -77,15 +80,16 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-DATABASES = {
-    'default': {
+if LOCAL_DEBUG:
+  DATABASES = {
+      'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+      }
+  }
+else:
+  DATABASES = {
+      'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'word_filters_data',
         'USER': 'djangouser',
@@ -94,8 +98,7 @@ DATABASES = {
         'PORT': '',
         'OPTIONS': {'charset': 'utf8mb4'},
     }
-}
-
+  }
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

@@ -4,8 +4,8 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
-
-from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, getChannel, get_matched_comment_ids
+from .utils import getChannelFromRequest
+from .util_rules import getMatchedComments, getMatchedCommentsForCharts, getMatchedCommentsAndPrettify, serializeComment, serializeCommentWithPhrase, getColors, ruleDateCounter, get_matched_comment_ids
 from .util_filters import serializeRule, serializeRules, serializeCollection
 from .models import Channel, RuleCollection, Rule, Video, Comment, RuleColTemplate
 
@@ -14,7 +14,6 @@ import urllib.request, json
 import random
 import re
 from heapq import nlargest
-import pandas as pd
 import os
 import string
 
@@ -32,7 +31,7 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
       queryset = self.queryset
-      myChannel = getChannel(self.request)
+      myChannel = getChanne(self.request)
       query_set = queryset.filter(owner = myChannel)
       return query_set
 
@@ -45,7 +44,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
       queryset = self.queryset
-      myChannel = getChannel(self.request)
+      myChannel = getChannelFromRequest(self.request)
       myChannelComments = queryset.filter(video__channel = myChannel)
 
       rule_collection_id = self.kwargs['username']
@@ -61,19 +60,9 @@ class AllCommentsViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
       queryset = self.queryset
-      myChannel = getChannel(self.request)
+      myChannel = getChannelFromRequest(self.request)
       myChannelComments = queryset.filter(video__channel = myChannel)
       return myChannelComments
-
-# def makeDebugChannel(channel_id = ''):
-#   try:
-#     return Channel.objects.get(channel_id = channel_id)
-#   except:
-#     return Channel.objects.create(
-#       title='Debug channel',
-#       channel_id=channel_id,
-#       description='This is a temporary debugging channel',
-#       pub_date=datetime.now())
 
 def isLoggedIn(request):
   return True #request.user.is_authenticated
@@ -134,7 +123,7 @@ def api(request):
 @csrf_exempt
 def getUserInfo(request):
   try:
-    channel = getChannel(request)
+    channel = getChannelFromRequest(request)
     return HttpResponse(json.dumps({
       'name': channel.title,
       'desc': channel.description,
@@ -142,14 +131,14 @@ def getUserInfo(request):
     }), content_type='application/json')
   except:
     return HttpResponse('Not logged in', status=401)
-    # Redirect to login    
+    # Redirect to login
 
 # -------------- CHART RELATED STUFF BELOW -------------
 
 @csrf_exempt
 def overviewChart(request):
   myData = []
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
   myColors = getColors(len(collections))
 
@@ -194,7 +183,7 @@ def overviewChart(request):
 @csrf_exempt
 def filterChart(request, filter_id):
 
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel, id=filter_id)
   collection = collections[0]
 
@@ -210,7 +199,7 @@ def filterChart(request, filter_id):
       'lineTension': 0,
       'num_matched_comments': len(rule_matched_comments),
       'data': ruleDateCounter(rule_matched_comments)
-    }    
+    }
     myData.append(ruleDict)
 
   myData = nlargest(NUM_CHART_ENTRIES, myData, key=lambda item: item["num_matched_comments"])
@@ -240,7 +229,7 @@ def ruleChart(request, filter_id, rule_id):
 # -------------- RULE RELATED STUFF BELOW --------------
 @csrf_exempt
 def previewRule(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   payload = json.loads(request.body.decode('utf-8'))
   # context is the filter group id
   context, rule = payload['id'], payload['rule']
@@ -257,7 +246,7 @@ def previewRule(request):
 
 @csrf_exempt
 def getComment(request, comment_id):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   # TODO: Fix this!
   response = {
 
@@ -266,7 +255,7 @@ def getComment(request, comment_id):
 
 @csrf_exempt
 def previewFilter(request, filter_id):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(id = filter_id)
   if (collections):
     collection = collections[0]
@@ -282,7 +271,7 @@ def previewFilter(request, filter_id):
 
 @csrf_exempt
 def loadFilters(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
   filters = []
   for collection in collections:
@@ -306,7 +295,7 @@ def loadFilter(request, filter_id):
 
 @csrf_exempt
 def createFilter(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
 
   request_data = json.loads(request.body.decode('utf-8'))
   name = request_data['name']
@@ -357,7 +346,7 @@ def createFilter(request):
 
 @csrf_exempt
 def updateRule(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   request_data = json.loads(request.body.decode('utf-8'))
   rule = Rule.objects.get(id=int(request_data['id']))
 
@@ -388,7 +377,7 @@ def updateRule(request):
 
 @csrf_exempt
 def updateFilter(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
 
   request_data = json.loads(request.body.decode('utf-8'))
   collection = RuleCollection.objects.get(id=request_data['id'])
@@ -442,7 +431,7 @@ def random_date():
   return start + timedelta(
     # Get a random amount of seconds between `start` and `end`
     seconds=random.randint(0, int((end - start).total_seconds())),
-  )    
+  )
 
 def random_string():
   return ''.join(random.choices(string.ascii_uppercase + string.digits, k=15))
@@ -458,12 +447,12 @@ def randomizeComment(comment_text):
   anchor = None
   if ('the' in comment_text):
     anchor = 'the'
-  elif ('that' in comment_text):    
+  elif ('that' in comment_text):
     anchor = 'that'
   elif ('with' in comment_text):
-    anchor = 'with'  
+    anchor = 'with'
   elif ('from' in comment_text):
-    anchor = 'from'  
+    anchor = 'from'
   else:
     return comment_text
   if (random.randrange(100) < 30):
@@ -485,7 +474,7 @@ def createTestVideos(myChannel):
   videos = []
 
   for title in titles:
-    updated_values = {      
+    updated_values = {
       'pub_date': random_date(),
       'video_id': random_string(),
       'channel': myChannel,
@@ -495,7 +484,9 @@ def createTestVideos(myChannel):
   return videos
 
 def createTestEntries(request):
-  myChannel = getChannel(request)
+  import pandas as pd
+  myChannel = getChannelFromRequest(request)
+
   csv_path = os.path.join(os.path.dirname(__file__), 'sample_entries.csv')
   df = pd.read_csv(csv_path)
   videos = createTestVideos(myChannel)
@@ -504,17 +495,16 @@ def createTestEntries(request):
       video = random.sample(videos[:4], 1)[0]
     else:
       video = videos[4]
-    updated_values = {      
+    updated_values = {
       'pub_date': random_date(),
       'video': video,
       'parent_id': '',
       'text': randomizeComment(row['text']),
-    }    
+    }
     comment, created = Comment.objects.update_or_create(
       author = row['author'],
       likeCount = int(row['likeCount']),
       comment_id = row['comment_id'],
       defaults=updated_values
       )
-  # return HttpResponse(json.dumps({}), content_type='application/json')
   return HttpResponseRedirect('/overview')

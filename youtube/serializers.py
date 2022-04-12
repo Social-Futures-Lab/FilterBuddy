@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Comment, Video, RuleCollection
-from .util_rules import pretty_date, getCatchingCollection, getChannel
+from .util_rules import pretty_date, getCatchingCollection
+from .utils import getChannelFromRequest
 
 class RuleCollectionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -19,14 +20,14 @@ class VideoSerializer(serializers.ModelSerializer):
         model = Video
         fields = (
             'id', 'video_id', 'title', 'url_id_and_title',
-        )        
+        )
 
 
     def to_representation(self, instance):
         representation = super(VideoSerializer, self).to_representation(instance)
         representation['url_id_and_title'] = (instance.video_id, instance.title)
-        return representation         
-           
+        return representation
+
 
 class CommentSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -36,12 +37,12 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = (
             'id', 'text', 'author', 'pub_date', 'video'
-        )        
+        )
 
     def to_representation(self, instance):
         representation = super(CommentSerializer, self).to_representation(instance)
         representation['pub_date'] = pretty_date(instance.pub_date.isoformat())
-        return representation        
+        return representation
 
 class AllCommentsSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -52,13 +53,13 @@ class AllCommentsSerializer(serializers.ModelSerializer):
         model = Comment
         fields = (
             'id', 'text', 'author', 'pub_date', 'video', 'caught_by_collection'
-        )        
+        )
 
     def to_representation(self, instance):
-        myChannel = getChannel(self.context['request'])
+        myChannel = getChannelFromRequest(self.context['request'])
         myCollections = RuleCollection.objects.filter(owner = myChannel)
 
         representation = super(AllCommentsSerializer, self).to_representation(instance)
         representation['pub_date'] = pretty_date(instance.pub_date.isoformat())
         representation['caught_by_collection'] = getCatchingCollection(instance, myCollections)
-        return representation                
+        return representation
