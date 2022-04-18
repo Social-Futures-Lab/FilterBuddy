@@ -46,7 +46,15 @@ class Rule(models.Model):
   rule_collection = models.ForeignKey(RuleCollection, on_delete=models.CASCADE)
   case_sensitive = models.BooleanField(default=False)
   spell_variants = models.BooleanField(default=True)
+  rule_variants = models.CharField(max_length=2, choices=RuleVariant.choices, default=RuleVariant.NOTHING,)
   # specify what are the possibilities (5 possibilities, enum django)
+  class RuleVariant(models.TextChoices):
+        NOTHING = 'DN', _('Do Nothing')
+        DELETE = 'DC', _('Delete Comment')
+        REVIEW = 'RC', _('Send to Review Folder')
+        REPORT = 'RY', _('Report to YouTube')
+        BLOCK = 'BC', _('Block Commenter')
+
 
   def __str__(self):
     return u'%s %s' % (self.phrase, self.rule_collection)
