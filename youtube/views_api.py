@@ -31,7 +31,7 @@ class RuleCollectionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
       queryset = self.queryset
-      myChannel = getChannel(self.request)
+      myChannel = getChannelFromRequest(self.request)
       query_set = queryset.filter(owner = myChannel)
       return query_set
 
@@ -379,7 +379,7 @@ def updateRule(request):
 
 @csrf_exempt
 def updateMatchTable(request):
-  myChannel = getChannel(request)
+  myChannel = getChannelFromRequest(request)
   collections = RuleCollection.objects.filter(owner = myChannel)
 
   # iterate through all of the collections
