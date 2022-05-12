@@ -43,9 +43,17 @@
 - previewFilter(id)
   - Return the comments that match a filter (see previewRule)
 
-# Statistics
+## Statistics
 - getStats(id)
   - Return statistics for a filter group
 
 - getRuleStats(id, rule)
   - Return statistics for a rule in a filter group
+
+## Meta
+- sync()
+  - Forces a refresh of comments from YT. If running locally, it re-imports the
+      test set of comments
+
+- api()
+  - Debugging endpoint. Returns a 'It works!'

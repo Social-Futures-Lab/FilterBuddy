@@ -91,21 +91,6 @@ def unifiedRule(rule):
   else:
     raise Error('Unknown type for rule')
 
-# @csrf_exempt
-# def debug(request):
-#   channel_id = ''
-#   try:
-#     request_data = json.loads(request.body.decode('utf-8'))
-#     channel_id = request_data['channel']
-#   except:
-#     pass
-#   channel = makeDebugChannel(channel_id = channel_id)
-#   if not 'credentials' in request.session:
-#     request.session['credentials'] = {}
-#   if not 'myChannelId' in request.session['credentials']:
-#     request.session['credentials']['myChannelId'] = channel.channel_id
-#   return HttpResponse('Done.'.encode('utf-8'))
-
 @csrf_exempt
 def api(request):
   if request.method == 'GET':

@@ -296,69 +296,6 @@ def create_word_filter(request):
       'rule_templates': ruleTemplates,
     })
 
-def get_matching_comments(request, phrase):
-  if 'credentials' not in request.session:
-    return authorize(request)
-
-  print ("phrase is: ", phrase)
-# Load credentials from the session.
-  sc = request.session['credentials']
-
-  myChannelId = sc['myChannelId']
-  myChannel = Channel.objects.get(channel_id = myChannelId)
-  myComments = Comment.objects.filter(video__channel = myChannel)
-  matched_comments = []
-  for myComment in myComments:
-    if (phrase in myComment.text):
-      matched_comment = {
-      'text': myComment.text,
-      'author': myComment.author,
-      'likeCount': myComment.likeCount,
-      'pub_date': myComment.pub_date.strftime("%m/%d/%Y, %H:%M:%S"),
-      }
-      matched_comments.append(matched_comment)
-  response = {
-      'matched_comments': matched_comments,
-    }
-  return HttpResponse(json.dumps(response), content_type='application/json')
-
-
-# def search_reg_exp(reg_exp, comments, highlight_words=False):
-#   def highlight(match):
-#     return "<strong>" + match.group() + "</strong>"
-#   matching_comments = []
-#   for comment in comments:
-#     if highlight_words:
-#       res_and_num_changes = re.subn(reg_exp, highlight, comment.text)
-#       if res_and_num_changes[1] > 0:
-#         matched_comment = copy.copy(comment)
-#         matched_comment.text = res_and_num_changes[0]
-#         matching_comments.append(matched_comment)
-#     elif re.search(reg_exp, comment.text) != None:
-#       matching_comments.append(comment)
-#   return matching_comments
-
-@csrf_exempt
-def get_rule_collection_templates(request):
-  ruleTemplates = RuleCollection.objects.filter(is_template=True)
-  templates = []
-  for ruleTemplate in ruleTemplates:
-    rules = []
-    for rule in Rule.objects.filter(rule_collection = ruleTemplate):
-      rules.append({
-        'phrase': rule.phrase,
-        'exception': rule.exception_phrase
-        })
-    template = {
-      'title': ruleTemplate.title,
-      'rules': rules
-    }
-    templates.append(template)
-  response = {
-    'filters': templates
-  }
-  return HttpResponse(json.dumps(response), content_type='application/json')
-
 @csrf_exempt
 def sync(request):
   if settings.LOCAL_DEBUG:
