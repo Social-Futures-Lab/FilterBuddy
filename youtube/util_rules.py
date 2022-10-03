@@ -115,7 +115,8 @@ def getMatchedCommentsForCharts(rule, myChannel):
   return matched_comments
 
 def convertDate(myDate):
-  newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')
+  #newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S%z').strftime('%Y-%m-%d')
+  newDate = datetime.strptime(myDate, '%Y-%m-%dT%H:%M:%S.%f%z').strftime('%Y-%m-%d')
   return newDate
 
 def ruleDateCounter(rule_matched_comments):

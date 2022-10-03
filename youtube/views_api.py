@@ -387,16 +387,22 @@ def updateMatchTable(request):
     rules = Rule.objects.filter(rule_collection = collection)
     # iterate through all of the rules in a collection
     for curr_rule in rules:
-      phrase = curr_rule['phrase']
+      phrase = getattr(curr_rule, 'phrase')
+      case_sensitive = getattr(curr_rule, 'case_sensitive')
       # iterate through all comments
       myComments = Comment.objects.filter(video__channel=myChannel)
       for myComment in myComments:
-        # find matching comments for rule and add to list
-        k = re.search(r'\b({})\b'.format(phrase), myComment.text)
+        # find matching comments for rule
+        k = None
+        if (case_sensitive):
+          k = re.search(r'\b({})\b'.format(phrase), myComment.text)
+        else:
+          k = re.search(r'\b({})\b'.format(phrase), myComment.text, re.IGNORECASE)
+
         if (k):
           # add matched comments to the table
-          data = MatchedComments.objects.update_or_create(rule = curr_rule, comment = myComment,
-                                                          span = json.dumps(k.span()), applied_date = datetime.today())
+          MatchedComments.objects.update_or_create(rule = curr_rule, comment = myComment,
+                    defaults={'rule' : curr_rule, 'comment' : myComment, 'span' : json.dumps(k.span()), 'applied_date' : datetime.today()})
 
   return HttpResponse('Added data to table'.encode('utf-8'), status = 200)
 
